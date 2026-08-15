@@ -1,0 +1,44 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  const tags = new Map<string, typeof posts>();
+  for (const post of posts) {
+    for (const t of post.data.tags) {
+      if (!tags.has(t)) tags.set(t, []);
+      tags.get(t)!.push(post);
+    }
+  }
+  return [...tags.entries()].map(([tag, tagged]) => ({
+    params: { tag },
+    props: { tagged: tagged.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()) },
+  }));
+}
+
+const { tagged } = Astro.props;
+const fmt = (d: Date) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+---
+
+<Base title={`${Astro.params.tag} — Jiahuo Lao 的手记`} description={`标签「${Astro.params.tag}」下的全部文章`}>
+  <article>
+    <header class="article-header">
+      <a class="back" href="/">← 返回列表</a>
+      <h1>#{Astro.params.tag}</h1>
+      <p class="article-meta">{tagged.length} 篇</p>
+    </header>
+    <ul class="posts">
+      {tagged.map((post) => (
+        <li class="post">
+          <time datetime={post.data.pubDate.toISOString().slice(0, 10)}>{fmt(post.data.pubDate).slice(5)}</time>
+          <div>
+            <h2><a href={`/blog/${post.id}/`}>{post.data.title}</a></h2>
+            <p>{post.data.description}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </article>
+</Base>

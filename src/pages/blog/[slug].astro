@@ -22,7 +22,7 @@ const dateStr = `${post.data.pubDate.getFullYear()}-${String(post.data.pubDate.g
       <h1>{post.data.title}</h1>
       <p class="article-meta">
         <time datetime={post.data.pubDate.toISOString().slice(0, 10)}>{dateStr}</time>
-        {post.data.tags.map((t) => <span class="tag">{t}</span>)}
+        {post.data.tags.map((t) => <a class="tag" href={`/tags/${t}/`}>{t}</a>)}
       </p>
     </header>
     <div class="prose">

@@ -8,7 +8,15 @@ const posts = (await getCollection('blog')).sort(
 );
 const fmt = (d: Date) =>
   `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-const year = posts[0]?.data.pubDate.getFullYear() ?? new Date().getFullYear();
+const tagHref = (t: string) => `/tags/${t}/`;
+// 按年分组（倒序），年份随内容自动滚动
+const byYear = new Map<number, typeof posts>();
+for (const post of posts) {
+  const y = post.data.pubDate.getFullYear();
+  if (!byYear.has(y)) byYear.set(y, []);
+  byYear.get(y)!.push(post);
+}
+const years = [...byYear.keys()].sort((a, b) => b - a);
 ---
 
 <Base title="Jiahuo Lao 的手记">
@@ -21,19 +29,23 @@ const year = posts[0]?.data.pubDate.getFullYear() ?? new Date().getFullYear();
     <Starmap />
   </header>
 
-  <p class="list-head">Post Log — {year}</p>
-  <ul class="posts">
-    {posts.map((post) => (
-      <li class="post">
-        <time datetime={post.data.pubDate.toISOString().slice(0, 10)}>{fmt(post.data.pubDate)}</time>
-        <div>
-          <h2>
-            <a href={`/blog/${post.id}/`}>{post.data.title}</a>
-            {post.data.tags.map((t) => <span class="tag">{t}</span>)}
-          </h2>
-          <p>{post.data.description}</p>
-        </div>
-      </li>
-    ))}
-  </ul>
+  {years.map((year) => (
+    <section>
+      <p class="list-head">Post Log — {year}</p>
+      <ul class="posts">
+        {byYear.get(year)!.map((post) => (
+          <li class="post">
+            <time datetime={post.data.pubDate.toISOString().slice(0, 10)}>{fmt(post.data.pubDate)}</time>
+            <div>
+              <h2>
+                <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+                {post.data.tags.map((t) => <a class="tag" href={tagHref(t)}>{t}</a>)}
+              </h2>
+              <p>{post.data.description}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
 </Base>
