@@ -1,0 +1,41 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'Jiahuo Lao 的手记 — AI Infra · LLM · 具身智能' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="alternate" type="application/rss+xml" title="Jiahuo Lao 的手记" href="/rss.xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <div class="wrap">
+      <slot name="header" />
+      <nav class="site" aria-label="站点导航">
+        <a href="/" aria-current={Astro.url.pathname === '/' ? 'page' : undefined}>文章</a>
+        <a href="/about/" aria-current={Astro.url.pathname.startsWith('/about') ? 'page' : undefined}>关于</a>
+        <a href="/rss.xml" aria-current={undefined}>RSS</a>
+      </nav>
+      <slot />
+      <footer class="site">
+        <span>© {new Date().getFullYear()} Jiahuo Lao</span>
+        <span><a href="https://github.com/laojiahuo2003">GitHub</a> · <a href="/rss.xml">RSS</a></span>
+      </footer>
+    </div>
+  </body>
+</html>
