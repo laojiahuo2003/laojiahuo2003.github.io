@@ -8,7 +8,7 @@ export async function GET(context: APIContext) {
   );
   return rss({
     title: 'Jiahuo Lao 的手记',
-    description: 'AI Infra · LLM · 具身智能：把模型跑快、跑稳过程中踩过的坑',
+    description: 'LLM 学习笔记与踩坑记录',
     site: context.site!,
     items: posts.map((post) => ({
       title: post.data.title,
