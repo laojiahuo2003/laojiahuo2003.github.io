@@ -11,8 +11,20 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
+const toc = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
 const dateStr = `${post.data.pubDate.getFullYear()}-${String(post.data.pubDate.getMonth() + 1).padStart(2, '0')}-${String(post.data.pubDate.getDate()).padStart(2, '0')}`;
+const fmtDate = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+// 相关笔记：按共同标签数排序，最多 3 篇
+const allPosts = await getCollection('blog');
+const related = allPosts
+  .filter((p) => p.id !== post.id)
+  .map((p) => ({ post: p, score: p.data.tags.filter((t) => post.data.tags.includes(t)).length }))
+  .filter((x) => x.score > 0)
+  .sort((a, b) => b.score - a.score || b.post.data.pubDate.valueOf() - a.post.data.pubDate.valueOf())
+  .slice(0, 3)
+  .map((x) => x.post);
 ---
 
 <Base title={`${post.data.title} — Jiahuo Lao 的手记`} description={post.data.description}>
@@ -25,8 +37,41 @@ const dateStr = `${post.data.pubDate.getFullYear()}-${String(post.data.pubDate.g
         {post.data.tags.map((t) => <a class="tag" href={`/tags/${t}/`}>{t}</a>)}
       </p>
     </header>
+
+    {toc.length >= 2 && (
+      <details class="toc" open>
+        <summary>目录</summary>
+        <nav aria-label="目录">
+          <ol class="toc-list">
+            {toc.map((h) => (
+              <li class={h.depth === 3 ? 'toc-item toc-item-indent' : 'toc-item'}>
+                <a href={`#${h.slug}`}>{h.text}</a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      </details>
+    )}
+
     <div class="prose">
       <Content />
     </div>
   </article>
+
+  {related.length > 0 && (
+    <section class="related">
+      <p class="list-head">相关笔记</p>
+      <ul class="posts">
+        {related.map((p) => (
+          <li class="post">
+            <time datetime={p.data.pubDate.toISOString().slice(0, 10)}>{fmtDate(p.data.pubDate)}</time>
+            <div>
+              <h2><a href={`/blog/${p.id}/`}>{p.data.title}</a></h2>
+              <p>{p.data.description}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
 </Base>

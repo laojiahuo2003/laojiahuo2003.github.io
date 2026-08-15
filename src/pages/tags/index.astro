@@ -1,0 +1,27 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+const posts = await getCollection('blog');
+const counts = new Map<string, number>();
+for (const post of posts) {
+  for (const t of post.data.tags) {
+    counts.set(t, (counts.get(t) ?? 0) + 1);
+  }
+}
+const tags = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'zh'));
+---
+
+<Base title="标签 — Jiahuo Lao 的手记" description="全部标签与文章数">
+  <article>
+    <header class="article-header">
+      <h1>标签</h1>
+      <p class="article-meta">{tags.length} 个标签 · {posts.length} 篇文章</p>
+    </header>
+    <ul class="tag-cloud">
+      {tags.map(([tag, n]) => (
+        <li><a class="tag-cloud-item" href={`/tags/${tag}/`}>{tag}<span class="tag-count">{n}</span></a></li>
+      ))}
+    </ul>
+  </article>
+</Base>

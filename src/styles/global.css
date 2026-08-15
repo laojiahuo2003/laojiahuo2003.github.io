@@ -273,3 +273,130 @@ footer.site a:hover { color: var(--accent); }
 @media (prefers-reduced-motion: reduce) {
   .post h2 a, nav.site a, .more, .prose a { transition: none; }
 }
+
+/* ============ KaTeX 数学 ============ */
+.katex-display { overflow-x: auto; overflow-y: hidden; padding: .35em 0; }
+
+/* ============ 代码块复制按钮 ============ */
+.code-block { position: relative; }
+.code-block .copy-btn {
+  position: absolute;
+  top: .5rem;
+  right: .5rem;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--dim);
+  background: var(--ground);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: .15rem .55rem;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity .15s ease, color .15s ease;
+}
+.code-block:hover .copy-btn,
+.code-block .copy-btn:focus-visible { opacity: 1; }
+.code-block .copy-btn:hover { color: var(--accent); }
+.code-block .copy-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ============ 标签云 ============ */
+.tag-cloud { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: .6rem; }
+.tag-cloud-item {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--dim);
+  border: 1px solid var(--rule);
+  border-radius: 99px;
+  padding: .3rem .85rem;
+  transition: color .15s ease, border-color .15s ease;
+}
+.tag-cloud-item:hover { color: var(--accent); border-color: var(--accent); }
+.tag-count { color: var(--faint); font-size: 11px; margin-left: .45rem; }
+
+/* ============ 搜索 ============ */
+.search-box { margin: 0 0 2rem; }
+#search-input {
+  width: 100%;
+  font-family: var(--sans);
+  font-size: 1rem;
+  color: var(--ink);
+  background: var(--ground);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: .75rem 1rem;
+}
+#search-input:focus { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
+.search-results { display: flex; flex-direction: column; gap: 1.5rem; }
+.search-item { display: block; }
+.search-item h2 {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.15rem;
+  line-height: 1.4;
+  margin: 0 0 .3rem;
+}
+.search-item:hover h2 { color: var(--accent); }
+.search-item h2 mark { background: var(--accent-soft); color: inherit; }
+.search-excerpt { margin: 0; color: var(--dim); font-size: .93rem; line-height: 1.7; }
+.search-excerpt mark { background: var(--accent-soft); color: var(--ink); border-radius: 2px; padding: 0 .1em; }
+.search-empty { color: var(--faint); font-family: var(--mono); font-size: 13px; }
+.search-empty code { font-family: var(--mono); background: var(--code-bg); border-radius: 4px; padding: .1em .4em; }
+
+/* ============ 相关笔记 ============ */
+.related { margin-top: 3.5rem; }
+
+/* ============ 代码高亮暗色主题 ============ */
+/* Shiki 双主题只内联了浅色值 + --shiki-dark 变量，这里手动在暗色下消费它 */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .astro-code {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+  }
+  :root:not([data-theme="light"]) .astro-code span {
+    color: var(--shiki-dark) !important;
+  }
+}
+:root[data-theme="dark"] .astro-code {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+}
+:root[data-theme="dark"] .astro-code span {
+  color: var(--shiki-dark) !important;
+}
+
+/* ============ 主题切换按钮 ============ */
+.theme-toggle {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--dim);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: color .15s ease;
+}
+.theme-toggle:hover { color: var(--accent); }
+.theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+/* ============ 文章目录 ============ */
+.toc {
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: .9rem 1.1rem;
+  margin: 0 0 2rem;
+  font-family: var(--mono);
+  font-size: 13px;
+}
+.toc summary {
+  cursor: pointer;
+  color: var(--ink);
+  font-weight: 600;
+  user-select: none;
+}
+.toc summary:hover { color: var(--accent); }
+.toc-list { list-style: none; margin: .75rem 0 0; padding: 0; }
+.toc-item { margin: .35rem 0; }
+.toc-item a { color: var(--dim); transition: color .15s ease; }
+.toc-item a:hover { color: var(--accent); }
+.toc-item-indent { padding-left: 1.1rem; }

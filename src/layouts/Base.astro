@@ -1,4 +1,5 @@
 ---
+import 'katex/dist/katex.min.css';
 import '../styles/global.css';
 
 interface Props {
@@ -22,20 +23,94 @@ const { title, description = 'Jiahuo Lao 的手记 — LLM 学习笔记与踩坑
     <link rel="alternate" type="application/rss+xml" title="Jiahuo Lao 的手记" href="/rss.xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline>
+      (function () {
+        try {
+          var t = localStorage.getItem('theme');
+          if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div class="wrap">
       <slot name="header" />
       <nav class="site" aria-label="站点导航">
         <a href="/" aria-current={Astro.url.pathname === '/' ? 'page' : undefined}>文章</a>
+        <a href="/tags/" aria-current={Astro.url.pathname.startsWith('/tags') ? 'page' : undefined}>标签</a>
         <a href="/about/" aria-current={Astro.url.pathname.startsWith('/about') ? 'page' : undefined}>关于</a>
+        <a href="/search/" aria-current={Astro.url.pathname.startsWith('/search') ? 'page' : undefined}>搜索</a>
         <a href="/rss.xml" aria-current={undefined}>RSS</a>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="切换主题">自动</button>
       </nav>
-      <slot />
+      <main data-pagefind-body>
+        <slot />
+      </main>
       <footer class="site">
         <span>© {new Date().getFullYear()} Jiahuo Lao</span>
         <span><a href="https://github.com/laojiahuo2003">GitHub</a> · <a href="/rss.xml">RSS</a></span>
       </footer>
     </div>
+    <script>
+      // 为每个代码块加一个「复制」按钮（纯客户端，无依赖）
+      document.querySelectorAll('pre').forEach((pre) => {
+        if (pre.parentElement?.classList.contains('code-block')) return;
+        const wrap = document.createElement('div');
+        wrap.className = 'code-block';
+        pre.parentNode!.insertBefore(wrap, pre);
+        wrap.appendChild(pre);
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'copy-btn';
+        btn.textContent = '复制';
+        btn.setAttribute('aria-label', '复制代码');
+        wrap.appendChild(btn);
+
+        btn.addEventListener('click', async () => {
+          const text = pre.querySelector('code')?.textContent ?? pre.textContent ?? '';
+          try {
+            await navigator.clipboard.writeText(text);
+          } catch {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            ta.remove();
+          }
+          btn.textContent = '已复制';
+          setTimeout(() => (btn.textContent = '复制'), 2000);
+        });
+      });
+    </script>
+    <script>
+      // 主题切换：自动 → 亮 → 暗 循环，持久化到 localStorage
+      (function () {
+        const html = document.documentElement;
+        const btn = document.getElementById('theme-toggle');
+        const ORDER = ['system', 'light', 'dark'];
+        const LABEL = { system: '自动', light: '亮', dark: '暗' };
+        const current = () => html.dataset.theme || 'system';
+
+        function apply(t) {
+          if (t === 'system') delete html.dataset.theme;
+          else html.dataset.theme = t;
+          try { localStorage.setItem('theme', t); } catch (e) {}
+          if (btn) {
+            btn.textContent = LABEL[t];
+            btn.title = '主题：' + LABEL[t] + '（点击切换）';
+          }
+        }
+
+        apply(current());
+        btn && btn.addEventListener('click', () => {
+          const i = ORDER.indexOf(current());
+          apply(ORDER[(i + 1) % ORDER.length]);
+        });
+      })();
+    </script>
   </body>
 </html>
