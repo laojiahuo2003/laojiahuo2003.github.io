@@ -40,7 +40,6 @@ const ogImage = new URL('/og.png', site).href;
     <link rel="canonical" href={canonical} />
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAFAF7" />
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#101312" />
-    <link rel="alternate" type="application/rss+xml" title="Jiahuo Lao 的手记" href="/rss.xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <script is:inline>
@@ -59,7 +58,6 @@ const ogImage = new URL('/og.png', site).href;
         <a href="/" aria-current={Astro.url.pathname === '/' ? 'page' : undefined}>文章</a>
         <a href="/daily/" aria-current={Astro.url.pathname.startsWith('/daily') ? 'page' : undefined}>日报</a>
         <a href="/tags/" aria-current={Astro.url.pathname.startsWith('/tags') ? 'page' : undefined}>标签</a>
-        <a href="/rss.xml" aria-current={undefined}>RSS</a>
         <button id="theme-toggle" class="theme-toggle" type="button" aria-label="切换主题">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M4.93 19.07l1.41-1.41"/><path d="M17.66 6.34l1.41-1.41"/></svg>
         </button>
@@ -69,7 +67,7 @@ const ogImage = new URL('/og.png', site).href;
       </main>
       <footer class="site">
         <span>© {new Date().getFullYear()} Jiahuo Lao</span>
-        <span><a href="https://github.com/laojiahuo2003">GitHub</a> · <a href="/rss.xml">RSS</a></span>
+        <span><a href="https://github.com/laojiahuo2003">GitHub</a></span>
       </footer>
     </div>
     <script>
