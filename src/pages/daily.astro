@@ -151,17 +151,27 @@ const REPO_URL = 'https://github.com/laojiahuo2003/github-daily-report';
         return html;
       };
 
-      // ---------- feed 加载（多源回退） ----------
-      var fetchFirstAvailable = function (sources) {
-        if (!sources.length) return Promise.reject(new Error('all failed'));
-        return fetch(sources[0])
-          .then(function (r) {
-            if (!r.ok) throw new Error(r.status);
-            return r.text();
-          })
-          .catch(function () {
-            return fetchFirstAvailable(sources.slice(1));
-          });
+      // ---------- feed 加载（双源并发，取数据最新的一份） ----------
+      // raw 永远最新但国内可能连不上；jsdelivr 国内稳定但缓存可能滞后
+      var fetchText = function (url) {
+        return fetch(url).then(function (r) {
+          if (!r.ok) throw new Error(r.status);
+          return r.text();
+        });
+      };
+
+      var parseFeed = function (text) {
+        var doc = new DOMParser().parseFromString(text, 'text/xml');
+        if (doc.getElementsByTagName('parsererror').length) throw new Error('parse');
+        var items = Array.from(doc.getElementsByTagName('item'));
+        if (!items.length) throw new Error('empty');
+        return items;
+      };
+
+      // guid 含报告文件名（ISO 日期），字典序比较即时间序
+      var latestStamp = function (items) {
+        var g = (items[0].querySelector('guid') || {}).textContent || '';
+        return g;
       };
 
       var itemDate = function (item) {
@@ -206,13 +216,16 @@ const REPO_URL = 'https://github.com/laojiahuo2003/github-daily-report';
         btnOlder.disabled = idx >= items.length - 1;
       };
 
-      fetchFirstAvailable(FEED_SOURCES)
-        .then(function (xml) {
+      Promise.all(FEED_SOURCES.map(function (u) { return fetchText(u).then(parseFeed).catch(function () { return null; }); }))
+        .then(function (results) {
+          var docs = results.filter(Boolean);
+          if (!docs.length) throw new Error('all failed');
           // 必须按 XML 解析：HTML 模式下 CDATA 会被当作注释、
           // 在内容首个 ">" 处截断，导致报告前半部分丢失
-          var doc = new DOMParser().parseFromString(xml, 'text/xml');
-          items = Array.from(doc.getElementsByTagName('item')).slice(0, 10);
-          if (!items.length) throw new Error('empty');
+          var best = docs.reduce(function (a, b) {
+            return latestStamp(a) >= latestStamp(b) ? a : b;
+          });
+          items = best.slice(0, 10);
           render();
         })
         .catch(function () {
