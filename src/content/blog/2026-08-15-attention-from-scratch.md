@@ -2,7 +2,8 @@
 title: Attention 从零推一遍：我卡了三天的 QKV
 description: 注意力到底在算什么、为什么要除以根号 d，配一个 20 行能跑的 numpy 实现。
 pubDate: 2026-08-15T08:00:00+08:00
-tags: [模型结构, 笔记]
+tags: [模型结构]
+featured: true
 ---
 
 看了很久的"Attention is All You Need"，能背公式，但合上纸就说不出 Q、K、V 到底是什么。这篇笔记把我卡了三天的地方和最后的理解记下来，最后附一个自己写的 20 行 numpy 实现——**能自己写出来，才算真的懂了**。

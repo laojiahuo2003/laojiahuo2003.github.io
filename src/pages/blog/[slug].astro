@@ -16,21 +16,36 @@ const toc = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
 const dateStr = `${post.data.pubDate.getFullYear()}-${String(post.data.pubDate.getMonth() + 1).padStart(2, '0')}-${String(post.data.pubDate.getDate()).padStart(2, '0')}`;
 const fmtDate = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
-// 相关笔记：按共同标签数排序，最多 3 篇
+// 相关笔记：标签 IDF 加权（稀有标签更能体现相关性），最多 3 篇
 const allPosts = await getCollection('blog');
+const tagFreq = new Map<string, number>();
+for (const p of allPosts) for (const t of p.data.tags) tagFreq.set(t, (tagFreq.get(t) ?? 0) + 1);
+const idf = (t: string) => Math.log(1 + allPosts.length / (tagFreq.get(t) ?? 1));
 const related = allPosts
   .filter((p) => p.id !== post.id)
-  .map((p) => ({ post: p, score: p.data.tags.filter((t) => post.data.tags.includes(t)).length }))
-  .filter((x) => x.score > 0)
+  .map((p) => {
+    const shared = p.data.tags.filter((t) => post.data.tags.includes(t));
+    return { post: p, score: shared.reduce((s, t) => s + idf(t), 0), n: shared.length };
+  })
+  .filter((x) => x.n > 0)
   .sort((a, b) => b.score - a.score || b.post.data.pubDate.valueOf() - a.post.data.pubDate.valueOf())
   .slice(0, 3)
   .map((x) => x.post);
+
+// 无共同标签时兜底为最新文章
+const hasRelated = related.length > 0;
+const relatedList = hasRelated
+  ? related
+  : allPosts
+      .filter((p) => p.id !== post.id)
+      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+      .slice(0, 3);
 ---
 
-<Base title={`${post.data.title} — Jiahuo Lao 的手记`} description={post.data.description}>
+<Base title={`${post.data.title} — Jiahuo Lao 的手记`} description={post.data.description} bodyClass={toc.length >= 2 ? 'post-page' : undefined} ogType="article">
   <article>
     <header class="article-header">
-      <a class="back" href="/">← 返回列表</a>
+      <a class="back" id="back-link" href="/">← 返回列表</a>
       <h1>{post.data.title}</h1>
       <p class="article-meta">
         <time datetime={post.data.pubDate.toISOString().slice(0, 10)}>{dateStr}</time>
@@ -38,40 +53,89 @@ const related = allPosts
       </p>
     </header>
 
-    {toc.length >= 2 && (
-      <details class="toc" open>
-        <summary>目录</summary>
-        <nav aria-label="目录">
-          <ol class="toc-list">
-            {toc.map((h) => (
-              <li class={h.depth === 3 ? 'toc-item toc-item-indent' : 'toc-item'}>
-                <a href={`#${h.slug}`}>{h.text}</a>
-              </li>
-            ))}
-          </ol>
-        </nav>
-      </details>
-    )}
+    <div class:list={['post-layout', { 'post-layout--flat': toc.length < 2 }]}>
+      <div class="post-main">
+        <div class="prose">
+          <Content />
+        </div>
 
-    <div class="prose">
-      <Content />
+        {relatedList.length > 0 && (
+          <section class="related">
+            <p class="list-head">{hasRelated ? '相关笔记' : '最新文章'}</p>
+            <ul class="posts">
+              {relatedList.map((p) => (
+                <li class="post">
+                  <time datetime={p.data.pubDate.toISOString().slice(0, 10)}>{fmtDate(p.data.pubDate)}</time>
+                  <div>
+                    <h2><a href={`/blog/${p.id}/`}>{p.data.title}</a></h2>
+                    <p>{p.data.description}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+      </div>
+
+      {toc.length >= 2 && (
+        <aside class="toc-aside">
+          <details class="toc" open>
+            <summary>目录</summary>
+            <nav aria-label="目录">
+              <ol class="toc-list">
+                {toc.map((h) => (
+                  <li class={h.depth === 3 ? 'toc-item toc-item-indent' : 'toc-item'}>
+                    <a href={`#${h.slug}`}>{h.text}</a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          </details>
+        </aside>
+      )}
     </div>
   </article>
-
-  {related.length > 0 && (
-    <section class="related">
-      <p class="list-head">相关笔记</p>
-      <ul class="posts">
-        {related.map((p) => (
-          <li class="post">
-            <time datetime={p.data.pubDate.toISOString().slice(0, 10)}>{fmtDate(p.data.pubDate)}</time>
-            <div>
-              <h2><a href={`/blog/${p.id}/`}>{p.data.title}</a></h2>
-              <p>{p.data.description}</p>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </section>
-  )}
 </Base>
+
+<script>
+  // 若从标签页进入，返回链接指向来源标签
+  const back = document.getElementById('back-link');
+  if (back && document.referrer) {
+    try {
+      const u = new URL(document.referrer);
+      if (u.pathname.startsWith('/tags/')) {
+        back.href = u.pathname;
+        back.textContent = '← 返回标签';
+      }
+    } catch {}
+  }
+</script>
+
+<script>
+  // 目录滚动高亮：标记当前可见章节
+  (function () {
+    const links = Array.from(document.querySelectorAll('.toc-list a'));
+    if (!links.length) return;
+    const entries = [];
+    for (const a of links) {
+      const id = decodeURIComponent(a.getAttribute('href')?.slice(1) ?? '');
+      const el = document.getElementById(id);
+      if (el) entries.push({ el, a });
+    }
+    if (!entries.length) return;
+
+    let ticking = false;
+    function update() {
+      ticking = false;
+      let active = entries[0].a;
+      for (const { el, a } of entries) {
+        if (el.getBoundingClientRect().top <= 120) active = a;
+      }
+      for (const { a } of entries) a.classList.toggle('active', a === active);
+    }
+    window.addEventListener('scroll', () => {
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    }, { passive: true });
+    update();
+  })();
+</script>

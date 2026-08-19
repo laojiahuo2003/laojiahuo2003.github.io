@@ -9,9 +9,12 @@ const posts = (await getCollection('blog')).sort(
 const fmt = (d: Date) =>
   `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 const tagHref = (t: string) => `/tags/${t}/`;
+// 精选：手动置顶，与时间线列表分开
+const featured = posts.filter((p) => p.data.featured);
+const rest = posts.filter((p) => !p.data.featured);
 // 按年分组（倒序），年份随内容自动滚动
 const byYear = new Map<number, typeof posts>();
-for (const post of posts) {
+for (const post of rest) {
   const y = post.data.pubDate.getFullYear();
   if (!byYear.has(y)) byYear.set(y, []);
   byYear.get(y)!.push(post);
@@ -28,6 +31,21 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
     </div>
     <Starmap />
   </header>
+
+  {featured.length > 0 && (
+    <section class="featured-section">
+      <p class="list-head">精选</p>
+      <div class="featured">
+        {featured.map((post) => (
+          <a class="featured-card" href={`/blog/${post.id}/`}>
+            <h2>{post.data.title}</h2>
+            <p>{post.data.description}</p>
+            <span>{post.data.tags.map((t) => <span class="tag">{t}</span>)}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
 
   {years.map((year) => (
     <section>

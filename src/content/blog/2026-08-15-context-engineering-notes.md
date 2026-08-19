@@ -2,7 +2,7 @@
 title: Context Engineering 学习笔记：从"写好提示词"到"管理信息环境"
 description: 2026 年 Agent 圈的方法论共识：Write / Select / Compress / Isolate 四个动词，一张我的 cheatsheet。
 pubDate: 2026-08-15
-tags: [Agent, 笔记]
+tags: [Agent]
 ---
 
 这两年看 Agent 相关的讨论，"prompt engineering"这个词出现得越来越少，取而代之的是 **context engineering**。这不止是换个时髦词。这篇笔记记录我的理解：它到底新在哪，以及那套被反复引用的四动词框架。

@@ -2,7 +2,7 @@
 title: Chunked Prefill 学习笔记：不拆机器的中间路线
 description: 把 prefill 切片给 decode 让路：token 预算怎么设、和 PD 分离怎么选、隐藏的缓存代价。
 pubDate: 2026-08-15T13:00:00+08:00
-tags: [推理, 笔记]
+tags: [推理]
 ---
 
 [PD 分离笔记](/blog/2026-08-15-pd-disaggregation-notes/)留的另一个坑。那次说的是"拆成两个池"，但业界还有一条温和得多的路线：**机器不拆，把 prefill 的活切碎**。Sarathi-Serve 论文是代表作，vLLM 的默认模式之一。

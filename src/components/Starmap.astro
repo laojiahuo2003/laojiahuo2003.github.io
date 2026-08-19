@@ -60,12 +60,22 @@
     ctx.globalAlpha = 1;
   }
 
-  if (reduced) {
-    draw(0);
-  } else {
-    requestAnimationFrame(function loop(t: number) {
+  draw(0); // 先画一帧，避免空白
+  if (!reduced) {
+    let raf = 0;
+    const loop = (t: number) => {
       draw(t);
-      requestAnimationFrame(loop);
+      raf = requestAnimationFrame(loop);
+    };
+    // 滚出视口就暂停动画，省电
+    const io = new IntersectionObserver((entries) => {
+      const visible = entries.some((e) => e.isIntersecting);
+      if (visible && !raf) raf = requestAnimationFrame(loop);
+      else if (!visible && raf) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
     });
+    io.observe(cv);
   }
 </script>

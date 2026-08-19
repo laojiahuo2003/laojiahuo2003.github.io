@@ -5,9 +5,19 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description?: string;
+  bodyClass?: string;
+  ogType?: string;
 }
 
-const { title, description = 'Jiahuo Lao 的手记 — LLM 学习笔记与踩坑记录' } = Astro.props;
+const {
+  title,
+  description = 'Jiahuo Lao 的手记 — LLM 学习笔记与踩坑记录',
+  bodyClass,
+  ogType = 'website',
+} = Astro.props;
+const site = Astro.site ?? new URL('https://laojiahuo2003.github.io');
+const canonical = new URL(Astro.url.pathname, site).href;
+const ogImage = new URL('/og.png', site).href;
 ---
 
 <!doctype html>
@@ -19,7 +29,17 @@ const { title, description = 'Jiahuo Lao 的手记 — LLM 学习笔记与踩坑
     <meta name="description" content={description} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content="Jiahuo Lao 的手记" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAFAF7" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#101312" />
     <link rel="alternate" type="application/rss+xml" title="Jiahuo Lao 的手记" href="/rss.xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -32,7 +52,7 @@ const { title, description = 'Jiahuo Lao 的手记 — LLM 学习笔记与踩坑
       })();
     </script>
   </head>
-  <body>
+  <body class={bodyClass || undefined}>
     <div class="wrap">
       <slot name="header" />
       <nav class="site" aria-label="站点导航">
@@ -42,7 +62,9 @@ const { title, description = 'Jiahuo Lao 的手记 — LLM 学习笔记与踩坑
         <a href="/about/" aria-current={Astro.url.pathname.startsWith('/about') ? 'page' : undefined}>关于</a>
         <a href="/search/" aria-current={Astro.url.pathname.startsWith('/search') ? 'page' : undefined}>搜索</a>
         <a href="/rss.xml" aria-current={undefined}>RSS</a>
-        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="切换主题">自动</button>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="切换主题">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M4.93 19.07l1.41-1.41"/><path d="M17.66 6.34l1.41-1.41"/></svg>
+        </button>
       </nav>
       <main data-pagefind-body>
         <slot />
@@ -88,12 +110,17 @@ const { title, description = 'Jiahuo Lao 的手记 — LLM 学习笔记与踩坑
       });
     </script>
     <script>
-      // 主题切换：自动 → 亮 → 暗 循环，持久化到 localStorage
+      // 主题切换：跟随系统 → 亮 → 暗 循环，图标 + aria-label 同步，持久化到 localStorage
       (function () {
         const html = document.documentElement;
         const btn = document.getElementById('theme-toggle');
         const ORDER = ['system', 'light', 'dark'];
-        const LABEL = { system: '自动', light: '亮', dark: '暗' };
+        const LABEL = { system: '跟随系统', light: '亮色', dark: '暗色' };
+        const ICONS = {
+          system: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>',
+          light: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M4.93 19.07l1.41-1.41"/><path d="M17.66 6.34l1.41-1.41"/></svg>',
+          dark: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
+        };
         const current = () => html.dataset.theme || 'system';
 
         function apply(t) {
@@ -101,8 +128,10 @@ const { title, description = 'Jiahuo Lao 的手记 — LLM 学习笔记与踩坑
           else html.dataset.theme = t;
           try { localStorage.setItem('theme', t); } catch (e) {}
           if (btn) {
-            btn.textContent = LABEL[t];
-            btn.title = '主题：' + LABEL[t] + '（点击切换）';
+            btn.innerHTML = ICONS[t];
+            const label = '主题：' + LABEL[t] + '（点击切换）';
+            btn.title = label;
+            btn.setAttribute('aria-label', label);
           }
         }
 

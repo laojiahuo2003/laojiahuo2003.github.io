@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <rect width="1200" height="630" fill="#0F7B5F"/>
+  <g fill="#FAFAF7">
+    <circle cx="140" cy="120" r="8"/>
+    <circle cx="260" cy="90" r="5"/>
+    <circle cx="380" cy="150" r="7"/>
+    <circle cx="520" cy="80" r="4"/>
+    <circle cx="660" cy="130" r="6"/>
+    <circle cx="900" cy="70" r="6"/>
+    <circle cx="980" cy="140" r="9"/>
+    <circle cx="1080" cy="180" r="5"/>
+    <circle cx="120" cy="500" r="6"/>
+    <circle cx="260" cy="560" r="4"/>
+    <circle cx="1060" cy="480" r="7"/>
+  </g>
+  <text x="90" y="350" font-family="Georgia, 'Noto Serif CJK SC', 'Noto Serif SC', 'Songti SC', serif" font-size="80" font-weight="600" fill="#FAFAF7">Jiahuo Lao 的手记</text>
+  <text x="92" y="422" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Noto Sans CJK SC', monospace" font-size="30" letter-spacing="2" fill="#FAFAF7" opacity="0.85">LLM 学习笔记 · 踩坑记录</text>
+</svg>

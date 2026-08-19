@@ -25,7 +25,7 @@ const fmt = (d: Date) =>
 <Base title={`${Astro.params.tag} — Jiahuo Lao 的手记`} description={`标签「${Astro.params.tag}」下的全部文章`}>
   <article>
     <header class="article-header">
-      <a class="back" href="/">← 返回列表</a>
+      <a class="back" href="/tags/">← 全部标签</a>
       <h1>#{Astro.params.tag}</h1>
       <p class="article-meta">{tagged.length} 篇</p>
     </header>

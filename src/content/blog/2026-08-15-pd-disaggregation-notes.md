@@ -2,7 +2,7 @@
 title: PD 分离学习笔记：一台机器伺候不好两种脾气
 description: prefill 吃算力、decode 吃带宽，拆开部署为什么赢了，拆完又欠下什么新债。
 pubDate: 2026-08-15
-tags: [推理, 笔记]
+tags: [推理]
 ---
 
 [上一篇 KV Cache 笔记](/blog/2026-08-15-kv-cache-notes/)结尾留了个坑：prefill 和 decode 为什么"一个算力密集一个带宽密集，是 PD 分离部署的由来"。这篇就是填坑的。读完最大的感受：**这是一次微服务拆分在 GPU 集群上的完整重演**。

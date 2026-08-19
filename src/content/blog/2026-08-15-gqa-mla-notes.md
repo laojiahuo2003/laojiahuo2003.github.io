@@ -2,7 +2,7 @@
 title: GQA / MLA 学习笔记：给 KV Cache 瘦身
 description: 从 MQA 到 GQA 到 MLA：三步压缩怎么把最贵的缓存打到零头，填 KV Cache 篇的坑。
 pubDate: 2026-08-15T11:00:00+08:00
-tags: [推理, 模型结构, 笔记]
+tags: [推理, 模型结构]
 ---
 
 [KV Cache 笔记](/blog/2026-08-15-kv-cache-notes/)里手算过：70B 级模型 2.6 MB/token，长上下文下缓存比权重还大。当时留的坑——"MLA/GQA 这些减少 KV 头的压缩路线"——就是这篇。三步演进，一次比一次狠。

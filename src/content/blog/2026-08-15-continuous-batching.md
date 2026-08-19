@@ -2,7 +2,7 @@
 title: Continuous Batching 学习笔记：GPU 是怎么闲下来的
 description: 静态批处理的浪费账、迭代级调度怎么让 GPU 利用率翻倍、抢占与换出的小尾巴。
 pubDate: 2026-08-15T12:00:00+08:00
-tags: [推理, 笔记]
+tags: [推理]
 ---
 
 这篇补推理服务三部曲的中间一块：[KV Cache](/blog/2026-08-15-kv-cache-notes/) 管"存得下"，[PD 分离](/blog/2026-08-15-pd-disaggregation-notes/)管"两种活分开干"，而 continuous batching 管"机器别闲着"。它是 Orca 论文带火的、如今所有推理框架（vLLM/SGLang/TensorRT-LLM）的地基。
