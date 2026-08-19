@@ -11,6 +11,22 @@
   --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Songti SC", "Noto Serif SC", serif;
   --sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Segoe UI", "Microsoft YaHei", sans-serif;
   --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  /* 间距刻度（8px 网格） */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+  --sp-16: 64px;
+  --sp-18: 72px;
+  /* 动效节奏 */
+  --dur-fast: 150ms;
+  --dur: 250ms;
+  --ease: cubic-bezier(.22, .61, .36, 1);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -102,7 +118,7 @@ nav.site {
   border-bottom: 1px solid var(--rule);
   margin-bottom: 2.75rem;
 }
-nav.site a { color: var(--dim); transition: color .15s ease; }
+nav.site a { color: var(--dim); transition: color var(--dur-fast) var(--ease); }
 nav.site a:hover { color: var(--accent); }
 nav.site a[aria-current="page"] { color: var(--ink); }
 nav.site a[aria-current="page"]::before { content: "· "; color: var(--accent); }
@@ -145,7 +161,7 @@ nav.site a[aria-current="page"]::before { content: "· "; color: var(--accent); 
   background-repeat: no-repeat;
   background-position: 0 100%;
   background-size: 0% 1.5px;
-  transition: background-size .25s ease;
+  transition: background-size var(--dur) var(--ease);
   padding-bottom: 1px;
 }
 .post:hover h2 a, .post h2 a:hover { background-size: 100% 1.5px; }
@@ -184,7 +200,7 @@ nav.site a[aria-current="page"]::before { content: "· "; color: var(--accent); 
   border-radius: 10px;
   padding: 1.2rem 1.3rem;
   background: var(--accent-soft);
-  transition: border-color .15s ease;
+  transition: border-color var(--dur-fast) var(--ease);
 }
 .featured-card:hover { border-color: var(--accent); }
 .featured-card h2 {
@@ -318,8 +334,8 @@ footer.site a:hover { color: var(--accent); }
   border-radius: 6px;
   padding: .15rem .55rem;
   cursor: pointer;
-  opacity: 0;
-  transition: opacity .15s ease, color .15s ease;
+  opacity: .55;
+  transition: opacity var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
 }
 .code-block:hover .copy-btn,
 .code-block .copy-btn:focus-visible { opacity: 1; }
@@ -339,7 +355,7 @@ footer.site a:hover { color: var(--accent); }
   border: 1px solid var(--rule);
   border-radius: 99px;
   padding: .3rem .85rem;
-  transition: color .15s ease, border-color .15s ease;
+  transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
 }
 .tag-cloud-item:hover { color: var(--accent); border-color: var(--accent); }
 .tag-count { color: var(--faint); font-size: 11px; margin-left: .45rem; }
@@ -405,7 +421,7 @@ footer.site a:hover { color: var(--accent); }
   border: none;
   padding: 0;
   cursor: pointer;
-  transition: color .15s ease;
+  transition: color var(--dur-fast) var(--ease);
 }
 .theme-toggle:hover { color: var(--accent); }
 .theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
@@ -428,7 +444,7 @@ footer.site a:hover { color: var(--accent); }
 .toc summary:hover { color: var(--accent); }
 .toc-list { list-style: none; margin: .75rem 0 0; padding: 0; }
 .toc-item { margin: .35rem 0; }
-.toc-item a { color: var(--dim); transition: color .15s ease; }
+.toc-item a { color: var(--dim); transition: color var(--dur-fast) var(--ease); }
 .toc-item a:hover { color: var(--accent); }
 .toc-item a.active { color: var(--accent); }
 .toc-item-indent { padding-left: 1.1rem; }

@@ -16,6 +16,31 @@ const toc = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
 const dateStr = `${post.data.pubDate.getFullYear()}-${String(post.data.pubDate.getMonth() + 1).padStart(2, '0')}-${String(post.data.pubDate.getDate()).padStart(2, '0')}`;
 const fmtDate = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
+// 阅读时长/字数：粗略按「中文字符 + 英文单词」估算（约 400 字/分钟）
+const bodyText = (post.body ?? '')
+  .replace(/```[\s\S]*?```/g, ' ')
+  .replace(/[#*_>~`\[\]()!|-]/g, ' ');
+const cjkChars = (bodyText.match(/[一-鿿]/g) || []).length;
+const latinWords = (bodyText.match(/[A-Za-z0-9_]+/g) || []).length;
+const wordCount = cjkChars + latinWords;
+const readingMinutes = Math.max(1, Math.round(wordCount / 400));
+
+// JSON-LD 结构化数据（BlogPosting），利于搜索结果富摘要
+const siteUrl = Astro.site ?? new URL('https://laojiahuo2003.github.io');
+const ldJson = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.pubDate.toISOString(),
+  dateModified: post.data.pubDate.toISOString(),
+  author: { '@type': 'Person', name: 'Jiahuo Lao', url: siteUrl.href },
+  mainEntityOfPage: new URL(Astro.url.pathname, siteUrl).href,
+  image: new URL('/og.png', siteUrl).href,
+  keywords: post.data.tags.join(', '),
+  wordCount,
+};
+
 // 相关笔记：标签 IDF 加权（稀有标签更能体现相关性），最多 3 篇
 const allPosts = await getCollection('blog');
 const tagFreq = new Map<string, number>();
@@ -43,12 +68,15 @@ const relatedList = hasRelated
 ---
 
 <Base title={`${post.data.title} — Jiahuo Lao 的手记`} description={post.data.description} bodyClass={toc.length >= 2 ? 'post-page' : undefined} ogType="article">
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(ldJson)} />
   <article>
     <header class="article-header">
       <a class="back" id="back-link" href="/">← 返回列表</a>
       <h1>{post.data.title}</h1>
       <p class="article-meta">
         <time datetime={post.data.pubDate.toISOString().slice(0, 10)}>{dateStr}</time>
+        <span aria-hidden="true"> · </span>
+        <span>{readingMinutes} 分钟 · {wordCount} 字</span>
         {post.data.tags.map((t) => <a class="tag" href={`/tags/${t}/`}>{t}</a>)}
       </p>
     </header>
