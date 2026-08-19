@@ -1,0 +1,65 @@
+---
+// 翻期导航：真实链接（可分享/SEO）+ 键盘 ←/→
+import { issueNo } from './utils';
+
+interface Props {
+  date: string;
+  total: number; // 可用期数
+  newer?: string | null; // 较新一期 URL
+  older?: string | null; // 较旧一期 URL
+}
+const { date, total, newer, older } = Astro.props;
+---
+
+<div class="daily-pager">
+  {newer
+    ? <a id="pager-newer" class="daily-nav" href={newer}>← 较新</a>
+    : <span class="daily-nav" aria-disabled="true">← 较新</span>}
+  <span class="daily-indicator">第 {issueNo(date)} 期 / 共 {total} 期在线</span>
+  {older
+    ? <a id="pager-older" class="daily-nav" href={older}>较旧 →</a>
+    : <span class="daily-nav" aria-disabled="true">较旧 →</span>}
+</div>
+
+<script>
+  // 键盘翻期：← 上一期（较新），→ 下一期（较旧）
+  const newer = document.getElementById('pager-newer');
+  const older = document.getElementById('pager-older');
+  document.addEventListener('keydown', (e) => {
+    if (e.altKey || e.metaKey || e.ctrlKey) return;
+    const t = e.target as HTMLElement;
+    if (t && /^(input|textarea|select)$/i.test(t.tagName)) return;
+    if (e.key === 'ArrowLeft' && newer) location.href = (newer as HTMLAnchorElement).href;
+    else if (e.key === 'ArrowRight' && older) location.href = (older as HTMLAnchorElement).href;
+  });
+</script>
+
+<style>
+  .daily-pager {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 0 0 1.8rem;
+  }
+  .daily-nav {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--dim);
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: .35rem .8rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+  }
+  a.daily-nav:hover { color: var(--accent); border-color: var(--accent); }
+  span.daily-nav[aria-disabled='true'] { opacity: .35; cursor: default; }
+  .daily-indicator {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--faint);
+    letter-spacing: .05em;
+  }
+</style>

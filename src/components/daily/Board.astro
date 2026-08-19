@@ -1,0 +1,138 @@
+---
+import LangDot from './LangDot.astro';
+import { safeUrl, fmtStars, growOf, type Repo } from './utils';
+
+interface Props { projects: Repo[] }
+const { projects } = Astro.props;
+
+const maxG = Math.max(1, ...projects.map(growOf));
+---
+
+<div class="board">
+  <div class="brow brow-head">
+    <span class="rank">#</span><span class="b-main">项目</span>
+    <span class="b-lang">语言</span><span class="b-stars">星标</span><span class="b-grow">日增</span>
+  </div>
+  {projects.map((p, i) => {
+    const url = safeUrl(p.url);
+    const g = growOf(p);
+    const w = Math.max(6, Math.round((g / maxG) * 100));
+    return (
+      <a class="brow" href={url || '#'} target={url ? '_blank' : undefined} rel={url ? 'noopener noreferrer' : undefined}>
+        <span class={`rank${i < 3 ? ' rank-top' : ''}`}>{i + 1}</span>
+        <span class="b-main">
+          <span class="rname">{p.name}</span>
+          {p.description && <span class="b-desc">{p.description}</span>}
+        </span>
+        <span class="b-lang"><LangDot language={p.language} /></span>
+        <span class="b-stars">⭐ {fmtStars(p.stars)}</span>
+        <span class="b-grow">
+          <i class="b-track"><i class="b-fill" style={`width:${w}%`}></i></i>
+          <b>+{g}</b>
+        </span>
+      </a>
+    );
+  })}
+</div>
+
+<style>
+  .board {
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .brow {
+    display: grid;
+    grid-template-columns: 2.4rem minmax(0, 1fr) 7.5rem 4.5rem 9rem;
+    align-items: center;
+    gap: .9rem;
+    padding: .6rem 1rem;
+    text-decoration: none;
+    border-top: 1px solid var(--rule);
+    transition: background var(--dur-fast) var(--ease);
+  }
+  .brow:first-child { border-top: 0; }
+  a.brow:hover { background: var(--code-bg); }
+  a.brow:hover .rname { color: var(--accent); }
+  .brow-head {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--faint);
+    background: var(--code-bg);
+    padding: .42rem 1rem;
+  }
+  .rank {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--faint);
+    background: var(--code-bg);
+    border-radius: 6px;
+    width: 1.5rem;
+    height: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .rank-top { color: var(--accent); background: var(--accent-soft); }
+  .b-main { min-width: 0; display: grid; gap: .1rem; }
+  .rname {
+    font-family: var(--mono);
+    font-size: .88rem;
+    font-weight: 600;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+  }
+  .b-desc {
+    font-size: .8rem;
+    color: var(--faint);
+    line-height: 1.45;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .b-lang { min-width: 0; overflow: hidden; }
+  .b-stars {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--dim);
+    text-align: right;
+    white-space: nowrap;
+  }
+  .b-grow {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    justify-content: flex-end;
+  }
+  .b-track {
+    flex: 1;
+    max-width: 4.5rem;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--code-bg);
+    overflow: hidden;
+    display: block;
+  }
+  .b-fill {
+    display: block;
+    height: 100%;
+    border-radius: 2px;
+    background: var(--accent);
+  }
+  .b-grow b {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 720px) {
+    .brow { grid-template-columns: 2rem minmax(0, 1fr) 4rem; }
+    .b-lang, .b-stars { display: none; }
+  }
+</style>

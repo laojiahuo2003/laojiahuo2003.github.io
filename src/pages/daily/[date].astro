@@ -1,0 +1,44 @@
+---
+// 日报往期：/daily/YYYY-MM-DD/，构建时从 feed.json 静态生成。
+import Base from '../../layouts/Base.astro';
+import Masthead from '../../components/daily/Masthead.astro';
+import Pager from '../../components/daily/Pager.astro';
+import Report from '../../components/daily/Report.astro';
+import { fmtDate, type Feed } from '../../components/daily/utils';
+import feed from '../../data/feed.json';
+
+const data = feed as unknown as Feed;
+const reports = data.reports;
+
+export function getStaticPaths() {
+  const list = (feed as unknown as Feed).reports;
+  return list.map((report, i) => ({
+    params: { date: report.date },
+    props: { index: i },
+  }));
+}
+
+const { index } = Astro.props;
+const report = reports[index];
+// reports 按日期倒序：较新 = i-1（i-1 为 0 时是最新一期首页），较旧 = i+1
+const newer = index <= 1 ? '/daily/' : `/daily/${reports[index - 1].date}/`;
+const older = reports[index + 1] ? `/daily/${reports[index + 1].date}/` : null;
+---
+
+<Base
+  title={`${fmtDate(report.date)} 开源日报 · Jiahuo Lao 的手记`}
+  description={`GitHub 趋势日报 ${report.date} 期：飙升榜、快速增长与新项目发现`}
+  bodyClass="daily-page"
+>
+  <Masthead slot="header" report={report} />
+  <section>
+    <Pager date={report.date} total={reports.length} newer={newer} older={older} />
+    <Report report={report} />
+  </section>
+</Base>
+
+<style is:global>
+  /* 日报是期刊排版而非正文，比文章页宽，容纳榜单与双栏卡片 */
+  body.daily-page .wrap { max-width: 60rem; }
+  @media (max-width: 900px) { body.daily-page .wrap { max-width: 42rem; } }
+</style>
