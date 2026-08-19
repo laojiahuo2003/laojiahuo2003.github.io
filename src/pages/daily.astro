@@ -1,0 +1,96 @@
+---
+import Base from '../layouts/Base.astro';
+
+// 开源日报由 github-daily-report 仓库的 GitHub Actions 每天生成，
+// 这里在浏览器端直接读取该仓库的 feed.xml，保证内容始终最新。
+const FEED_URL =
+  'https://raw.githubusercontent.com/laojiahuo2003/github-daily-report/main/feed.xml';
+const REPO_URL = 'https://github.com/laojiahuo2003/github-daily-report';
+---
+
+<Base title="开源日报 · Jiahuo Lao 的手记" description="每日 GitHub 趋势、飙升榜与新项目发现">
+  <header slot="header" class="home-header">
+    <div>
+      <p class="eyebrow">GitHub Trending · 每日 09:00 / 18:00 更新</p>
+      <h1>开源日报</h1>
+      <p class="bio">
+        自动追踪 GitHub <em>趋势、飙升榜与新项目</em>，数据来自
+        <a href={REPO_URL}>github-daily-report</a> 仓库。
+      </p>
+    </div>
+  </header>
+
+  <section>
+    <p class="list-head">Daily Report Log</p>
+    <ul class="posts" id="daily-list" aria-live="polite">
+      <li class="post"><p>加载中…</p></li>
+    </ul>
+    <p id="daily-error" hidden>
+      加载失败，
+      <a href={REPO_URL}>直接去仓库看报告</a>。
+    </p>
+  </section>
+
+  <script define:vars={{ FEED_URL }}>
+    (function () {
+      var list = document.getElementById('daily-list');
+      var err = document.getElementById('daily-error');
+
+      // [name](url) → name，描述里的 markdown 链接转纯文本
+      var plain = function (s) {
+        return s.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+      };
+
+      fetch(FEED_URL)
+        .then(function (r) {
+          if (!r.ok) throw new Error(r.status);
+          return r.text();
+        })
+        .then(function (xml) {
+          var doc = new DOMParser().parseFromString(xml, 'text/xml');
+          var items = Array.from(doc.querySelectorAll('item')).slice(0, 15);
+          if (!items.length) throw new Error('empty');
+
+          list.innerHTML = '';
+          items.forEach(function (item) {
+            var title = (item.querySelector('title') || {}).textContent || '';
+            var link = (item.querySelector('link') || {}).textContent || '';
+            var desc = plain(((item.querySelector('description') || {}).textContent || '').trim());
+
+            var li = document.createElement('li');
+            li.className = 'post';
+
+            var date = title.slice(-10) || '';
+            var time = document.createElement('time');
+            time.setAttribute('datetime', date);
+            time.textContent = date.slice(5);
+
+            var div = document.createElement('div');
+            var h2 = document.createElement('h2');
+            var a = document.createElement('a');
+            a.href = link;
+            a.target = '_blank';
+            a.rel = 'noopener';
+            a.textContent = title.replace(/^GitHub 每日报告\s*-\s*/, '');
+            h2.appendChild(a);
+            div.appendChild(h2);
+
+            // 描述是飙升榜前几行，逐行渲染
+            desc.split('\n').filter(Boolean).slice(0, 5).forEach(function (line) {
+              var p = document.createElement('p');
+              p.textContent = line;
+              div.appendChild(p);
+            });
+
+            li.appendChild(time);
+            li.appendChild(div);
+            list.appendChild(li);
+          });
+        })
+        .catch(function () {
+          list.hidden = true;
+          err.hidden = false;
+        });
+    })();
+  </script>
+</Base>
