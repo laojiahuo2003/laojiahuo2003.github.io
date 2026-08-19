@@ -1,5 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
+import 'katex/dist/katex.min.css'; // 数学样式仅文章页需要，不进全局共享包
 import Base from '../../layouts/Base.astro';
 
 export async function getStaticPaths() {
@@ -136,6 +137,14 @@ const relatedList = hasRelated
         back.textContent = '← 返回标签';
       }
     } catch {}
+  }
+</script>
+
+<script>
+  // 移动端目录默认收起：窄屏下目录置顶且展开会把正文推出首屏
+  const tocDetails = document.querySelector('.toc');
+  if (tocDetails && matchMedia('(max-width: 900px)').matches) {
+    tocDetails.removeAttribute('open');
   }
 </script>
 

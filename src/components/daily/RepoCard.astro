@@ -74,5 +74,5 @@ const growth = +repo.growth > 0 ? `+${+repo.growth}/日` : +repo.weekly_growth >
     padding: .12rem .5rem;
   }
   .chip-grow { color: var(--accent); background: var(--accent-soft); }
-  .chip-muted { color: var(--faint); }
+  .chip-muted { color: var(--dim); } /* faint 在 code-bg 上对比不足 4.5:1 */
 </style>

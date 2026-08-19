@@ -67,7 +67,11 @@ body {
 a { color: var(--ink); text-decoration: none; }
 a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
 
-.wrap { max-width: 42rem; margin: 0 auto; padding: 4.5rem 1.5rem 5rem; }
+.wrap {
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 4.5rem max(1.5rem, env(safe-area-inset-right)) 5rem max(1.5rem, env(safe-area-inset-left));
+}
 
 /* ============ 首页头部 ============ */
 .home-header {

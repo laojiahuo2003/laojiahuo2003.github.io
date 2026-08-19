@@ -55,7 +55,7 @@ if (r.newly_discovered?.length) sections.push({ title: '新发现项目', projec
 {
   r.leaderboard?.length && (
     <>
-      <h3 class="sec"><span class="sec-name">今日飙升榜</span><span class="sec-count">{r.leaderboard.length}</span><span class="sec-rule" /></h3>
+      <h2 class="sec"><span class="sec-name">今日飙升榜</span><span class="sec-count">{r.leaderboard.length}</span><span class="sec-rule" /></h2>
       <Board projects={r.leaderboard} />
     </>
   )
@@ -63,7 +63,7 @@ if (r.newly_discovered?.length) sections.push({ title: '新发现项目', projec
 
 {sections.map((s) => (
   <>
-    <h3 class="sec"><span class="sec-name">{s.title}</span><span class="sec-count">{s.projects.length}</span><span class="sec-rule" /></h3>
+    <h2 class="sec"><span class="sec-name">{s.title}</span><span class="sec-count">{s.projects.length}</span><span class="sec-rule" /></h2>
     <div class="grid">{s.projects.map((p) => <RepoCard repo={p} />)}</div>
   </>
 ))}
