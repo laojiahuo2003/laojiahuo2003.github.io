@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "postbuild": "pagefind --site dist",
     "preview": "astro preview"
   },
   "dependencies": {
@@ -21,8 +20,5 @@
     "esbuild@0.27.7": true,
     "esbuild@0.25.12": true,
     "sharp@0.34.5": true
-  },
-  "devDependencies": {
-    "pagefind": "^1.5.2"
   }
 }
