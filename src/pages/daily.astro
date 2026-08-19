@@ -1,17 +1,16 @@
 ---
 import Base from '../layouts/Base.astro';
 
-// 开源日报由 github-daily-report 仓库的 GitHub Actions 每天生成，
-// 这里在浏览器端读取该仓库的 feed.xml（jsdelivr CDN 优先，raw 回退），
-// 每页展示一期完整报告，渲染进 .prose 容器与文章页排版保持一致。
+// 开源日报由 github-daily-report 仓库的 GitHub Actions 每天生成结构化 feed.json，
+// 浏览器端读取（jsdelivr CDN 优先，raw 回退），每页一期，按分区渲染成卡片。
 const FEED_SOURCES = [
-  'https://cdn.jsdelivr.net/gh/laojiahuo2003/github-daily-report@main/feed.xml',
-  'https://raw.githubusercontent.com/laojiahuo2003/github-daily-report/main/feed.xml',
+  'https://cdn.jsdelivr.net/gh/laojiahuo2003/github-daily-report@main/feed.json',
+  'https://raw.githubusercontent.com/laojiahuo2003/github-daily-report/main/feed.json',
 ];
 const REPO_URL = 'https://github.com/laojiahuo2003/github-daily-report';
 ---
 
-<Base title="开源日报 · Jiahuo Lao 的手记" description="每日 GitHub 趋势、飙升榜与新项目发现">
+<Base title="开源日报 · Jiahuo Lao 的手记" description="每日 GitHub 趋势、飙升榜与新项目发现" bodyClass="daily-page">
   <header slot="header" class="home-header">
     <div>
       <p class="eyebrow">GitHub Trending · 每日 09:00 / 18:00 更新</p>
@@ -24,7 +23,7 @@ const REPO_URL = 'https://github.com/laojiahuo2003/github-daily-report';
   </header>
 
   <section>
-    <div id="daily-pager">
+    <div id="daily-pager" class="daily-pager">
       <button id="daily-newer" class="daily-nav" type="button" disabled>← 较新</button>
       <span id="daily-indicator" class="daily-indicator">加载中…</span>
       <button id="daily-older" class="daily-nav" type="button" disabled>较旧 →</button>
@@ -48,111 +47,152 @@ const REPO_URL = 'https://github.com/laojiahuo2003/github-daily-report';
       var items = [];
       var idx = 0; // 0 = 最新一期
 
-      // ---------- 轻量 markdown 渲染（覆盖报告用到的语法子集） ----------
+      // ---------- 安全工具 ----------
       var esc = function (s) {
-        return s
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
+        return String(s == null ? '' : s)
+          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
           .replace(/"/g, '&quot;');
       };
-
-      var inline = function (s) {
-        s = esc(s);
-        s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
-        s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-        s = s.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, function (_, text, url) {
-          var ext = url.indexOf('http') === 0;
-          return (
-            '<a href="' + url + '"' +
-            (ext ? ' target="_blank" rel="noopener"' : '') +
-            '>' + text + '</a>'
-          );
-        });
-        return s;
+      var safeUrl = function (u) {
+        return /^https?:\/\//.test(u || '') ? u : '';
       };
-
-      var renderMarkdown = function (md) {
-        var lines = md.split('\n');
-        var html = '';
-        var table = [];
-        var list = null; // { ordered: bool, items: [html...] }
-
-        var flushTable = function () {
-          if (!table.length) return;
-          var out = '<div class="daily-table-wrap"><table><thead><tr>';
-          table[0].forEach(function (c) { out += '<th>' + inline(c) + '</th>'; });
-          out += '</tr></thead><tbody>';
-          for (var r = 2; r < table.length; r++) {
-            out += '<tr>';
-            table[r].forEach(function (c) { out += '<td>' + inline(c) + '</td>'; });
-            out += '</tr>';
-          }
-          out += '</tbody></table></div>';
-          html += out;
-          table = [];
-        };
-
-        var flushList = function () {
-          if (!list) return;
-          var tag = list.ordered ? 'ol' : 'ul';
-          html += '<' + tag + '>' + list.items.map(function (it) { return '<li>' + it + '</li>'; }).join('') + '</' + tag + '>';
-          list = null;
-        };
-
-        for (var i = 0; i < lines.length; i++) {
-          var s = lines[i].trim();
-
-          if (s.charAt(0) === '|') {
-            flushList();
-            table.push(s.replace(/^\|/, '').replace(/\|$/, '').split('|').map(function (x) { return x.trim(); }));
-            continue;
-          }
-          flushTable();
-
-          if (!s) { flushList(); continue; }
-          if (s === '---') { flushList(); html += '<hr>'; continue; }
-
-          var h = s.match(/^(#{1,3})\s+(.*)$/);
-          if (h) {
-            flushList();
-            if (h[1].length === 1) continue; // 主标题：日期已在卡片头
-            var level = h[1].length;
-            html += '<h' + level + '>' + inline(h[2]) + '</h' + level + '>';
-            continue;
-          }
-
-          // 列表项 / 缩进的引用（列表项的第二行简介）
-          var li = s.match(/^(?:[-*]|\d+\.)\s+(.*)$/);
-          var cont = s.match(/^&gt;\s*(.*)$/) || s.match(/^>\s*(.*)$/);
-          if (li) {
-            if (!list) list = { ordered: /^\d/.test(s), items: [] };
-            list.items.push(inline(li[1]));
-            continue;
-          }
-          if (cont) {
-            if (list && list.items.length) {
-              list.items[list.items.length - 1] += '<br><span class="daily-li-desc">' + inline(cont[1]) + '</span>';
-            } else {
-              html += '<blockquote>' + inline(cont[1]) + '</blockquote>';
-            }
-            continue;
-          }
-
-          flushList();
-          if (/^\*[^*].*\*$/.test(s)) {
-            html += '<p class="daily-foot">' + inline(s.slice(1, -1)) + '</p>'; // 报告生成时间行
-            continue;
-          }
-          html += '<p>' + inline(s) + '</p>';
+      var fmtStars = function (n) {
+        n = +n || 0;
+        if (n >= 1000) {
+          var s = (n / 1000).toFixed(1);
+          if (/\.0$/.test(s)) s = s.slice(0, -2);
+          return s + 'k';
         }
-        flushTable();
-        flushList();
-        return html;
+        return String(n);
+      };
+      var fmtDate = function (d) {
+        var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d || '');
+        return m ? (+m[1]) + ' 年 ' + (+m[2]) + ' 月 ' + (+m[3]) + ' 日' : (d || '');
       };
 
-      // ---------- feed 加载（双源并发，取数据最新的一份） ----------
-      // raw 永远最新但国内可能连不上；jsdelivr 国内稳定但缓存可能滞后
+      // ---------- 卡片渲染 ----------
+      var repoLink = function (r) {
+        var url = safeUrl(r.url);
+        var name = '<span class="rname">' + esc(r.name) + '</span>';
+        return url
+          ? '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + name + '</a>'
+          : name;
+      };
+
+      var repoCard = function (r, opts) {
+        opts = opts || {};
+        var meta = [];
+        if (r.language) meta.push('<span class="chip">' + esc(r.language) + '</span>');
+        if (opts.badge) meta.push('<span class="chip chip-grow">' + esc(opts.badge) + '</span>');
+        else if (+r.growth > 0) meta.push('<span class="chip chip-grow">+' + (+r.growth) + '/日</span>');
+        else if (+r.weekly_growth > 0) meta.push('<span class="chip chip-grow">+' + (+r.weekly_growth) + '/周</span>');
+        if (r.source) meta.push('<span class="chip chip-muted">' + esc(r.source) + '</span>');
+        if (r.created) meta.push('<span class="chip chip-muted">' + esc(r.created) + '</span>');
+
+        var rank = '';
+        if (opts.rank) {
+          var top = opts.rank <= 3;
+          rank = '<span class="rank' + (top ? ' rank-top' : '') + '">' + opts.rank + '</span>';
+        }
+
+        return '<article class="card">' +
+          '<div class="card-top">' + rank + repoLink(r) +
+            '<span class="stars">⭐ ' + esc(fmtStars(r.stars)) + '</span></div>' +
+          (r.description ? '<p class="desc">' + esc(r.description) + '</p>' : '') +
+          (meta.length ? '<div class="meta">' + meta.join('') + '</div>' : '') +
+          '</article>';
+      };
+
+      var sec = function (title, count) {
+        return '<h3 class="sec"><span>' + title + '</span>' +
+          (count != null ? '<span class="sec-count">' + count + '</span>' : '') +
+          '</h3>';
+      };
+
+      var grid = function (projects, opts) {
+        return '<div class="grid">' +
+          projects.map(function (p, i) {
+            return repoCard(p, opts && opts.ranked ? Object.assign({ rank: i + 1 }, opts) : opts);
+          }).join('') +
+          '</div>';
+      };
+
+      var heroCard = function (b) {
+        var pills = [];
+        if (b.stars_fmt || +b.stars) pills.push(['⭐ 总星标', esc(fmtStars(b.stars))]);
+        if (+b.growth > 0) pills.push(['🔺 今日增长', '+' + (+b.growth)]);
+        if (b.language) pills.push(['💻 语言', esc(b.language)]);
+        if (b.category) pills.push(['🗂 分类', esc(b.category)]);
+        if (b.created) pills.push(['📅 创建', esc(b.created)]);
+        var name = '<span class="rname">' + esc(b.name) + '</span>';
+        var url = safeUrl(b.url);
+        return '<div class="hero">' +
+          '<h2 class="hero-name">' +
+            (url ? '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + name + '</a>' : name) +
+          '</h2>' +
+          (b.description ? '<p class="hero-desc">' + esc(b.description) + '</p>' : '') +
+          '<div class="pills">' + pills.map(function (p) {
+            return '<span class="pill"><b>' + p[0] + '</b>' + p[1] + '</span>';
+          }).join('') + '</div>' +
+          '</div>';
+      };
+
+      var renderReport = function (r) {
+        var html = '';
+        var total = 0;
+        total += r.best ? 1 : 0;
+        total += (r.leaderboard || []).length;
+        total += (r.fast_growing || []).length;
+        total += (r.monthly || []).length;
+        (r.by_category || []).forEach(function (g) { total += g.projects.length; });
+        (r.new_projects || []).forEach(function (g) { total += g.projects.length; });
+        (r.explored || []).forEach(function (g) { total += g.projects.length; });
+        total += (r.newly_discovered || []).length;
+
+        if (r.best) {
+          html += sec('🏆 今日最佳', null) + heroCard(r.best);
+        }
+        if ((r.leaderboard || []).length) {
+          html += sec('📊 今日飙升榜', r.leaderboard.length) +
+            grid(r.leaderboard, { ranked: true });
+        }
+        if ((r.fast_growing || []).length) {
+          html += sec('🚀 快速增长项目', r.fast_growing.length) + grid(r.fast_growing);
+        }
+        if ((r.monthly || []).length) {
+          html += sec('📈 本月新星', r.monthly.length) + grid(r.monthly);
+        }
+        (r.by_category || []).forEach(function (g) {
+          if (g.projects.length) html += sec('🔥 ' + g.category, g.projects.length) + grid(g.projects);
+        });
+        (r.new_projects || []).forEach(function (g) {
+          if (g.projects.length) html += sec('🌱 ' + g.category, g.projects.length) + grid(g.projects);
+        });
+        (r.explored || []).forEach(function (g) {
+          if (g.projects.length) html += sec('🔍 ' + g.strategy, g.projects.length) + grid(g.projects);
+        });
+        if ((r.newly_discovered || []).length) {
+          html += sec('✨ 新发现项目', r.newly_discovered.length) + grid(r.newly_discovered);
+        }
+
+        var head = '<div class="report-head">' +
+          '<h2 class="report-date">' + esc(fmtDate(r.date)) + '</h2>' +
+          '<span class="report-sum">共 ' + total + ' 个项目</span>' +
+          '</div>';
+
+        view.innerHTML = head + (html || '<p class="empty">本期暂无数据。</p>');
+      };
+
+      var render = function () {
+        renderReport(items[idx]);
+        indicator.textContent = idx === 0
+          ? '最新一期'
+          : '第 ' + (idx + 1) + ' / ' + items.length + ' 期';
+        btnNewer.disabled = idx === 0;
+        btnOlder.disabled = idx >= items.length - 1;
+      };
+
+      // ---------- feed 加载（双源并发，取 updated 最新的一份） ----------
       var fetchText = function (url) {
         return fetch(url).then(function (r) {
           if (!r.ok) throw new Error(r.status);
@@ -161,71 +201,22 @@ const REPO_URL = 'https://github.com/laojiahuo2003/github-daily-report';
       };
 
       var parseFeed = function (text) {
-        var doc = new DOMParser().parseFromString(text, 'text/xml');
-        if (doc.getElementsByTagName('parsererror').length) throw new Error('parse');
-        var items = Array.from(doc.getElementsByTagName('item'));
-        if (!items.length) throw new Error('empty');
-        return items;
+        var data = JSON.parse(text);
+        if (!data || !Array.isArray(data.reports) || !data.reports.length) throw new Error('empty');
+        return data;
       };
 
-      // guid 含报告文件名（ISO 日期），字典序比较即时间序
-      var latestStamp = function (items) {
-        var g = (items[0].querySelector('guid') || {}).textContent || '';
-        return g;
-      };
-
-      var itemDate = function (item) {
-        var title = (item.querySelector('title') || {}).textContent || '';
-        return title.slice(-10);
-      };
-
-      var itemContent = function (item) {
-        return (item.querySelector('description') || {}).textContent || '';
-      };
-
-      var render = function () {
-        var item = items[idx];
-        var date = itemDate(item);
-        var content = itemContent(item);
-
-        view.innerHTML = '';
-        var card = document.createElement('div');
-        card.className = 'daily-report';
-
-        var head = document.createElement('div');
-        head.className = 'daily-report-head';
-        var h2 = document.createElement('h2');
-        h2.textContent = date;
-        head.appendChild(h2);
-        card.appendChild(head);
-
-        var prose = document.createElement('div');
-        prose.className = 'prose';
-        if (content.trim()) {
-          prose.innerHTML = renderMarkdown(content);
-        } else {
-          prose.innerHTML = '<p>该期报告暂无内容。</p>';
-        }
-        card.appendChild(prose);
-        view.appendChild(card);
-
-        indicator.textContent = idx === 0
-          ? '最新一期'
-          : '第 ' + (idx + 1) + ' / ' + items.length + ' 期';
-        btnNewer.disabled = idx === 0;
-        btnOlder.disabled = idx >= items.length - 1;
-      };
-
-      Promise.all(FEED_SOURCES.map(function (u) { return fetchText(u).then(parseFeed).catch(function () { return null; }); }))
+      Promise.all(FEED_SOURCES.map(function (u) {
+        return fetchText(u).then(parseFeed).catch(function () { return null; });
+      }))
         .then(function (results) {
           var docs = results.filter(Boolean);
           if (!docs.length) throw new Error('all failed');
-          // 必须按 XML 解析：HTML 模式下 CDATA 会被当作注释、
-          // 在内容首个 ">" 处截断，导致报告前半部分丢失
+          // raw 永远最新但国内可能连不上；jsdelivr 国内稳定但缓存可能滞后，取 updated 较新者
           var best = docs.reduce(function (a, b) {
-            return latestStamp(a) >= latestStamp(b) ? a : b;
+            return (a.updated || '') >= (b.updated || '') ? a : b;
           });
-          items = best.slice(0, 10);
+          items = best.reports.slice(0, 10);
           render();
         })
         .catch(function () {
@@ -243,13 +234,19 @@ const REPO_URL = 'https://github.com/laojiahuo2003/github-daily-report';
     })();
   </script>
 
+  <style is:global>
+    /* 日报是卡片流而非正文，比文章页略宽，容纳双栏卡片 */
+    body.daily-page .wrap { max-width: 60rem; }
+    @media (max-width: 900px) { body.daily-page .wrap { max-width: 42rem; } }
+  </style>
+
   <style>
     .daily-pager {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 1rem;
-      margin: 0 0 1.4rem;
+      margin: 0 0 1.6rem;
     }
     .daily-nav {
       font-family: var(--mono);
@@ -260,6 +257,7 @@ const REPO_URL = 'https://github.com/laojiahuo2003/github-daily-report';
       border-radius: 6px;
       padding: .35rem .8rem;
       cursor: pointer;
+      transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
     }
     .daily-nav:hover:not(:disabled) { color: var(--accent); border-color: var(--accent); }
     .daily-nav:disabled { opacity: .35; cursor: default; }
@@ -270,33 +268,145 @@ const REPO_URL = 'https://github.com/laojiahuo2003/github-daily-report';
       letter-spacing: .05em;
     }
 
-    .daily-report-head {
+    .report-head {
+      display: flex;
+      align-items: baseline;
+      gap: .75rem;
+      padding-bottom: .6rem;
+      margin-bottom: .4rem;
       border-bottom: 1px solid var(--rule);
-      padding-bottom: .55rem;
-      margin-bottom: 1.2rem;
     }
-    .daily-report-head h2 {
+    .report-date {
       font-family: var(--mono);
-      font-size: 15px;
+      font-size: 1.05rem;
       font-weight: 600;
       color: var(--ink);
       margin: 0;
-      letter-spacing: .04em;
+      letter-spacing: .02em;
     }
-
-    /* 宽表格在窄栏内横向滚动，不撑破版式 */
-    .daily-table-wrap { overflow-x: auto; }
-    .daily-table-wrap table { min-width: 620px; }
-
-    .daily-li-desc {
-      display: inline-block;
-      font-size: .88em;
-      color: var(--dim);
-    }
-    .daily-foot {
+    .report-sum {
       font-family: var(--mono);
       font-size: 12px;
       color: var(--faint);
+    }
+
+    .sec {
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+      margin: 2.2rem 0 .9rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .sec-count {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--faint);
+      background: var(--code-bg);
+      border-radius: 999px;
+      padding: .14rem .55rem;
+    }
+
+    .hero {
+      border: 1px solid var(--rule);
+      border-left: 3px solid var(--accent);
+      border-radius: 10px;
+      padding: 1.15rem 1.3rem;
+      background: var(--accent-soft);
+    }
+    .hero-name { font-size: 1.15rem; margin: 0 0 .45rem; }
+    .hero-name a { color: var(--ink); text-decoration: none; }
+    .hero-name a:hover { color: var(--accent); }
+    .hero-name .rname { font-family: var(--mono); font-size: 1.05rem; overflow-wrap: anywhere; }
+    .hero-desc { color: var(--dim); margin: 0 0 .9rem; line-height: 1.6; font-size: .94rem; }
+    .pills { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .pill {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--dim);
+      background: var(--ground);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: .22rem .6rem;
+    }
+    .pill b { font-weight: 600; color: var(--faint); margin-right: .35rem; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: .8rem;
+    }
+    .card {
+      border: 1px solid var(--rule);
+      border-radius: 10px;
+      padding: .8rem .9rem;
+      display: flex;
+      flex-direction: column;
+      gap: .4rem;
+      min-width: 0;
+      transition: border-color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+    }
+    .card:hover { border-color: var(--accent); transform: translateY(-1px); }
+    .card-top { display: flex; align-items: center; gap: .5rem; min-width: 0; }
+    .card a { color: var(--ink); text-decoration: none; }
+    .card a:hover .rname { color: var(--accent); }
+    .rname {
+      font-family: var(--mono);
+      font-size: .9rem;
+      font-weight: 600;
+      overflow-wrap: anywhere;
+      flex: 1;
+      min-width: 0;
+    }
+    .rank {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--faint);
+      background: var(--code-bg);
+      border-radius: 6px;
+      width: 1.45rem;
+      height: 1.45rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .rank-top { color: var(--accent); background: var(--accent-soft); }
+    .stars {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--dim);
+      flex-shrink: 0;
+    }
+    .desc {
+      margin: 0;
+      color: var(--dim);
+      font-size: .88rem;
+      line-height: 1.55;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .meta { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .1rem; }
+    .chip {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--dim);
+      background: var(--code-bg);
+      border-radius: 999px;
+      padding: .12rem .5rem;
+    }
+    .chip-grow { color: var(--accent); background: var(--accent-soft); }
+    .chip-muted { color: var(--faint); }
+
+    .empty { color: var(--dim); }
+
+    @media (max-width: 640px) {
+      .grid { grid-template-columns: 1fr; }
     }
   </style>
 </Base>
