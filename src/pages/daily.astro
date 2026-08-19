@@ -22,12 +22,11 @@ const REPO_URL = 'https://github.com/laojiahuo2003/github-daily-report';
 
   <section>
     <p class="list-head">Daily Report Log</p>
-    <ul class="posts" id="daily-list" aria-live="polite">
-      <li class="post"><p>加载中…</p></li>
-    </ul>
+    <div id="daily-list" aria-live="polite">
+      <p class="daily-hint">加载中…</p>
+    </div>
     <p id="daily-error" hidden>
-      加载失败，
-      <a href={REPO_URL}>直接去仓库看报告</a>。
+      加载失败，<a href={REPO_URL}>直接去仓库看报告</a>。
     </p>
   </section>
 
@@ -36,9 +35,34 @@ const REPO_URL = 'https://github.com/laojiahuo2003/github-daily-report';
       var list = document.getElementById('daily-list');
       var err = document.getElementById('daily-error');
 
-      // [name](url) → name，描述里的 markdown 链接转纯文本
-      var plain = function (s) {
-        return s.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+      // "1 | [name](url) | 🔺2304 | 109k" -> {rank, name, url, growth, stars}
+      var parseRow = function (line) {
+        var cells = line.split('|');
+        if (cells.length < 4) return null;
+        var cell = cells[1].trim();
+        var m = cell.match(/\[([^\]]+)\]\(([^)]+)\)/); // 新格式带链接
+        var name = m ? m[1] : cell; // 旧格式纯文本
+        return {
+          rank: cells[0].trim(),
+          name: name,
+          url: m ? m[2] : '',
+          growth: cells[2].trim().replace('🔺', '+'),
+          stars: cells[3].trim()
+        };
+      };
+
+      var repoLink = function (row) {
+        if (!row.url) {
+          var span = document.createElement('span');
+          span.textContent = row.name;
+          return span;
+        }
+        var a = document.createElement('a');
+        a.href = row.url;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.textContent = row.name;
+        return a;
       };
 
       fetch(FEED_URL)
@@ -55,36 +79,86 @@ const REPO_URL = 'https://github.com/laojiahuo2003/github-daily-report';
           items.forEach(function (item) {
             var title = (item.querySelector('title') || {}).textContent || '';
             var link = (item.querySelector('link') || {}).textContent || '';
-            var desc = plain(((item.querySelector('description') || {}).textContent || '').trim());
+            var desc = ((item.querySelector('description') || {}).textContent || '').trim();
+            var rows = desc.split('\n').map(parseRow).filter(Boolean);
 
-            var li = document.createElement('li');
-            li.className = 'post';
+            var date = title.slice(-10);
 
-            var date = title.slice(-10) || '';
-            var time = document.createElement('time');
-            time.setAttribute('datetime', date);
-            time.textContent = date.slice(5);
+            // —— 卡片 ——
+            var card = document.createElement('article');
+            card.className = 'daily-card';
 
-            var div = document.createElement('div');
+            var head = document.createElement('div');
+            head.className = 'daily-card-head';
             var h2 = document.createElement('h2');
-            var a = document.createElement('a');
-            a.href = link;
-            a.target = '_blank';
-            a.rel = 'noopener';
-            a.textContent = title.replace(/^GitHub 每日报告\s*-\s*/, '');
-            h2.appendChild(a);
-            div.appendChild(h2);
+            h2.textContent = date;
+            var more = document.createElement('a');
+            more.className = 'daily-more';
+            more.href = link;
+            more.target = '_blank';
+            more.rel = 'noopener';
+            more.textContent = '完整报告 →';
+            head.appendChild(h2);
+            head.appendChild(more);
+            card.appendChild(head);
 
-            // 描述是飙升榜前几行，逐行渲染
-            desc.split('\n').filter(Boolean).slice(0, 5).forEach(function (line) {
-              var p = document.createElement('p');
-              p.textContent = line;
-              div.appendChild(p);
+            if (!rows.length) {
+              var empty = document.createElement('p');
+              empty.className = 'daily-hint';
+              empty.textContent = '本期无飙升榜数据';
+              card.appendChild(empty);
+              list.appendChild(card);
+              return;
+            }
+
+            // 榜首高亮块：第一眼看到当日最火项目
+            var top = rows[0];
+            var topBox = document.createElement('div');
+            topBox.className = 'daily-top';
+            var topLabel = document.createElement('span');
+            topLabel.className = 'daily-top-label';
+            topLabel.textContent = '🏆 今日最佳';
+            var topName = document.createElement('div');
+            topName.className = 'daily-top-name';
+            topName.appendChild(repoLink(top));
+            var topMeta = document.createElement('div');
+            topMeta.className = 'daily-top-meta';
+            var g = document.createElement('strong');
+            g.textContent = top.growth;
+            topMeta.appendChild(g);
+            topMeta.appendChild(document.createTextNode(' 今日 · ⭐ ' + top.stars + ' 总星标'));
+            topBox.appendChild(topLabel);
+            topBox.appendChild(topName);
+            topBox.appendChild(topMeta);
+            card.appendChild(topBox);
+
+            // 榜单表格
+            var table = document.createElement('table');
+            table.className = 'daily-table';
+            var tbody = document.createElement('tbody');
+            rows.forEach(function (row) {
+              var tr = document.createElement('tr');
+              var tdRank = document.createElement('td');
+              tdRank.className = 'daily-rank';
+              tdRank.textContent = row.rank;
+              var tdName = document.createElement('td');
+              tdName.appendChild(repoLink(row));
+              var tdGrowth = document.createElement('td');
+              tdGrowth.className = 'daily-growth';
+              tdGrowth.textContent = row.growth;
+              var tdStars = document.createElement('td');
+              tdStars.className = 'daily-stars';
+              tdStars.textContent = row.stars;
+              tr.appendChild(tdRank);
+              tr.appendChild(tdName);
+              tr.appendChild(tdGrowth);
+              tr.appendChild(tdStars);
+              tbody.appendChild(tr);
             });
+            table.appendChild(tbody);
+            card.appendChild(table);
 
-            li.appendChild(time);
-            li.appendChild(div);
-            list.appendChild(li);
+            list.appendChild(card);
           });
         })
         .catch(function () {
@@ -93,4 +167,105 @@ const REPO_URL = 'https://github.com/laojiahuo2003/github-daily-report';
         });
     })();
   </script>
+
+  <style>
+    .daily-card {
+      margin: 0 0 2.2rem;
+      border: 1px solid var(--rule);
+      border-radius: 10px;
+      padding: 1.1rem 1.25rem .9rem;
+      background: color-mix(in srgb, var(--ground) 60%, transparent);
+    }
+    .daily-card-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: .55rem;
+      margin-bottom: .8rem;
+    }
+    .daily-card-head h2 {
+      font-family: var(--mono);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+      margin: 0;
+      letter-spacing: .04em;
+    }
+    .daily-more {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--dim);
+      text-decoration: none;
+    }
+    .daily-more:hover { color: var(--accent); }
+
+    .daily-top {
+      border-left: 3px solid var(--accent);
+      background: var(--accent-soft);
+      border-radius: 0 8px 8px 0;
+      padding: .6rem .9rem;
+      margin-bottom: .8rem;
+    }
+    .daily-top-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--dim);
+      letter-spacing: .06em;
+    }
+    .daily-top-name {
+      font-family: var(--serif);
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin: .15rem 0 .2rem;
+    }
+    .daily-top-name a { color: var(--ink); text-decoration: none; }
+    .daily-top-name a:hover { color: var(--accent); }
+    .daily-top-meta {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--dim);
+    }
+    .daily-top-meta strong { color: var(--accent); font-weight: 600; }
+
+    .daily-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .88rem;
+    }
+    .daily-table td {
+      padding: .42rem .3rem;
+      border-top: 1px solid var(--rule);
+      vertical-align: middle;
+    }
+    .daily-table tr:first-child td { border-top: none; }
+    .daily-rank {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--faint);
+      width: 2rem;
+    }
+    .daily-table a {
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .daily-table a:hover { color: var(--accent); }
+    .daily-growth {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--accent);
+      text-align: right;
+      white-space: nowrap;
+      width: 4.5rem;
+    }
+    .daily-stars {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--dim);
+      text-align: right;
+      white-space: nowrap;
+      width: 4.5rem;
+    }
+    .daily-hint { color: var(--dim); font-size: .93rem; }
+  </style>
 </Base>
