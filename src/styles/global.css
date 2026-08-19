@@ -187,32 +187,6 @@ nav.site a[aria-current="page"]::before { content: "· "; color: var(--accent); 
 }
 .more:hover { color: var(--accent); }
 
-/* ============ 精选（置顶）区块 ============ */
-.featured-section { margin-bottom: 3rem; }
-.featured {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-  gap: 1rem;
-}
-.featured-card {
-  display: block;
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  padding: 1.2rem 1.3rem;
-  background: var(--accent-soft);
-  transition: border-color var(--dur-fast) var(--ease);
-}
-.featured-card:hover { border-color: var(--accent); }
-.featured-card h2 {
-  font-family: var(--serif);
-  font-weight: 600;
-  font-size: 1.12rem;
-  line-height: 1.4;
-  margin: 0 0 .4rem;
-}
-.featured-card p { margin: 0 0 .75rem; color: var(--dim); font-size: .9rem; }
-.featured-card .tag { margin-left: 0; margin-right: .45rem; }
-
 /* ============ 文章页 ============ */
 .article-header { margin: 0 0 2.5rem; }
 .article-header h1 {
