@@ -1,0 +1,51 @@
+name: 📰 生成开源日报
+
+on:
+  schedule:
+    - cron: '0 1 * * *'   # 北京时间 09:00
+    - cron: '0 10 * * *'  # 北京时间 18:00
+  workflow_dispatch:
+
+jobs:
+  daily-report:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: 检出
+        uses: actions/checkout@v4
+
+      - name: 清理 60 天前的报告
+        run: |
+          find daily/reports -name "*.md" -type f -mtime +60 -delete || true
+          find daily/reports -name "*.json" -type f -mtime +60 -delete || true
+          echo "Deleted reports older than 60 days"
+
+      - name: 安装 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 安装依赖
+        run: pip install -r daily/requirements.txt
+
+      - name: 生成日报
+        env:
+          MY_GITHUB_TOKEN: ${{ github.token }}
+          PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
+          TZ: Asia/Shanghai
+        run: python daily/main.py
+
+      # history/ 必须一并提交：star 历史断链会导致周增长/快速成长板块恒为空
+      # （旧仓库的 workflow 漏掉它，迁移时修复）
+      - name: 提交数据
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add daily/reports daily/history src/data/feed.json
+          git diff --quiet && git diff --staged --quiet || git commit -m "Add daily report $(TZ='Asia/Shanghai' date +'%Y-%m-%d %H:%M')"
+          git pull --rebase
+          git push
+
+      # push 到 main 自动触发 deploy.yml 重新构建部署 Pages，无需显式部署步骤
