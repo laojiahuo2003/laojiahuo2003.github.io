@@ -192,38 +192,51 @@ const REPO_URL = 'https://github.com/laojiahuo2003/github-daily-report';
         btnOlder.disabled = idx >= items.length - 1;
       };
 
-      // ---------- feed 加载（双源并发，取 updated 最新的一份） ----------
-      var fetchText = function (url) {
-        return fetch(url).then(function (r) {
-          if (!r.ok) throw new Error(r.status);
-          return r.text();
-        });
-      };
-
+      // ---------- feed 加载 ----------
+      // 双源并发：首个成功立即渲染，更新的源到达后再升级。
+      // 每个源单独加 6s 超时——raw 在国内常挂起几十秒，绝不能拖慢 jsdelivr 的首屏。
       var parseFeed = function (text) {
         var data = JSON.parse(text);
         if (!data || !Array.isArray(data.reports) || !data.reports.length) throw new Error('empty');
         return data;
       };
 
-      Promise.all(FEED_SOURCES.map(function (u) {
-        return fetchText(u).then(parseFeed).catch(function () { return null; });
-      }))
-        .then(function (results) {
-          var docs = results.filter(Boolean);
-          if (!docs.length) throw new Error('all failed');
-          // raw 永远最新但国内可能连不上；jsdelivr 国内稳定但缓存可能滞后，取 updated 较新者
-          var best = docs.reduce(function (a, b) {
-            return (a.updated || '') >= (b.updated || '') ? a : b;
-          });
-          items = best.reports.slice(0, 10);
+      var showError = function () {
+        view.hidden = true;
+        document.getElementById('daily-pager').hidden = true;
+        err.hidden = false;
+      };
+
+      var loadFeed = function () {
+        var rendered = false;
+        var bestUpdated = '';
+
+        var apply = function (data) {
+          // 已渲染且新数据不比现有新 → 跳过（避免旧源覆盖新源）
+          if (rendered && (data.updated || '') <= bestUpdated) return;
+          bestUpdated = data.updated || '';
+          items = data.reports.slice(0, 10);
           render();
-        })
-        .catch(function () {
-          view.hidden = true;
-          document.getElementById('daily-pager').hidden = true;
-          err.hidden = false;
+          rendered = true;
+        };
+
+        var jobs = FEED_SOURCES.map(function (url) {
+          var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+          var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 6000) : null;
+          return fetch(url, ctrl ? { signal: ctrl.signal } : {})
+            .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+            .then(parseFeed)
+            .then(apply)
+            .catch(function () {})
+            .then(function () { if (timer) clearTimeout(timer); });
         });
+
+        Promise.all(jobs).then(function () {
+          if (!rendered) showError();
+        });
+      };
+
+      loadFeed();
 
       btnNewer.addEventListener('click', function () {
         if (idx > 0) { idx--; render(); }
