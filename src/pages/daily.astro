@@ -3,13 +3,12 @@ import Base from '../layouts/Base.astro';
 
 // 开源日报由 github-daily-report 仓库的 GitHub Actions 每天生成，
 // 这里在浏览器端读取该仓库的 feed.xml（jsdelivr CDN 优先，raw 回退），
-// 每页展示一期，翻页查看往期。
+// 每页展示一期完整报告，渲染进 .prose 容器与文章页排版保持一致。
 const FEED_SOURCES = [
   'https://cdn.jsdelivr.net/gh/laojiahuo2003/github-daily-report@main/feed.xml',
   'https://raw.githubusercontent.com/laojiahuo2003/github-daily-report/main/feed.xml',
 ];
 const REPO_URL = 'https://github.com/laojiahuo2003/github-daily-report';
-const INDEX_URL = 'https://github.com/laojiahuo2003/github-daily-report/blob/main/reports/index.md';
 ---
 
 <Base title="开源日报 · Jiahuo Lao 的手记" description="每日 GitHub 趋势、飙升榜与新项目发现">
@@ -25,22 +24,16 @@ const INDEX_URL = 'https://github.com/laojiahuo2003/github-daily-report/blob/mai
   </header>
 
   <section>
-    <p class="list-head">Daily Report</p>
-
     <div id="daily-pager">
       <button id="daily-newer" class="daily-nav" type="button" disabled>← 较新</button>
       <span id="daily-indicator" class="daily-indicator">加载中…</span>
       <button id="daily-older" class="daily-nav" type="button" disabled>较旧 →</button>
     </div>
 
-    <div id="daily-view" aria-live="polite"></div>
+    <article id="daily-view" aria-live="polite"></article>
 
     <p id="daily-error" hidden>
       加载失败，<a href={REPO_URL}>直接去仓库看报告</a>。
-    </p>
-
-    <p class="daily-archive">
-      全部历史报告见 <a href={INDEX_URL}>仓库索引</a>
     </p>
   </section>
 
@@ -55,38 +48,110 @@ const INDEX_URL = 'https://github.com/laojiahuo2003/github-daily-report/blob/mai
       var items = [];
       var idx = 0; // 0 = 最新一期
 
-      // "1 | [name](url) | 🔺2304 | 109k | Python | 🤖 AI / LLM"
-      var parseRow = function (line) {
-        var cells = line.split('|');
-        if (cells.length < 4) return null;
-        var cell = cells[1].trim();
-        var m = cell.match(/\[([^\]]+)\]\(([^)]+)\)/);
-        return {
-          rank: cells[0].trim(),
-          name: m ? m[1] : cell,
-          url: m ? m[2] : '',
-          growth: cells[2].trim().replace('🔺', '+'),
-          stars: cells[3].trim(),
-          lang: cells[4] ? cells[4].trim() : '',
-          category: cells[5] ? cells[5].trim() : '',
-          desc: cells[6] ? cells[6].trim() : ''
+      // ---------- 轻量 markdown 渲染（覆盖报告用到的语法子集） ----------
+      var esc = function (s) {
+        return s
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      };
+
+      var inline = function (s) {
+        s = esc(s);
+        s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+        s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+        s = s.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, function (_, text, url) {
+          var ext = url.indexOf('http') === 0;
+          return (
+            '<a href="' + url + '"' +
+            (ext ? ' target="_blank" rel="noopener"' : '') +
+            '>' + text + '</a>'
+          );
+        });
+        return s;
+      };
+
+      var renderMarkdown = function (md) {
+        var lines = md.split('\n');
+        var html = '';
+        var table = [];
+        var list = null; // { ordered: bool, items: [html...] }
+
+        var flushTable = function () {
+          if (!table.length) return;
+          var out = '<div class="daily-table-wrap"><table><thead><tr>';
+          table[0].forEach(function (c) { out += '<th>' + inline(c) + '</th>'; });
+          out += '</tr></thead><tbody>';
+          for (var r = 2; r < table.length; r++) {
+            out += '<tr>';
+            table[r].forEach(function (c) { out += '<td>' + inline(c) + '</td>'; });
+            out += '</tr>';
+          }
+          out += '</tbody></table></div>';
+          html += out;
+          table = [];
         };
-      };
 
-      var repoLink = function (row) {
-        if (!row.url) {
-          var span = document.createElement('span');
-          span.textContent = row.name;
-          return span;
+        var flushList = function () {
+          if (!list) return;
+          var tag = list.ordered ? 'ol' : 'ul';
+          html += '<' + tag + '>' + list.items.map(function (it) { return '<li>' + it + '</li>'; }).join('') + '</' + tag + '>';
+          list = null;
+        };
+
+        for (var i = 0; i < lines.length; i++) {
+          var s = lines[i].trim();
+
+          if (s.charAt(0) === '|') {
+            flushList();
+            table.push(s.replace(/^\|/, '').replace(/\|$/, '').split('|').map(function (x) { return x.trim(); }));
+            continue;
+          }
+          flushTable();
+
+          if (!s) { flushList(); continue; }
+          if (s === '---') { flushList(); html += '<hr>'; continue; }
+
+          var h = s.match(/^(#{1,3})\s+(.*)$/);
+          if (h) {
+            flushList();
+            if (h[1].length === 1) continue; // 主标题：日期已在卡片头
+            var level = h[1].length;
+            html += '<h' + level + '>' + inline(h[2]) + '</h' + level + '>';
+            continue;
+          }
+
+          // 列表项 / 缩进的引用（列表项的第二行简介）
+          var li = s.match(/^(?:[-*]|\d+\.)\s+(.*)$/);
+          var cont = s.match(/^&gt;\s*(.*)$/) || s.match(/^>\s*(.*)$/);
+          if (li) {
+            if (!list) list = { ordered: /^\d/.test(s), items: [] };
+            list.items.push(inline(li[1]));
+            continue;
+          }
+          if (cont) {
+            if (list && list.items.length) {
+              list.items[list.items.length - 1] += '<br><span class="daily-li-desc">' + inline(cont[1]) + '</span>';
+            } else {
+              html += '<blockquote>' + inline(cont[1]) + '</blockquote>';
+            }
+            continue;
+          }
+
+          flushList();
+          if (/^\*[^*].*\*$/.test(s)) {
+            html += '<p class="daily-foot">' + inline(s.slice(1, -1)) + '</p>'; // 报告生成时间行
+            continue;
+          }
+          html += '<p>' + inline(s) + '</p>';
         }
-        var a = document.createElement('a');
-        a.href = row.url;
-        a.target = '_blank';
-        a.rel = 'noopener';
-        a.textContent = row.name;
-        return a;
+        flushTable();
+        flushList();
+        return html;
       };
 
+      // ---------- feed 加载（多源回退） ----------
       var fetchFirstAvailable = function (sources) {
         if (!sources.length) return Promise.reject(new Error('all failed'));
         return fetch(sources[0])
@@ -99,124 +164,41 @@ const INDEX_URL = 'https://github.com/laojiahuo2003/github-daily-report/blob/mai
           });
       };
 
-      var renderCard = function (item) {
+      var itemDate = function (item) {
         var title = (item.querySelector('title') || {}).textContent || '';
-        var link = (item.querySelector('link') || {}).textContent || '';
-        var desc = ((item.querySelector('description') || {}).textContent || '').trim();
-        var rows = desc.split('\n').map(parseRow).filter(Boolean);
-        var date = title.slice(-10);
+        return title.slice(-10);
+      };
 
-        var card = document.createElement('article');
-        card.className = 'daily-card';
-
-        var head = document.createElement('div');
-        head.className = 'daily-card-head';
-        var h2 = document.createElement('h2');
-        h2.textContent = date;
-        var more = document.createElement('a');
-        more.className = 'daily-more';
-        more.href = link;
-        more.target = '_blank';
-        more.rel = 'noopener';
-        more.textContent = '完整报告 →';
-        head.appendChild(h2);
-        head.appendChild(more);
-        card.appendChild(head);
-
-        if (!rows.length) {
-          var empty = document.createElement('p');
-          empty.className = 'daily-hint';
-          empty.textContent = '该期为旧格式报告，无飙升榜数据，可点击右上角查看完整报告。';
-          card.appendChild(empty);
-          return card;
-        }
-
-        // 榜首高亮块
-        var top = rows[0];
-        var topBox = document.createElement('div');
-        topBox.className = 'daily-top';
-        var topLabel = document.createElement('span');
-        topLabel.className = 'daily-top-label';
-        topLabel.textContent = '🏆 今日最佳';
-        var topName = document.createElement('div');
-        topName.className = 'daily-top-name';
-        topName.appendChild(repoLink(top));
-        var topMeta = document.createElement('div');
-        topMeta.className = 'daily-top-meta';
-        var g = document.createElement('strong');
-        g.textContent = top.growth;
-        topMeta.appendChild(g);
-        topMeta.appendChild(document.createTextNode(' 今日 · ⭐ ' + top.stars + ' 总星标'));
-        if (top.lang) topMeta.appendChild(document.createTextNode(' · ' + top.lang));
-        topBox.appendChild(topLabel);
-        topBox.appendChild(topName);
-        if (top.desc && top.desc !== '-') {
-          var topDesc = document.createElement('div');
-          topDesc.className = 'daily-top-desc';
-          topDesc.textContent = top.desc;
-          topBox.appendChild(topDesc);
-        }
-        topBox.appendChild(topMeta);
-        card.appendChild(topBox);
-
-        // 榜单表格（含表头）
-        var table = document.createElement('table');
-        table.className = 'daily-table';
-        var thead = document.createElement('thead');
-        var hr = document.createElement('tr');
-        ['#', '项目', '今日', '总⭐', '语言', '分类'].forEach(function (label, i) {
-          var th = document.createElement('th');
-          th.textContent = label;
-          if (i >= 2) th.className = 'daily-num-col';
-          hr.appendChild(th);
-        });
-        thead.appendChild(hr);
-        table.appendChild(thead);
-
-        var tbody = document.createElement('tbody');
-        rows.forEach(function (row) {
-          var tr = document.createElement('tr');
-          var tdRank = document.createElement('td');
-          tdRank.className = 'daily-rank';
-          tdRank.textContent = row.rank;
-          var tdName = document.createElement('td');
-          tdName.appendChild(repoLink(row));
-          if (row.desc && row.desc !== '-') {
-            var d = document.createElement('div');
-            d.className = 'daily-desc';
-            d.textContent = row.desc;
-            tdName.appendChild(d);
-          }
-          var tdGrowth = document.createElement('td');
-          tdGrowth.className = 'daily-growth';
-          tdGrowth.textContent = row.growth;
-          var tdStars = document.createElement('td');
-          tdStars.className = 'daily-stars';
-          tdStars.textContent = row.stars;
-          [tdRank, tdName, tdGrowth, tdStars].forEach(function (td) { tr.appendChild(td); });
-          if (row.lang) {
-            var tdLang = document.createElement('td');
-            tdLang.className = 'daily-lang';
-            tdLang.textContent = row.lang;
-            tr.appendChild(tdLang);
-          }
-          if (row.category) {
-            var tdCat = document.createElement('td');
-            tdCat.className = 'daily-cat';
-            tdCat.textContent = row.category;
-            tr.appendChild(tdCat);
-          }
-          tbody.appendChild(tr);
-        });
-        table.appendChild(tbody);
-        card.appendChild(table);
-
-        return card;
+      var itemContent = function (item) {
+        return (item.querySelector('description') || {}).textContent || '';
       };
 
       var render = function () {
+        var item = items[idx];
+        var date = itemDate(item);
+        var content = itemContent(item);
+
         view.innerHTML = '';
-        view.appendChild(renderCard(items[idx]));
+        var card = document.createElement('div');
+        card.className = 'daily-report';
+
+        var head = document.createElement('div');
+        head.className = 'daily-report-head';
+        var h2 = document.createElement('h2');
+        h2.textContent = date;
+        head.appendChild(h2);
+        card.appendChild(head);
+
+        var prose = document.createElement('div');
+        prose.className = 'prose';
+        if (content.trim()) {
+          prose.innerHTML = renderMarkdown(content);
+        } else {
+          prose.innerHTML = '<p>该期报告暂无内容。</p>';
+        }
+        card.appendChild(prose);
+        view.appendChild(card);
+
         indicator.textContent = idx === 0
           ? '最新一期'
           : '第 ' + (idx + 1) + ' / ' + items.length + ' 期';
@@ -226,8 +208,10 @@ const INDEX_URL = 'https://github.com/laojiahuo2003/github-daily-report/blob/mai
 
       fetchFirstAvailable(FEED_SOURCES)
         .then(function (xml) {
+          // 必须按 XML 解析：HTML 模式下 CDATA 会被当作注释、
+          // 在内容首个 ">" 处截断，导致报告前半部分丢失
           var doc = new DOMParser().parseFromString(xml, 'text/xml');
-          items = Array.from(doc.querySelectorAll('item')).slice(0, 15);
+          items = Array.from(doc.getElementsByTagName('item')).slice(0, 10);
           if (!items.length) throw new Error('empty');
           render();
         })
@@ -247,15 +231,12 @@ const INDEX_URL = 'https://github.com/laojiahuo2003/github-daily-report/blob/mai
   </script>
 
   <style>
-    /* 数据表格页放宽阅读栏（博客正文默认 42rem 是为文章设计的） */
-    :global(.wrap) { max-width: 72rem; }
-
     .daily-pager {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 1rem;
-      margin: 0 0 1rem;
+      margin: 0 0 1.4rem;
     }
     .daily-nav {
       font-family: var(--mono);
@@ -276,22 +257,12 @@ const INDEX_URL = 'https://github.com/laojiahuo2003/github-daily-report/blob/mai
       letter-spacing: .05em;
     }
 
-    .daily-card {
-      margin: 0 0 1.6rem;
-      border: 1px solid var(--rule);
-      border-radius: 10px;
-      padding: 1.1rem 1.25rem .9rem;
-      background: color-mix(in srgb, var(--ground) 60%, transparent);
-    }
-    .daily-card-head {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
+    .daily-report-head {
       border-bottom: 1px solid var(--rule);
       padding-bottom: .55rem;
-      margin-bottom: .8rem;
+      margin-bottom: 1.2rem;
     }
-    .daily-card-head h2 {
+    .daily-report-head h2 {
       font-family: var(--mono);
       font-size: 15px;
       font-weight: 600;
@@ -299,113 +270,20 @@ const INDEX_URL = 'https://github.com/laojiahuo2003/github-daily-report/blob/mai
       margin: 0;
       letter-spacing: .04em;
     }
-    .daily-more {
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--dim);
-      text-decoration: none;
-    }
-    .daily-more:hover { color: var(--accent); }
 
-    .daily-top {
-      border-left: 3px solid var(--accent);
-      background: var(--accent-soft);
-      border-radius: 0 8px 8px 0;
-      padding: .6rem .9rem;
-      margin-bottom: .8rem;
-    }
-    .daily-top-label {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--dim);
-      letter-spacing: .06em;
-    }
-    .daily-top-name {
-      font-family: var(--serif);
-      font-size: 1.05rem;
-      font-weight: 600;
-      margin: .15rem 0 .2rem;
-    }
-    .daily-top-name a { color: var(--ink); text-decoration: none; }
-    .daily-top-name a:hover { color: var(--accent); }
-    .daily-top-desc {
-      font-size: .85rem;
-      color: var(--dim);
-      margin: 0 0 .2rem;
-      max-width: 68ch;
-    }
-    .daily-top-meta {
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--dim);
-    }
-    .daily-top-meta strong { color: var(--accent); font-weight: 600; }
+    /* 宽表格在窄栏内横向滚动，不撑破版式 */
+    .daily-table-wrap { overflow-x: auto; }
+    .daily-table-wrap table { min-width: 620px; }
 
-    .daily-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: .88rem;
-    }
-    .daily-table th {
-      font-family: var(--mono);
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--faint);
-      text-align: left;
-      padding: .3rem .3rem .45rem;
-      border-bottom: 1px solid var(--rule);
-      letter-spacing: .05em;
-    }
-    .daily-table th.daily-num-col { text-align: right; }
-    .daily-table td {
-      padding: .42rem .3rem;
-      border-top: 1px solid var(--rule);
-      vertical-align: middle;
-    }
-    .daily-table tbody tr:first-child td { border-top: none; }
-    .daily-rank {
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--faint);
-      width: 2rem;
-    }
-    .daily-table a {
-      color: var(--ink);
-      text-decoration: none;
-    }
-    .daily-table a:hover { color: var(--accent); }
-    .daily-desc {
-      font-size: .8rem;
+    .daily-li-desc {
+      display: inline-block;
+      font-size: .88em;
       color: var(--dim);
-      margin-top: .15rem;
-      max-width: 42ch;
     }
-    .daily-growth,
-    .daily-stars,
-    .daily-lang {
-      font-family: var(--mono);
-      font-size: 12px;
-      white-space: nowrap;
-      text-align: right;
-    }
-    .daily-growth { color: var(--accent); width: 4.5rem; }
-    .daily-stars { color: var(--dim); width: 4.5rem; }
-    .daily-lang { color: var(--dim); width: 5.5rem; }
-    .daily-cat {
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--dim);
-      white-space: nowrap;
-      text-align: right;
-    }
-    .daily-hint { color: var(--dim); font-size: .93rem; }
-    .daily-archive {
+    .daily-foot {
       font-family: var(--mono);
       font-size: 12px;
       color: var(--faint);
-      margin-top: .4rem;
     }
-    .daily-archive a { color: var(--dim); }
-    .daily-archive a:hover { color: var(--accent); }
   </style>
 </Base>
