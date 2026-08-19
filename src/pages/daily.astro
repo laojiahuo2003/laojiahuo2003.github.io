@@ -68,7 +68,8 @@ const INDEX_URL = 'https://github.com/laojiahuo2003/github-daily-report/blob/mai
           growth: cells[2].trim().replace('🔺', '+'),
           stars: cells[3].trim(),
           lang: cells[4] ? cells[4].trim() : '',
-          category: cells[5] ? cells[5].trim() : ''
+          category: cells[5] ? cells[5].trim() : '',
+          desc: cells[6] ? cells[6].trim() : ''
         };
       };
 
@@ -149,6 +150,12 @@ const INDEX_URL = 'https://github.com/laojiahuo2003/github-daily-report/blob/mai
         if (top.lang) topMeta.appendChild(document.createTextNode(' · ' + top.lang));
         topBox.appendChild(topLabel);
         topBox.appendChild(topName);
+        if (top.desc && top.desc !== '-') {
+          var topDesc = document.createElement('div');
+          topDesc.className = 'daily-top-desc';
+          topDesc.textContent = top.desc;
+          topBox.appendChild(topDesc);
+        }
         topBox.appendChild(topMeta);
         card.appendChild(topBox);
 
@@ -174,6 +181,12 @@ const INDEX_URL = 'https://github.com/laojiahuo2003/github-daily-report/blob/mai
           tdRank.textContent = row.rank;
           var tdName = document.createElement('td');
           tdName.appendChild(repoLink(row));
+          if (row.desc && row.desc !== '-') {
+            var d = document.createElement('div');
+            d.className = 'daily-desc';
+            d.textContent = row.desc;
+            tdName.appendChild(d);
+          }
           var tdGrowth = document.createElement('td');
           tdGrowth.className = 'daily-growth';
           tdGrowth.textContent = row.growth;
@@ -234,6 +247,9 @@ const INDEX_URL = 'https://github.com/laojiahuo2003/github-daily-report/blob/mai
   </script>
 
   <style>
+    /* 数据表格页放宽阅读栏（博客正文默认 42rem 是为文章设计的） */
+    :global(.wrap) { max-width: 72rem; }
+
     .daily-pager {
       display: flex;
       align-items: center;
@@ -312,6 +328,12 @@ const INDEX_URL = 'https://github.com/laojiahuo2003/github-daily-report/blob/mai
     }
     .daily-top-name a { color: var(--ink); text-decoration: none; }
     .daily-top-name a:hover { color: var(--accent); }
+    .daily-top-desc {
+      font-size: .85rem;
+      color: var(--dim);
+      margin: 0 0 .2rem;
+      max-width: 68ch;
+    }
     .daily-top-meta {
       font-family: var(--mono);
       font-size: 12px;
@@ -352,6 +374,12 @@ const INDEX_URL = 'https://github.com/laojiahuo2003/github-daily-report/blob/mai
       text-decoration: none;
     }
     .daily-table a:hover { color: var(--accent); }
+    .daily-desc {
+      font-size: .8rem;
+      color: var(--dim);
+      margin-top: .15rem;
+      max-width: 42ch;
+    }
     .daily-growth,
     .daily-stars,
     .daily-lang {
