@@ -2,11 +2,12 @@
 import { getCollection, render } from 'astro:content';
 import 'katex/dist/katex.min.css'; // 数学样式仅文章页需要，不进全局共享包
 import Base from '../../layouts/Base.astro';
+import { slugOf } from '../../lib/categories';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
   return posts.map((post) => ({
-    params: { slug: post.id },
+    params: { slug: slugOf(post) },
     props: { post },
   }));
 }
@@ -100,7 +101,7 @@ const relatedList = hasRelated
                 <li class="post">
                   <time datetime={p.data.pubDate.toISOString().slice(0, 10)}>{fmtDate(p.data.pubDate)}</time>
                   <div>
-                    <h2><a href={`/blog/${p.id}/`}>{p.data.title}</a></h2>
+                    <h2><a href={`/blog/${slugOf(p)}/`}>{p.data.title}</a></h2>
                     <p>{p.data.description}</p>
                   </div>
                 </li>

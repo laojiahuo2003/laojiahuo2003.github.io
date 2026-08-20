@@ -1,0 +1,39 @@
+---
+// 文章时间线列表：按年倒序分组，首页（全部）与分类页共用。
+import { slugOf, type Post } from '../lib/categories';
+
+interface Props { posts: Post[] }
+const { posts } = Astro.props;
+
+const sorted = [...posts].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const fmt = (d: Date) =>
+  `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+const byYear = new Map<number, Post[]>();
+for (const post of sorted) {
+  const y = post.data.pubDate.getFullYear();
+  if (!byYear.has(y)) byYear.set(y, []);
+  byYear.get(y)!.push(post);
+}
+const years = [...byYear.keys()].sort((a, b) => b - a);
+---
+
+{years.map((year) => (
+  <section>
+    <p class="list-head">Post Log — {year}</p>
+    <ul class="posts">
+      {byYear.get(year)!.map((post) => (
+        <li class="post">
+          <time datetime={post.data.pubDate.toISOString().slice(0, 10)}>{fmt(post.data.pubDate)}</time>
+          <div>
+            <h2>
+              <a href={`/blog/${slugOf(post)}/`}>{post.data.title}</a>
+              {post.data.tags.map((t) => <a class="tag" href={`/tags/${t}/`}>{t}</a>)}
+            </h2>
+            <p>{post.data.description}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </section>
+))}

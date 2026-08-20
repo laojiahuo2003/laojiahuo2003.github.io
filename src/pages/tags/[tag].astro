@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import { slugOf } from '../../lib/categories';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -34,7 +35,7 @@ const fmt = (d: Date) =>
         <li class="post">
           <time datetime={post.data.pubDate.toISOString().slice(0, 10)}>{fmt(post.data.pubDate).slice(5)}</time>
           <div>
-            <h2><a href={`/blog/${post.id}/`}>{post.data.title}</a></h2>
+            <h2><a href={`/blog/${slugOf(post)}/`}>{post.data.title}</a></h2>
             <p>{post.data.description}</p>
           </div>
         </li>

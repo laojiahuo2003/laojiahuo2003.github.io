@@ -2,24 +2,13 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import Starmap from '../components/Starmap.astro';
+import PostsSidebar from '../components/PostsSidebar.astro';
+import PostList from '../components/PostList.astro';
 
-const posts = (await getCollection('blog')).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
-const fmt = (d: Date) =>
-  `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-const tagHref = (t: string) => `/tags/${t}/`;
-// 按年分组（倒序），年份随内容自动滚动
-const byYear = new Map<number, typeof posts>();
-for (const post of posts) {
-  const y = post.data.pubDate.getFullYear();
-  if (!byYear.has(y)) byYear.set(y, []);
-  byYear.get(y)!.push(post);
-}
-const years = [...byYear.keys()].sort((a, b) => b - a);
+const posts = await getCollection('blog');
 ---
 
-<Base title="Jiahuo Lao 的手记">
+<Base title="Jiahuo Lao 的手记" bodyClass="list-page">
   <header slot="header" class="home-header">
     <div>
       <p class="eyebrow">AI Infra · LLM · Agent · 具身智能</p>
@@ -29,23 +18,10 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
     <Starmap />
   </header>
 
-  {years.map((year) => (
-    <section>
-      <p class="list-head">Post Log — {year}</p>
-      <ul class="posts">
-        {byYear.get(year)!.map((post) => (
-          <li class="post">
-            <time datetime={post.data.pubDate.toISOString().slice(0, 10)}>{fmt(post.data.pubDate)}</time>
-            <div>
-              <h2>
-                <a href={`/blog/${post.id}/`}>{post.data.title}</a>
-                {post.data.tags.map((t) => <a class="tag" href={tagHref(t)}>{t}</a>)}
-              </h2>
-              <p>{post.data.description}</p>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </section>
-  ))}
+  <div class="posts-layout">
+    <PostsSidebar active="all" posts={posts} />
+    <div class="posts-main">
+      <PostList posts={posts} />
+    </div>
+  </div>
 </Base>

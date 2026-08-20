@@ -1,0 +1,62 @@
+---
+// 文章分类侧栏：全部 + 各文件夹，计数右对齐，当前项高亮。首页与分类页共用。
+import { categoryLabel, groupByCategory, type Post } from '../lib/categories';
+
+interface Props {
+  active: string; // 'all' 或分类 key
+  posts: Post[];
+}
+
+const { active, posts } = Astro.props;
+const groups = groupByCategory(posts);
+---
+
+<aside class="posts-side">
+  <p class="side-cap">分类</p>
+  <nav aria-label="文章分类">
+    <ul class="side-list">
+      <li>
+        <a href="/" aria-current={active === 'all' ? 'page' : undefined}>
+          全部<span class="n">{posts.length}</span>
+        </a>
+      </li>
+      {[...groups.entries()].map(([key, ps]) => (
+        <li>
+          <a href={`/cat/${key}/`} aria-current={active === key ? 'page' : undefined}>
+            {categoryLabel(key)}<span class="n">{ps.length}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+</aside>
+
+<style>
+  .posts-side {
+    position: sticky;
+    top: 1.5rem;
+    font-family: var(--mono);
+    font-size: 12.5px;
+  }
+  .side-cap {
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin: 0 0 .7rem;
+  }
+  .side-list { list-style: none; margin: 0; padding: 0; }
+  .side-list li { margin: .3rem 0; }
+  .side-list a {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: .8rem;
+    color: var(--dim);
+    transition: color var(--dur-fast) var(--ease);
+  }
+  .side-list a:hover { color: var(--accent); }
+  .side-list a[aria-current="page"] { color: var(--ink); }
+  .side-list a[aria-current="page"]::before { content: "· "; color: var(--accent); }
+  .side-list .n { color: var(--faint); font-size: 11px; }
+</style>

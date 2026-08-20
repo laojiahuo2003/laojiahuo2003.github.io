@@ -1,0 +1,32 @@
+---
+// 分类页：/cat/<folder>/，文件夹即分类。URL 只用文件名，与文章页解耦。
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PostsSidebar from '../../components/PostsSidebar.astro';
+import PostList from '../../components/PostList.astro';
+import { categoryLabel, groupByCategory } from '../../lib/categories';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  const groups = groupByCategory(posts);
+  return [...groups.entries()].map(([cat, ps]) => ({
+    params: { cat },
+    props: { posts: ps },
+  }));
+}
+
+const { cat } = Astro.params;
+const { posts } = Astro.props;
+const allPosts = await getCollection('blog');
+const label = categoryLabel(cat!);
+---
+
+<Base title={`${label} · Jiahuo Lao 的手记`} description={`分类「${label}」下的全部文章`}>
+  <div class="posts-layout">
+    <PostsSidebar active={cat!} posts={allPosts} />
+    <div class="posts-main">
+      <p class="list-head">分类 · {label}</p>
+      <PostList posts={posts} />
+    </div>
+  </div>
+</Base>
