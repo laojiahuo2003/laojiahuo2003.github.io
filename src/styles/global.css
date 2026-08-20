@@ -52,7 +52,10 @@
 }
 
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
 body {
   margin: 0;
   background: var(--ground);
@@ -98,8 +101,6 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-
   margin: 0 0 .9rem;
   text-wrap: balance;
 }
-.bio { margin: 0; color: var(--dim); max-width: 34ch; }
-.bio em { font-style: normal; color: var(--ink); }
 #starmap { width: 132px; height: 132px; display: block; }
 .starmap-cap {
   font-family: var(--mono);
@@ -270,6 +271,7 @@ nav.site a[aria-current="page"]::before { content: "· "; color: var(--accent); 
 .prose img { max-width: 100%; border-radius: 8px; }
 .prose hr { border: none; border-top: 1px solid var(--rule); margin: 3em 0; }
 .prose table { border-collapse: collapse; width: 100%; font-size: .9rem; }
+.table-scroll { overflow-x: auto; } /* JS 包裹宽表格，窄屏横向滚动 */
 .prose th, .prose td { border: 1px solid var(--rule); padding: .45em .8em; text-align: left; }
 .prose th { font-family: var(--mono); font-size: .8rem; color: var(--dim); }
 
@@ -293,9 +295,14 @@ footer.site a:hover { color: var(--accent); }
 @media (max-width: 560px) {
   nav.site { padding-top: 3rem; }
   .home-header { grid-template-columns: 1fr; }
-  #starmap { order: -1; }
+  /* 星图移到标题上方并居中（order 加在 grid item 即外层 div 上；last-of-type 因末尾有 script） */
+  .home-header > div:last-of-type { order: -1; justify-self: center; text-align: center; }
   .post { grid-template-columns: 1fr; gap: .35rem; }
   .post time { padding-top: 0; }
+}
+/* 触屏设备：加大导航图标与分类胶囊的触控目标 */
+@media (hover: none) {
+  nav.site .theme-toggle, nav.site .nav-icon { padding: .55rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   .post h2 a, nav.site a, .more, .prose a { transition: none; }
@@ -447,7 +454,9 @@ body.list-page .wrap { max-width: 62rem; }
 
 .post-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 15rem;
+  /* 正文限宽 42rem（约 45 汉字/行，与全站阅读宽度一致），目录靠右 */
+  grid-template-columns: minmax(0, 42rem) 15rem;
+  justify-content: space-between;
   gap: 3rem;
   align-items: start;
 }

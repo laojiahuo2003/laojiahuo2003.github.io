@@ -132,7 +132,7 @@ const relatedList = hasRelated
 </Base>
 
 <script>
-  // 若从标签页进入，返回链接指向来源标签
+  // 若从标签页/分类页进入，返回链接指回来源页
   const back = document.getElementById('back-link');
   if (back && document.referrer) {
     try {
@@ -140,6 +140,9 @@ const relatedList = hasRelated
       if (u.pathname.startsWith('/tags/')) {
         back.href = u.pathname;
         back.textContent = '← 返回标签';
+      } else if (u.pathname.startsWith('/cat/')) {
+        back.href = u.pathname;
+        back.textContent = '← 返回分类';
       }
     } catch {}
   }

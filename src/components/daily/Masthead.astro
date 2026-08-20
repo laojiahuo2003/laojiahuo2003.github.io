@@ -14,10 +14,7 @@ const no = issueNo(report.date);
     <span class="issue-no">ISSUE #{no}</span>
   </div>
   <h1 class="masthead-date">{fmtDate(report.date)}</h1>
-  <p class="statline">
-    共 <b>{total}</b> 个项目 · <b>{sections}</b> 个分区 · 数据由
-    <a href="https://github.com/laojiahuo2003/laojiahuo2003.github.io/tree/main/daily">本仓库 daily/ 生成器</a>产出
-  </p>
+  <p class="statline">共 <b>{total}</b> 个项目 · <b>{sections}</b> 个分区</p>
 </header>
 
 <style>
@@ -55,11 +52,6 @@ const no = issueNo(report.date);
     font-family: var(--mono);
     font-weight: 600;
     color: var(--ink);
-  }
-  .statline a {
-    color: var(--accent);
-    text-decoration: underline;
-    text-underline-offset: .2em;
   }
 
   @media (max-width: 720px) {

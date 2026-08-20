@@ -74,6 +74,14 @@ const ogImage = new URL('/og.png', site).href;
       </footer>
     </div>
     <script>
+      // 宽表格包一层横向滚动容器，窄屏不挤压换行
+      document.querySelectorAll('.prose table').forEach((tb) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'table-scroll';
+        tb.parentNode!.insertBefore(wrap, tb);
+        wrap.appendChild(tb);
+      });
+
       // 为每个代码块加一个「复制」按钮（纯客户端，无依赖）
       document.querySelectorAll('pre').forEach((pre) => {
         if (pre.parentElement?.classList.contains('code-block')) return;

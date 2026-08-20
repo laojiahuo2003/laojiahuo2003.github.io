@@ -14,7 +14,10 @@ const growth = +repo.growth > 0 ? `+${+repo.growth}/日` : +repo.weekly_growth >
     {url
       ? <a href={url} target="_blank" rel="noopener noreferrer"><span class="rname">{repo.name}</span></a>
       : <span class="rname">{repo.name}</span>}
-    <span class="stars">⭐ {fmtStars(repo.stars)}</span>
+    <span class="stars">
+      <svg class="ic-star" width="11" height="11" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0l2.47 4.79 5.53.9-4 3.9.94 5.5L8 12.4l-4.94 2.69.94-5.5-4-3.9 5.53-.9z"/></svg>
+      {fmtStars(repo.stars)}
+    </span>
   </div>
   {repo.description && <p class="desc">{repo.description}</p>}
   <div class="meta">
@@ -53,7 +56,11 @@ const growth = +repo.growth > 0 ? `+${+repo.growth}/日` : +repo.weekly_growth >
     font-size: 12px;
     color: var(--dim);
     flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
   }
+  .ic-star { color: var(--accent); flex-shrink: 0; }
   .desc {
     margin: 0;
     color: var(--dim);
