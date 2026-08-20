@@ -381,9 +381,18 @@ footer.site a:hover { color: var(--accent); }
   color: var(--shiki-dark) !important;
 }
 
-/* ============ 主题切换按钮 ============ */
-.theme-toggle {
+/* ============ 导航右侧图标（GitHub 入口 + 主题切换） ============ */
+.nav-icon {
   margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  color: var(--dim);
+  transition: color var(--dur-fast) var(--ease);
+}
+.nav-icon:hover { color: var(--accent); }
+.nav-icon:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+.theme-toggle {
   display: inline-flex;
   align-items: center;
   color: var(--dim);
