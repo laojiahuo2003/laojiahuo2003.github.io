@@ -70,7 +70,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-
 .wrap {
   max-width: 42rem;
   margin: 0 auto;
-  padding: 4.5rem max(1.5rem, env(safe-area-inset-right)) 5rem max(1.5rem, env(safe-area-inset-left));
+  padding: 0 max(1.5rem, env(safe-area-inset-right)) 5rem max(1.5rem, env(safe-area-inset-left));
 }
 
 /* ============ 首页头部 ============ */
@@ -110,16 +110,21 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-
   letter-spacing: .08em;
 }
 
-/* ============ 导航 ============ */
+/* ============ 导航：通栏边框 + 固定宽度内容，不随页面正文宽度变 ============ */
 nav.site {
+  padding-top: 4.5rem;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 2.75rem;
+}
+.site-nav {
+  max-width: 42rem;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   gap: 1.75rem;
   font-family: var(--mono);
   font-size: 13px;
-  padding: 1rem 0;
-  border-bottom: 1px solid var(--rule);
-  margin-bottom: 2.75rem;
+  padding: 1rem max(1.5rem, env(safe-area-inset-right)) 1rem max(1.5rem, env(safe-area-inset-left));
 }
 nav.site a { color: var(--dim); transition: color var(--dur-fast) var(--ease); }
 nav.site a:hover { color: var(--accent); }
@@ -286,7 +291,7 @@ footer.site a:hover { color: var(--accent); }
 
 /* ============ 响应式 / 无障碍 ============ */
 @media (max-width: 560px) {
-  .wrap { padding-top: 3rem; }
+  nav.site { padding-top: 3rem; }
   .home-header { grid-template-columns: 1fr; }
   #starmap { order: -1; }
   .post { grid-template-columns: 1fr; gap: .35rem; }
