@@ -9,28 +9,21 @@ const no = issueNo(report.date);
 ---
 
 <header class="masthead">
-  <div class="masthead-top">
-    <p class="eyebrow">GitHub Trending · 每日 09:00 / 18:00 更新</p>
-    <span class="issue-no">ISSUE #{no}</span>
-  </div>
+  <span class="issue-no">ISSUE #{no}</span>
   <h1 class="masthead-date">{fmtDate(report.date)}</h1>
   <p class="statline">共 <b>{total}</b> 个项目 · <b>{sections}</b> 个分区</p>
 </header>
 
 <style>
   .masthead { margin-bottom: 2.75rem; }
-  .masthead-top {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
-  }
   .issue-no {
+    display: block;
     font-family: var(--mono);
     font-size: 11px;
     letter-spacing: .18em;
     color: var(--faint);
     white-space: nowrap;
+    margin: 0 0 .6rem;
   }
   .masthead-date {
     font-family: var(--serif);
