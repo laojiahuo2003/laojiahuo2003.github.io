@@ -8,9 +8,9 @@
   --accent-soft: rgba(15, 123, 95, .12);
   --rule: #E5E2D9;
   --code-bg: #F1EFE8;
-  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Songti SC", "Noto Serif SC", serif;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Songti SC", "Noto Serif SC", "Source Han Serif SC", "Noto Serif CJK SC", serif;
   --sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Segoe UI", "Microsoft YaHei", sans-serif;
-  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Microsoft YaHei", "PingFang SC", monospace;
   /* 间距刻度（8px 网格） */
   --sp-1: 4px;
   --sp-2: 8px;
