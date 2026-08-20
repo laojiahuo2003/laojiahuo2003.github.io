@@ -443,7 +443,6 @@ body.list-page .wrap { max-width: 62rem; }
 @media (max-width: 1100px) {
   body.list-page .wrap { max-width: 42rem; }
   .posts-layout { grid-template-columns: minmax(0, 1fr); }
-  .posts-layout .posts-side { display: none; }
 }
 
 .post-layout {

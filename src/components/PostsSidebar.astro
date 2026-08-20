@@ -59,4 +59,28 @@ const groups = groupByCategory(posts);
   .side-list a[aria-current="page"] { color: var(--ink); }
   .side-list a[aria-current="page"]::before { content: "· "; color: var(--accent); }
   .side-list .n { color: var(--faint); font-size: 11px; }
+
+  /* 移动端：竖排侧栏改为横向滚动胶囊条，分类导航不缺席 */
+  @media (max-width: 1100px) {
+    .posts-side { position: static; margin-bottom: 1.25rem; }
+    .side-cap { display: none; }
+    .side-list {
+      display: flex;
+      gap: .5rem;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: .15rem;
+    }
+    .side-list::-webkit-scrollbar { display: none; }
+    .side-list li { margin: 0; flex-shrink: 0; }
+    .side-list a {
+      border: 1px solid var(--rule);
+      border-radius: 99px;
+      padding: .28rem .85rem;
+      white-space: nowrap;
+    }
+    .side-list a[aria-current="page"] { color: var(--accent); border-color: var(--accent); }
+    .side-list a[aria-current="page"]::before { content: none; }
+  }
 </style>
