@@ -1,0 +1,85 @@
+---
+// 周报：每周黑马分析。数据由 daily/weekly_report.py 写入 src/data/weekly.json，
+// 每周一 09:30 由 weekly.yml 生成。最新一期完整展示，往期折叠。
+import Base from '../../layouts/Base.astro';
+import WeekReport from '../../components/weekly/WeekReport.astro';
+import weekly from '../../data/weekly.json';
+
+interface Repo {
+  name: string; url: string; stars: number; growth: number;
+  days_seen: number; language: string; first_seen: string;
+}
+interface Week {
+  week_start: string; week_end: string; coverage: number; warmup: boolean;
+  darkhorses: Repo[]; onedayers: Repo[]; newcomers: Repo[]; langs: Record<string, number>;
+}
+
+const reports = (weekly as unknown as { reports: Week[] }).reports;
+if (!reports?.length) throw new Error('src/data/weekly.json 无周报数据');
+const [latest, ...older] = reports;
+const title = `周报 ${latest.week_start.slice(5).replace('-', '/')} — Jiahuo Lao 的手记`;
+---
+
+<Base title={title} description="每周 GitHub 黑马分析：持续上涨、一日游与新面孔" bodyClass="weekly-page">
+  <header class="week-header">
+    <h1>每周黑马</h1>
+    <p class="week-range">{latest.week_start.slice(0, 4)} 年 {+latest.week_start.slice(5, 7)} 月 {+latest.week_start.slice(8, 10)} 日 — {+latest.week_end.slice(5, 7)} 月 {+latest.week_end.slice(8, 10)} 日</p>
+  </header>
+  <WeekReport week={latest} />
+
+  {older.length > 0 && (
+    <section class="archive">
+      <p class="arc-cap">往期（{older.length} 期）</p>
+      {older.map((wk) => (
+        <details class="arc-box">
+          <summary>{wk.week_start} ~ {wk.week_end}{wk.warmup ? ' · 预热期' : ''}</summary>
+          <WeekReport week={wk} />
+        </details>
+      ))}
+    </section>
+  )}
+</Base>
+
+<style is:global>
+  body.weekly-page .wrap { max-width: 54rem; }
+  @media (max-width: 900px) { body.weekly-page .wrap { max-width: 42rem; } }
+</style>
+
+<style>
+  .week-header { margin-bottom: 2.75rem; }
+  .week-header h1 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 2.15rem;
+    line-height: 1.2;
+    letter-spacing: .01em;
+    margin: 0 0 .6rem;
+    text-wrap: balance;
+  }
+  .week-range {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--faint);
+    margin: 0;
+  }
+
+  .archive { margin-top: 4rem; border-top: 1px solid var(--rule); padding-top: 1.5rem; }
+  .arc-cap {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin: 0 0 1rem;
+  }
+  .arc-box { border: 1px solid var(--rule); border-radius: 10px; padding: .8rem 1.1rem; margin: .7rem 0; }
+  .arc-box summary {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--dim);
+    cursor: pointer;
+    user-select: none;
+  }
+  .arc-box summary:hover { color: var(--accent); }
+  .arc-box[open] summary { color: var(--accent); margin-bottom: .5rem; }
+</style>

@@ -1,0 +1,245 @@
+﻿---
+// 单期周报内容：黑马榜 / 一日游 / 新面孔 / 语言分布。/weekly/ 页复用渲染各期。
+interface Repo {
+  name: string;
+  url: string;
+  stars: number;
+  growth: number;
+  days_seen: number;
+  language: string;
+  first_seen: string;
+}
+interface Props {
+  week: {
+    week_start: string;
+    week_end: string;
+    coverage: number;
+    warmup: boolean;
+    darkhorses: Repo[];
+    onedayers: Repo[];
+    newcomers: Repo[];
+    langs: Record<string, number>;
+  };
+  showDays?: number; // 出勤显示分母（默认 7）
+}
+const { week: w, showDays = 7 } = Astro.props;
+const fmtStars = (n?: number) => {
+  n = +n || 0;
+  return n >= 1000 ? `${(n / 1000).toFixed(1).replace(/\.0$/, '')}k` : String(n);
+};
+const fmtRange = (s: string, e: string) =>
+  `${+s.slice(5, 7)} 月 ${+s.slice(8, 10)} 日 — ${+e.slice(5, 7)} 月 ${+e.slice(8, 10)} 日`;
+const langColor = (l: string) =>
+  ({ TypeScript: '#3178c6', JavaScript: '#f1e05a', Python: '#3572A5', Rust: '#dea584', Go: '#00ADD8', 'C++': '#f34b7d', C: '#555555', Java: '#b07219', Zig: '#ec915c', Lua: '#000080' } as Record<string, string>)[l] ?? 'var(--faint)';
+const langTotal = Object.values(w.langs).reduce((s, n) => s + n, 0) || 1;
+---
+
+{w.warmup && (
+  <p class="warmup">数据积累中（当前覆盖 {w.coverage}/7 天）：本系统 08-19 启用，跑满一周后周增长与持续度统计即为完整口径。</p>
+)}
+
+{w.darkhorses.length > 0 && (
+  <section>
+    <h2 class="sec"><span class="sec-name">本周黑马 · 持续上涨</span><span class="sec-count">{w.darkhorses.length}</span><span class="sec-rule" /></h2>
+    <p class="sec-note">周星标增长 ≥ 50，且 {showDays} 天中至少 4 天在榜——持续度过滤掉脉冲式项目</p>
+    <ol class="wlist">
+      {w.darkhorses.map((r) => (
+        <li>
+          <a class="wrow" href={r.url} target="_blank" rel="noopener noreferrer">
+            <span class="wname">{r.name}</span>
+            {r.language && (
+              <span class="wlang"><i class="dot" style={`background:${langColor(r.language)}`}></i>{r.language}</span>
+            )}
+            <span class="wdays" aria-label={`7 天中 ${r.days_seen} 天在榜`}>
+              {Array.from({ length: showDays }, (_, i) => (
+                <i class:list={['dd', { on: i < r.days_seen }]}></i>
+              ))}
+              <b>{r.days_seen}/{showDays}</b>
+            </span>
+            <span class="wstars"><svg class="ic-star" width="11" height="11" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0l2.47 4.79 5.53.9-4 3.9.94 5.5L8 12.4l-4.94 2.69.94-5.5-4-3.9 5.53-.9z"/></svg> {fmtStars(r.stars)}</span>
+            <span class="wgrow">+{r.growth}/周</span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </section>
+)}
+
+{w.onedayers.length > 0 && (
+  <section>
+    <h2 class="sec"><span class="sec-name">一日游 · 脉冲上榜</span><span class="sec-count">{w.onedayers.length}</span><span class="sec-rule" /></h2>
+    <p class="sec-note">周增长 ≥ 100 但仅出现 ≤ 2 天——热闹但不持续，谨慎跟风</p>
+    <ol class="wlist">
+      {w.onedayers.map((r) => (
+        <li>
+          <a class="wrow" href={r.url} target="_blank" rel="noopener noreferrer">
+            <span class="wname">{r.name}</span>
+            {r.language && <span class="wlang"><i class="dot" style={`background:${langColor(r.language)}`}></i>{r.language}</span>}
+            <span class="wstars"><svg class="ic-star" width="11" height="11" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0l2.47 4.79 5.53.9-4 3.9.94 5.5L8 12.4l-4.94 2.69.94-5.5-4-3.9 5.53-.9z"/></svg> {fmtStars(r.stars)}</span>
+            <span class="wgrow">+{r.growth}/周</span>
+            <span class="wseen">{r.days_seen} 天在榜</span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </section>
+)}
+
+{w.newcomers.length > 0 && (
+  <section>
+    <h2 class="sec"><span class="sec-name">本周新面孔</span><span class="sec-count">{w.newcomers.length}</span><span class="sec-rule" /></h2>
+    <p class="sec-note">{fmtRange(w.week_start, w.week_end)}间首次进入追踪视野，星标 ≥ 50</p>
+    <ol class="wlist">
+      {w.newcomers.map((r) => (
+        <li>
+          <a class="wrow" href={r.url} target="_blank" rel="noopener noreferrer">
+            <span class="wname">{r.name}</span>
+            {r.language && <span class="wlang"><i class="dot" style={`background:${langColor(r.language)}`}></i>{r.language}</span>}
+            <span class="wstars"><svg class="ic-star" width="11" height="11" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0l2.47 4.79 5.53.9-4 3.9.94 5.5L8 12.4l-4.94 2.69.94-5.5-4-3.9 5.53-.9z"/></svg> {fmtStars(r.stars)}</span>
+            <span class="wseen">{r.first_seen} 首见</span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </section>
+)}
+
+{langTotal > 1 && (
+  <section>
+    <h2 class="sec"><span class="sec-name">语言分布</span><span class="sec-rule" /></h2>
+    <p class="sec-note">黑马 + 新面孔的主力语言</p>
+    <ul class="langbars">
+      {Object.entries(w.langs).slice(0, 5).map(([lang, n]) => (
+        <li>
+          <span class="lb-name">{lang}</span>
+          <span class="lb-track"><i class="lb-fill" style={`width:${(n / langTotal) * 100}%`}></i></span>
+          <span class="lb-num">{Math.round((n / langTotal) * 100)}%</span>
+        </li>
+      ))}
+    </ul>
+  </section>
+)}
+
+<style>
+  .warmup {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--dim);
+    border: 1px dashed var(--rule);
+    border-radius: 8px;
+    padding: .7rem 1rem;
+    margin: 0 0 2rem;
+  }
+  .sec {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    margin: 2.8rem 0 .3rem;
+  }
+  .sec-name {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 1.16rem;
+    color: var(--ink);
+  }
+  .sec-name::before {
+    content: "";
+    display: inline-block;
+    width: .5em;
+    height: .5em;
+    border-radius: 2px;
+    background: var(--accent);
+    margin-right: .5em;
+    vertical-align: .1em;
+  }
+  .sec-count {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-radius: 999px;
+    padding: .1rem .55rem;
+  }
+  .sec-rule { flex: 1; height: 1px; background: var(--rule); }
+  .sec-note { margin: 0 0 1rem; font-size: .88rem; color: var(--faint); }
+
+  .wlist { list-style: none; margin: 0; padding: 0; }
+  .wlist li { border-bottom: 1px solid var(--rule); }
+  .wrow {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: .8rem .2rem;
+    text-decoration: none;
+  }
+  .wrow:hover .wname { color: var(--accent); }
+  .wname {
+    font-family: var(--mono);
+    font-size: .88rem;
+    font-weight: 600;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+    flex: 1;
+    min-width: 0;
+  }
+  .wlang {
+    display: inline-flex;
+    align-items: center;
+    gap: .38rem;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--dim);
+    white-space: nowrap;
+  }
+  .wlang .dot, .dd { border-radius: 50%; }
+  .wlang .dot { width: 8px; height: 8px; flex-shrink: 0; }
+  .wdays {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--faint);
+    white-space: nowrap;
+  }
+  .wdays .dd { width: 5px; height: 5px; background: var(--rule); }
+  .wdays .dd.on { background: var(--accent); }
+  .wdays b { font-weight: 500; margin-left: .35rem; }
+  .wstars {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--dim);
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+  }
+  .ic-star { color: var(--accent); flex-shrink: 0; }
+  .wgrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    white-space: nowrap;
+    min-width: 5.5rem;
+    text-align: right;
+  }
+  .wseen {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--faint);
+    white-space: nowrap;
+  }
+
+  .langbars { list-style: none; margin: 0; padding: 0; }
+  .langbars li { display: flex; align-items: center; gap: .8rem; margin: .55rem 0; }
+  .lb-name { font-family: var(--mono); font-size: 11.5px; color: var(--ink); width: 8rem; }
+  .lb-track { flex: 1; height: 5px; border-radius: 2.5px; background: var(--code-bg); overflow: hidden; }
+  .lb-fill { display: block; height: 100%; border-radius: 2.5px; background: var(--accent); }
+  .lb-num { font-family: var(--mono); font-size: 11px; color: var(--faint); width: 2.5rem; text-align: right; }
+
+  @media (max-width: 720px) {
+    .wlang, .wstars { display: none; }
+  }
+</style>

@@ -1,0 +1,249 @@
+{
+  "updated": "2026-08-21T01:20:17Z",
+  "reports": [
+    {
+      "week_start": "2026-08-14",
+      "week_end": "2026-08-20",
+      "generated": "2026-08-21 01:20",
+      "coverage": 2,
+      "warmup": true,
+      "darkhorses": [
+        {
+          "name": "deepseek-ai/deepseek-harness",
+          "url": "https://github.com/deepseek-ai/deepseek-harness",
+          "stars": 171179,
+          "growth": 8500,
+          "days_seen": 2,
+          "language": "TypeScript",
+          "first_seen": "2026-08-19"
+        },
+        {
+          "name": "harry0703/MoneyPrinterTurbo",
+          "url": "https://github.com/harry0703/MoneyPrinterTurbo",
+          "stars": 112257,
+          "growth": 3230,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-08-19"
+        },
+        {
+          "name": "mattpocock/skills",
+          "url": "https://github.com/mattpocock/skills",
+          "stars": 224626,
+          "growth": 2571,
+          "days_seen": 2,
+          "language": "Shell",
+          "first_seen": "2026-08-19"
+        },
+        {
+          "name": "anywhere-labs/deepseek-harness-desktop",
+          "url": "https://github.com/anywhere-labs/deepseek-harness-desktop",
+          "stars": 16054,
+          "growth": 1921,
+          "days_seen": 2,
+          "language": "TypeScript",
+          "first_seen": "2026-08-19"
+        },
+        {
+          "name": "public-apis/public-apis",
+          "url": "https://github.com/public-apis/public-apis",
+          "stars": 466615,
+          "growth": 1669,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-08-19"
+        },
+        {
+          "name": "cathrynlavery/diagram-design",
+          "url": "https://github.com/cathrynlavery/diagram-design",
+          "stars": 23866,
+          "growth": 1659,
+          "days_seen": 2,
+          "language": "HTML",
+          "first_seen": "2026-08-19"
+        },
+        {
+          "name": "s1dashu/ip-as-logo-skill",
+          "url": "https://github.com/s1dashu/ip-as-logo-skill",
+          "stars": 2725,
+          "growth": 1526,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-08-19"
+        },
+        {
+          "name": "awesome-dsh-plugin/awesome-dsh-plugin",
+          "url": "https://github.com/awesome-dsh-plugin/awesome-dsh-plugin",
+          "stars": 10416,
+          "growth": 1098,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-08-19"
+        },
+        {
+          "name": "volcengine/OpenViking",
+          "url": "https://github.com/volcengine/OpenViking",
+          "stars": 30711,
+          "growth": 1092,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-04-02"
+        },
+        {
+          "name": "stablyai/orca",
+          "url": "https://github.com/stablyai/orca",
+          "stars": 49607,
+          "growth": 1074,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-08-19"
+        },
+        {
+          "name": "guillaumemeyer/watermarks-remover",
+          "url": "https://github.com/guillaumemeyer/watermarks-remover",
+          "stars": 15638,
+          "growth": 968,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-08-19"
+        },
+        {
+          "name": "diegosouzapw/OmniRoute",
+          "url": "https://github.com/diegosouzapw/OmniRoute",
+          "stars": 51553,
+          "growth": 927,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-08-19"
+        },
+        {
+          "name": "mukul975/Anthropic-Cybersecurity-Skills",
+          "url": "https://github.com/mukul975/Anthropic-Cybersecurity-Skills",
+          "stars": 30177,
+          "growth": 808,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-08-19"
+        },
+        {
+          "name": "earendil-works/pi",
+          "url": "https://github.com/earendil-works/pi",
+          "stars": 94167,
+          "growth": 803,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-08-19"
+        },
+        {
+          "name": "chaitanyagiri/munder-difflin",
+          "url": "https://github.com/chaitanyagiri/munder-difflin",
+          "stars": 2926,
+          "growth": 685,
+          "days_seen": 2,
+          "language": "TypeScript",
+          "first_seen": "2026-08-19"
+        }
+      ],
+      "onedayers": [],
+      "newcomers": [
+        {
+          "name": "public-apis/public-apis",
+          "url": "https://github.com/public-apis/public-apis",
+          "stars": 466615,
+          "growth": 1669,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-08-19"
+        },
+        {
+          "name": "mattpocock/skills",
+          "url": "https://github.com/mattpocock/skills",
+          "stars": 224626,
+          "growth": 2571,
+          "days_seen": 2,
+          "language": "Shell",
+          "first_seen": "2026-08-19"
+        },
+        {
+          "name": "deepseek-ai/deepseek-harness",
+          "url": "https://github.com/deepseek-ai/deepseek-harness",
+          "stars": 171179,
+          "growth": 8500,
+          "days_seen": 2,
+          "language": "TypeScript",
+          "first_seen": "2026-08-19"
+        },
+        {
+          "name": "harry0703/MoneyPrinterTurbo",
+          "url": "https://github.com/harry0703/MoneyPrinterTurbo",
+          "stars": 112257,
+          "growth": 3230,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-08-19"
+        },
+        {
+          "name": "earendil-works/pi",
+          "url": "https://github.com/earendil-works/pi",
+          "stars": 94167,
+          "growth": 803,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-08-19"
+        },
+        {
+          "name": "koala73/worldmonitor",
+          "url": "https://github.com/koala73/worldmonitor",
+          "stars": 83364,
+          "growth": 322,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-08-19"
+        },
+        {
+          "name": "unslothai/unsloth",
+          "url": "https://github.com/unslothai/unsloth",
+          "stars": 73987,
+          "growth": 320,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-08-19"
+        },
+        {
+          "name": "microsoft/AI-For-Beginners",
+          "url": "https://github.com/microsoft/AI-For-Beginners",
+          "stars": 65792,
+          "growth": 295,
+          "days_seen": 2,
+          "language": "Jupyter Notebook",
+          "first_seen": "2026-08-19"
+        },
+        {
+          "name": "diegosouzapw/OmniRoute",
+          "url": "https://github.com/diegosouzapw/OmniRoute",
+          "stars": 51553,
+          "growth": 927,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-08-19"
+        },
+        {
+          "name": "stablyai/orca",
+          "url": "https://github.com/stablyai/orca",
+          "stars": 49607,
+          "growth": 1074,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-08-19"
+        }
+      ],
+      "langs": {
+        "Python": 9,
+        "TypeScript": 4,
+        "Shell": 2,
+        "HTML": 1,
+        "Jupyter Notebook": 1
+      }
+    }
+  ]
+}
