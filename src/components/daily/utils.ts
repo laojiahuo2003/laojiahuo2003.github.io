@@ -106,3 +106,43 @@ export function reportStats(r: Report): { total: number; sections: number } {
   add(r.newly_discovered);
   return { total, sections };
 }
+
+// 分区清单：正文渲染与侧栏目录同源，id 用作锚点。
+// group 与 title 相同视为独立板块（目录里直接挂一级），否则收进分组。
+export interface DailySection {
+  id: string;
+  title: string;   // 目录子项标题
+  heading: string; // 正文分区标题（含「新项目 ·」等前缀）
+  count: number;
+  group?: string;
+  projects?: Repo[];
+}
+
+export function buildSections(r: Report): DailySection[] {
+  const out: DailySection[] = [];
+  if (r.best) out.push({ id: 'best', title: '今日最佳', heading: '今日最佳', count: 1, group: '今日最佳' });
+  if (r.leaderboard?.length) {
+    out.push({ id: 'board', title: '今日飙升榜', heading: '今日飙升榜', count: r.leaderboard.length, group: '今日飙升榜' });
+  }
+  if (r.fast_growing?.length) {
+    out.push({ id: 'fast', title: '快速增长项目', heading: '快速增长项目', count: r.fast_growing.length, group: '快速增长项目', projects: r.fast_growing });
+  }
+  (r.by_category ?? []).forEach((g, i) => {
+    if (!g.projects.length) return;
+    const cat = cleanCat(g.category);
+    out.push({ id: `hot-${i}`, title: cat, heading: cat, count: g.projects.length, group: '热门项目', projects: g.projects });
+  });
+  (r.new_projects ?? []).forEach((g, i) => {
+    if (!g.projects.length) return;
+    const cat = cleanCat(g.category);
+    out.push({ id: `new-${i}`, title: cat, heading: `新项目 · ${cat}`, count: g.projects.length, group: '新项目速递', projects: g.projects });
+  });
+  (r.explored ?? []).forEach((g, i) => {
+    if (!g.projects.length) return;
+    out.push({ id: `exp-${i}`, title: g.strategy, heading: `深度探索 · ${g.strategy}`, count: g.projects.length, group: '深度探索', projects: g.projects });
+  });
+  if (r.newly_discovered?.length) {
+    out.push({ id: 'fresh', title: '新发现项目', heading: '新发现项目', count: r.newly_discovered.length, group: '新发现项目', projects: r.newly_discovered });
+  }
+  return out;
+}

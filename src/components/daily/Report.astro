@@ -1,99 +1,211 @@
 ---
-// 单期日报正文：头版头条 hero + 飙升榜 + 各分区卡片流。
+// 单期日报正文：左侧粘性目录 + 右侧内容（头版头条 + 飙升榜 + 分区卡片流）。
+// 分区清单由 buildSections 统一给出，目录与正文锚点同源。
 // 由 daily/index.astro（最新一期）与 daily/[date].astro（往期）共用。
 import Board from './Board.astro';
 import RepoCard from './RepoCard.astro';
 import LangDot from './LangDot.astro';
-import { safeUrl, fmtStars, cleanCat, type Repo, type Report as ReportData } from './utils';
+import { buildSections, safeUrl, fmtStars, cleanCat, type Repo, type Report as ReportData } from './utils';
 
 interface Props { report: ReportData }
 const { report: r } = Astro.props;
+
+const sections = buildSections(r);
+const gridSections = sections.filter((s) => s.projects?.length);
+
+// 目录树：独立板块（group 与 title 相同）挂一级，成组板块收进分组
+interface TocNode { id?: string; title: string; children?: { id: string; title: string }[] }
+const toc: TocNode[] = [];
+for (const s of sections) {
+  if (!s.group || s.group === s.title) {
+    toc.push({ id: s.id, title: s.title });
+  } else {
+    let g = toc.find((t) => t.children && t.title === s.group);
+    if (!g) {
+      g = { title: s.group, children: [] };
+      toc.push(g);
+    }
+    g.children!.push({ id: s.id, title: s.title });
+  }
+}
 
 const heroUrl = r.best ? safeUrl(r.best.url) : '';
 const heroTail = r.best
   ? [cleanCat(r.best.category), r.best.created && `创建于 ${r.best.created}`].filter(Boolean).join(' · ')
   : '';
-
-// 分区定义：标题 + 项目列表，渲染为 eyebrow 标题 + 卡片网格
-const sections: { title: string; projects: Repo[] }[] = [];
-if (r.fast_growing?.length) sections.push({ title: '快速增长项目', projects: r.fast_growing });
-if (r.monthly?.length) sections.push({ title: '本月新星', projects: r.monthly });
-(r.by_category ?? []).forEach((g) => {
-  if (g.projects.length) sections.push({ title: cleanCat(g.category), projects: g.projects });
-});
-(r.new_projects ?? []).forEach((g) => {
-  if (g.projects.length) sections.push({ title: `新项目 · ${cleanCat(g.category)}`, projects: g.projects });
-});
-(r.explored ?? []).forEach((g) => {
-  if (g.projects.length) sections.push({ title: `深度探索 · ${g.strategy}`, projects: g.projects });
-});
-if (r.newly_discovered?.length) sections.push({ title: '新发现项目', projects: r.newly_discovered });
 ---
 
-{
-  r.best && (
-    <div class="hero">
-      <p class="hero-kicker">今日最佳</p>
-      <h2 class="hero-name">
-        {heroUrl
-          ? <a href={heroUrl} target="_blank" rel="noopener noreferrer"><span class="rname">{r.best!.name}</span></a>
-          : <span class="rname">{r.best!.name}</span>}
-      </h2>
-      {r.best.description && <p class="hero-desc">{r.best.description}</p>}
-      <div class="hero-foot">
-        <div class="hero-stats">
-          <span class="hstat"><b>{fmtStars(r.best.stars)}</b>总星标</span>
-          {+r.best.growth! > 0 && <span class="hstat hstat-grow"><b>+{r.best.growth}</b>今日增长</span>}
-          {heroTail && <span class="hstat hstat-quiet">{heroTail}</span>}
+<div class="daily-layout">
+  <aside class="daily-toc">
+    <p class="toc-cap">本期目录</p>
+    <nav aria-label="本期日报目录">
+      <ul class="toc-list">
+        {toc.map((t) => (
+          <li class={t.children ? 'toc-group' : 'toc-item'}>
+            {t.children ? (
+              <>
+                <span class="toc-group-name">{t.title}</span>
+                <ul>
+                  {t.children.map((c) => (
+                    <li class="toc-item toc-sub"><a href={`#${c.id}`}>{c.title}</a></li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <a href={`#${t.id}`}>{t.title}</a>
+            )}
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </aside>
+
+  <div class="daily-body">
+    {
+      r.best && (
+        <div class="hero" id="best">
+          <p class="hero-kicker">今日最佳</p>
+          <h2 class="hero-name">
+            {heroUrl
+              ? <a href={heroUrl} target="_blank" rel="noopener noreferrer"><span class="rname">{r.best!.name}</span></a>
+              : <span class="rname">{r.best!.name}</span>}
+          </h2>
+          {r.best.description && <p class="hero-desc">{r.best.description}</p>}
+          <div class="hero-foot">
+            <div class="hero-stats">
+              <span class="hstat"><b>{fmtStars(r.best.stars)}</b>总星标</span>
+              {+r.best.growth! > 0 && <span class="hstat hstat-grow"><b>+{r.best.growth}</b>今日增长</span>}
+              {heroTail && <span class="hstat hstat-quiet">{heroTail}</span>}
+            </div>
+            <LangDot language={r.best.language} />
+          </div>
         </div>
-        <LangDot language={r.best.language} />
-      </div>
-    </div>
-  )
-}
+      )
+    }
 
-{
-  r.leaderboard?.length && (
-    <>
-      <h2 class="sec"><span class="sec-name">今日飙升榜</span><span class="sec-count">{r.leaderboard.length}</span><span class="sec-rule" /></h2>
-      <Board projects={r.leaderboard} />
-    </>
-  )
-}
+    {
+      r.leaderboard?.length && (
+        <section id="board">
+          <h2 class="sec"><span class="sec-name">今日飙升榜</span><span class="sec-count">{r.leaderboard.length}</span><span class="sec-rule" /></h2>
+          <Board projects={r.leaderboard} />
+        </section>
+      )
+    }
 
-{sections.map((s) => (
-  <>
-    <h2 class="sec"><span class="sec-name">{s.title}</span><span class="sec-count">{s.projects.length}</span><span class="sec-rule" /></h2>
-    <div class="grid">{s.projects.map((p) => <RepoCard repo={p} />)}</div>
-  </>
-))}
+    {gridSections.map((s) => (
+      <section id={s.id}>
+        <h2 class="sec"><span class="sec-name">{s.heading}</span><span class="sec-count">{s.count}</span><span class="sec-rule" /></h2>
+        <div class="grid">{s.projects!.map((p: Repo) => <RepoCard repo={p} />)}</div>
+      </section>
+    ))}
 
-{!r.best && !sections.length && !r.leaderboard?.length && <p class="empty">本期暂无数据。</p>}
+    {!sections.length && <p class="empty">本期暂无数据。</p>}
+  </div>
+</div>
+
+<script>
+  // 目录滚动高亮：标记当前可见分区（与文章页目录同款逻辑）
+  (function () {
+    const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.daily-toc a[href^="#"]'));
+    if (!links.length) return;
+    const entries: { el: Element; a: HTMLAnchorElement }[] = [];
+    for (const a of links) {
+      const el = document.getElementById(decodeURIComponent(a.hash.slice(1)));
+      if (el) entries.push({ el, a });
+    }
+    if (!entries.length) return;
+
+    let ticking = false;
+    function update() {
+      ticking = false;
+      let active = entries[0].a;
+      for (const { el, a } of entries) {
+        if (el.getBoundingClientRect().top <= 140) active = a;
+      }
+      for (const { a } of entries) a.classList.toggle('active', a === active);
+    }
+    window.addEventListener('scroll', () => {
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    }, { passive: true });
+    update();
+  })();
+</script>
 
 <style>
-  /* ---- 分区标题：eyebrow 风格 + 延伸细线 ---- */
+  /* ---- 双栏布局：粘性目录 + 正文 ---- */
+  .daily-layout {
+    display: grid;
+    grid-template-columns: 11rem minmax(0, 1fr);
+    gap: 3rem;
+    align-items: start;
+  }
+  .daily-toc {
+    position: sticky;
+    top: 1.5rem;
+    max-height: calc(100vh - 3rem);
+    overflow-y: auto;
+    font-family: var(--mono);
+    font-size: 12.5px;
+  }
+  .toc-cap {
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin: 0 0 .7rem;
+  }
+  .toc-list { list-style: none; margin: 0; padding: 0; }
+  .toc-group-name {
+    display: block;
+    color: var(--ink);
+    font-weight: 600;
+    margin: .8rem 0 .35rem;
+  }
+  .toc-group:first-child .toc-group-name { margin-top: 0; }
+  .toc-item { margin: .3rem 0; }
+  .toc-item a { color: var(--dim); transition: color var(--dur-fast) var(--ease); }
+  .toc-item a:hover, .toc-item a.active { color: var(--accent); }
+  .toc-sub { padding-left: .85rem; }
+
+  @media (max-width: 1100px) {
+    .daily-layout { grid-template-columns: minmax(0, 1fr); }
+    .daily-toc { display: none; }
+  }
+
+  /* ---- 分区标题：衬线大标题 + 色块记号，比旧版 eyebrow 小字醒目 ---- */
   .sec {
     display: flex;
     align-items: center;
-    gap: .6rem;
-    margin: 2.4rem 0 1rem;
+    gap: .7rem;
+    margin: 2.6rem 0 1.05rem;
+    scroll-margin-top: 1.5rem;
   }
   .sec-name {
-    font-family: var(--mono);
-    font-size: 12px;
+    font-family: var(--serif);
     font-weight: 600;
-    letter-spacing: .18em;
-    text-transform: uppercase;
+    font-size: 1.16rem;
+    line-height: 1.35;
+    letter-spacing: .01em;
     color: var(--ink);
+  }
+  .sec-name::before {
+    content: "";
+    display: inline-block;
+    width: .5rem;
+    height: .5rem;
+    border-radius: 2px;
+    background: var(--accent);
+    margin-right: .55rem;
+    vertical-align: .14em;
   }
   .sec-count {
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: 11.5px;
     font-weight: 500;
     color: var(--accent);
     background: var(--accent-soft);
     border-radius: 999px;
-    padding: .1rem .55rem;
+    padding: .12rem .6rem;
   }
   .sec-rule { flex: 1; height: 1px; background: var(--rule); }
 
@@ -104,6 +216,7 @@ if (r.newly_discovered?.length) sections.push({ title: '新发现项目', projec
     border-radius: 12px;
     padding: 1.4rem 1.6rem 1.3rem;
     background: var(--accent-soft);
+    scroll-margin-top: 1.5rem;
   }
   .hero-kicker {
     font-family: var(--mono);

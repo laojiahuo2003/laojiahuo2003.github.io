@@ -38,7 +38,8 @@ const older = reports[index + 1] ? `/daily/${reports[index + 1].date}/` : null;
 </Base>
 
 <style is:global>
-  /* 日报是期刊排版而非正文，比文章页宽，容纳榜单与双栏卡片 */
-  body.daily-page .wrap { max-width: 60rem; }
+  /* 日报是期刊排版而非正文，比文章页宽：宽屏容纳左侧目录 + 榜单与双栏卡片 */
+  body.daily-page .wrap { max-width: 74rem; }
+  @media (max-width: 1100px) { body.daily-page .wrap { max-width: 60rem; } }
   @media (max-width: 900px) { body.daily-page .wrap { max-width: 42rem; } }
 </style>
