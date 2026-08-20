@@ -1,7 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import Starmap from '../components/Starmap.astro';
 import PostsSidebar from '../components/PostsSidebar.astro';
 import PostList from '../components/PostList.astro';
 
@@ -10,11 +9,8 @@ const posts = await getCollection('blog');
 
 <Base title="Jiahuo Lao 的手记" bodyClass="list-page">
   <header slot="header" class="home-header">
-    <div>
-      <p class="eyebrow">AI Infra · LLM · Agent · 具身智能</p>
-      <h1>Jiahuo Lao 的手记</h1>
-    </div>
-    <Starmap />
+    <p class="eyebrow">AI Infra · LLM · Agent · 具身智能</p>
+    <h1>Jiahuo Lao 的手记</h1>
   </header>
 
   <div class="posts-layout">
