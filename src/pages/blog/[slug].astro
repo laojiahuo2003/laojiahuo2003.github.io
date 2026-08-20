@@ -73,12 +73,16 @@ const relatedList = hasRelated
   <article>
     <header class="article-header">
       <a class="back" id="back-link" href="/">← 返回列表</a>
+      {post.data.tags.length > 0 && (
+        <p class="article-tags">
+          {post.data.tags.map((t) => <a class="tag" href={`/tags/${t}/`}>{t}</a>)}
+        </p>
+      )}
       <h1>{post.data.title}</h1>
       <p class="article-meta">
         <time datetime={post.data.pubDate.toISOString().slice(0, 10)}>{dateStr}</time>
         <span aria-hidden="true"> · </span>
         <span>{readingMinutes} 分钟 · {wordCount} 字</span>
-        {post.data.tags.map((t) => <a class="tag" href={`/tags/${t}/`}>{t}</a>)}
       </p>
     </header>
 
