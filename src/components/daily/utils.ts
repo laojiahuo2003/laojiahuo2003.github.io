@@ -89,24 +89,6 @@ export function growOf(r: Repo): number {
   return +r.growth > 0 ? +r.growth : +r.weekly_growth > 0 ? +r.weekly_growth : 0;
 }
 
-// 整期统计：项目总数与分区数（报头 statline 用）
-export function reportStats(r: Report): { total: number; sections: number } {
-  let total = 0;
-  let sections = 0;
-  const add = (projects?: Repo[]) => {
-    if (projects?.length) { total += projects.length; sections++; }
-  };
-  if (r.best) { total += 1; sections++; }
-  add(r.leaderboard);
-  add(r.fast_growing);
-  add(r.monthly);
-  (r.by_category ?? []).forEach((g) => add(g.projects));
-  (r.new_projects ?? []).forEach((g) => add(g.projects));
-  (r.explored ?? []).forEach((g) => add(g.projects));
-  add(r.newly_discovered);
-  return { total, sections };
-}
-
 // 分区清单：正文渲染与侧栏目录同源，id 用作锚点。
 // group 与 title 相同视为独立板块（目录里直接挂一级），否则收进分组。
 export interface DailySection {

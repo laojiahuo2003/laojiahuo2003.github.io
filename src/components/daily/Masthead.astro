@@ -1,50 +1,25 @@
 ---
-// 期刊式报头：期号 + 衬线大字日期 + 项目/分区统计条
-import { fmtDate, issueNo, reportStats, type Report } from './utils';
+// 期刊式报头：衬线大字日期
+import { fmtDate, type Report } from './utils';
 
 interface Props { report: Report }
 const { report } = Astro.props;
-const { total, sections } = reportStats(report);
-const no = issueNo(report.date);
 ---
 
 <header class="masthead">
-  <span class="issue-no">ISSUE #{no}</span>
   <h1 class="masthead-date">{fmtDate(report.date)}</h1>
-  <p class="statline">共 <b>{total}</b> 个项目 · <b>{sections}</b> 个分区</p>
 </header>
 
 <style>
   .masthead { margin-bottom: 2.75rem; }
-  .issue-no {
-    display: block;
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: .18em;
-    color: var(--faint);
-    white-space: nowrap;
-    margin: 0 0 .6rem;
-  }
   .masthead-date {
     font-family: var(--serif);
     font-weight: 600;
     font-size: 2.15rem;
     line-height: 1.2;
     letter-spacing: .01em;
-    margin: 0 0 .7rem;
-    text-wrap: balance;
-  }
-  .statline {
     margin: 0;
-    color: var(--dim);
-    font-size: .92rem;
-    padding-top: .8rem;
-    border-top: 1px solid var(--rule);
-  }
-  .statline b {
-    font-family: var(--mono);
-    font-weight: 600;
-    color: var(--ink);
+    text-wrap: balance;
   }
 
   @media (max-width: 720px) {
