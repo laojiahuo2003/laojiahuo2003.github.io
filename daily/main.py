@@ -9,7 +9,7 @@ from fetchers.trending import fetch_all_trending
 from notifiers.wechat import send_daily_report
 from history_tracker import record_repos, get_fast_growing_repos, get_newly_discovered_repos
 from categorizer import categorize_repo, group_by_category
-from feed import generate_index, generate_rss, generate_json_index
+from feed import generate_index, generate_rss, generate_json_index, prune_old_reports
 
 
 def format_created_date(repo: Dict) -> str:
@@ -401,6 +401,7 @@ def main():
     save_report_json(report_data)
 
     print("\nGenerating report index, RSS and JSON feeds...")
+    prune_old_reports(REPORTS_DIR, keep_days=30)
     generate_index(REPORTS_DIR)
     generate_rss(REPORTS_DIR)
     generate_json_index(REPORTS_DIR)

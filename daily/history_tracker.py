@@ -50,13 +50,21 @@ def record_repos(repos: List[Dict]):
 
 def clean_old_history(history: Dict, keep_days: int = 30):
     cutoff_date = (datetime.now() - timedelta(days=keep_days)).strftime("%Y-%m-%d")
-    
-    for repo_name, repo_data in history.items():
+
+    for repo_name in list(history.keys()):
+        repo_data = history[repo_name]
         stars_history = repo_data.get("stars_history", {})
-        repo_data["stars_history"] = {
+        pruned = {
             date: stars for date, stars in stars_history.items()
             if date >= cutoff_date
         }
+        # 整条仓库记录：超过 keep_days 未再见到就整体删除，文件不再无限膨胀
+        # （旧数据可能缺 last_seen，退回用星标记录里最近的日期判断）
+        last_seen = repo_data.get("last_seen") or (max(pruned) if pruned else "")
+        if last_seen < cutoff_date:
+            del history[repo_name]
+            continue
+        repo_data["stars_history"] = pruned
 
 def calculate_growth(repo_name: str, history: Dict) -> Dict:
     if repo_name not in history:

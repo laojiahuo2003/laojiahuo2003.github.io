@@ -1,7 +1,7 @@
 import json
 import os
 import re
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from xml.sax.saxutils import escape
 
 REPO_URL = "https://github.com/laojiahuo2003/laojiahuo2003.github.io"
@@ -9,6 +9,21 @@ RSS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "feed.xml")
 # feed.json 输出到博客源码数据目录，构建时由 Astro 读取渲染日报页
 JSON_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src", "data", "feed.json")
 INDEX_HEADER = "# 📜 历史报告索引\n\n> 每日 09:00 / 18:00（北京时间）自动更新 · [RSS 订阅](../feed.xml)\n\n"
+
+
+def prune_old_reports(reports_dir: str, keep_days: int = 30) -> int:
+    """删除超过 keep_days 的历史报告文件（md/json），仓库只维护最近 30 天"""
+    cutoff = (datetime.now() - timedelta(days=keep_days)).strftime("%Y-%m-%d")
+    removed = 0
+    if not os.path.isdir(reports_dir):
+        return 0
+    for f in os.listdir(reports_dir):
+        if re.match(r"\d{4}-\d{2}-\d{2}_\d{2}-\d{2}\.(md|json)$", f) and f[:10] < cutoff:
+            os.remove(os.path.join(reports_dir, f))
+            removed += 1
+    if removed:
+        print(f"Pruned {removed} report file(s) older than {keep_days} days")
+    return removed
 
 
 def list_report_files(reports_dir: str) -> list:
