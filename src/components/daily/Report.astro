@@ -110,26 +110,33 @@ const heroTail = r.best
 </div>
 
 <script>
-  // 窄屏目录默认收起（展开会把正文推出首屏），与文章页目录同策略
-  const tocBox = document.querySelector('.daily-toc details');
-  if (tocBox && matchMedia('(max-width: 1100px)').matches) {
-    tocBox.removeAttribute('open');
-  }
+  // 视图过渡（ClientRouter）整体换文档：初始化挂 astro:page-load，
+  // window 级监听用 AbortController 在离开页面时清理，避免跨页累积
+  let dailyCleanup: (() => void) | null = null;
+  document.addEventListener('astro:before-swap', () => { dailyCleanup?.(); dailyCleanup = null; });
 
-  // 组名点击收起/展开（滚动到别的分区时联动逻辑会重新同步）
-  document.querySelectorAll<HTMLButtonElement>('.daily-toc .toc-group-name').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const g = btn.closest('.toc-group');
-      if (!g) return;
-      const collapsed = g.classList.toggle('collapsed');
-      btn.setAttribute('aria-expanded', String(!collapsed));
+  document.addEventListener('astro:page-load', () => {
+    const aside = document.querySelector('.daily-toc');
+    if (!aside) return; // 非日报页
+
+    // 窄屏目录默认收起（展开会把正文推出首屏），与文章页目录同策略
+    const tocBox = aside.querySelector('details');
+    if (tocBox && matchMedia('(max-width: 1100px)').matches) {
+      tocBox.removeAttribute('open');
+    }
+
+    // 组名点击收起/展开（滚动到别的分区时联动逻辑会重新同步）
+    aside.querySelectorAll<HTMLButtonElement>('.toc-group-name').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const g = btn.closest('.toc-group');
+        if (!g) return;
+        const collapsed = g.classList.toggle('collapsed');
+        btn.setAttribute('aria-expanded', String(!collapsed));
+      });
     });
-  });
 
-  // 目录滚动高亮 + 自动跟随：当前分区项高亮并平滑滚到面板中部（滚动条隐藏，随页面联动）
-  (function () {
-    const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.daily-toc a[href^="#"]'));
-    if (!links.length) return;
+    // 目录滚动高亮 + 自动跟随：当前分区项高亮并平滑滚到面板中部（滚动条隐藏，随页面联动）
+    const links = Array.from(aside.querySelectorAll<HTMLAnchorElement>('a[href^="#"]'));
     const entries: { el: Element; a: HTMLAnchorElement }[] = [];
     for (const a of links) {
       const el = document.getElementById(decodeURIComponent(a.hash.slice(1)));
@@ -138,8 +145,7 @@ const heroTail = r.best
     if (!entries.length) return;
 
     // 滚动容器随断点变化：宽屏(≥1520)是 .toc-box，其余是 .daily-toc；列表放得下则无需跟随
-    const aside = document.querySelector('.daily-toc');
-    const box = aside?.querySelector('details') ?? null;
+    const box = aside.querySelector('details');
     const scrollerOf = (): HTMLElement | null => {
       for (const el of [box, aside]) {
         if (el && (el as HTMLElement).scrollHeight > (el as HTMLElement).clientHeight + 4) return el as HTMLElement;
@@ -160,7 +166,7 @@ const heroTail = r.best
       last = active;
       // 手风琴：自动展开当前分区所在组，收起其他组（概览常在，联动更有方向感）
       const activeGroup = active.closest('.toc-group');
-      document.querySelectorAll('.daily-toc .toc-group').forEach((g) => {
+      aside.querySelectorAll('.toc-group').forEach((g) => {
         const on = g === activeGroup;
         g.classList.toggle('collapsed', !on);
         g.querySelector('.toc-group-name')?.setAttribute('aria-expanded', String(on));
@@ -172,11 +178,13 @@ const heroTail = r.best
         - sc.clientHeight / 2 + active.offsetHeight / 2;
       sc.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
     }
+    const ac = new AbortController();
     window.addEventListener('scroll', () => {
       if (!ticking) { ticking = true; requestAnimationFrame(update); }
-    }, { passive: true });
+    }, { passive: true, signal: ac.signal });
+    dailyCleanup = () => ac.abort();
     update();
-  })();
+  });
 </script>
 
 <style>

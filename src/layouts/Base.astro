@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
 
 interface Props {
   title: string;
@@ -41,7 +42,9 @@ const ogImage = new URL('/og.png', site).href;
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#101312" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <script is:inline>
+    <ClientRouter />
+    <!-- data-astro-rerun：客户端导航换文档后重跑，立即恢复主题避免闪错色 -->
+    <script is:inline data-astro-rerun>
       (function () {
         try {
           var t = localStorage.getItem('theme');
@@ -76,45 +79,56 @@ const ogImage = new URL('/og.png', site).href;
       </footer>
     </div>
     <script>
-      // 宽表格包一层横向滚动容器，窄屏不挤压换行
-      document.querySelectorAll('.prose table').forEach((tb) => {
-        const wrap = document.createElement('div');
-        wrap.className = 'table-scroll';
-        tb.parentNode!.insertBefore(wrap, tb);
-        wrap.appendChild(tb);
+      // 客户端导航前记录当前路径：文章页「返回标签/分类」链接依赖它
+      // （视图过渡不更新 document.referrer）
+      document.addEventListener('astro:before-preparation', () => {
+        try { sessionStorage.setItem('lastPath', location.pathname); } catch (e) {}
       });
 
-      // 为每个代码块加一个「复制」按钮（纯客户端，无依赖）
-      document.querySelectorAll('pre').forEach((pre) => {
-        if (pre.parentElement?.classList.contains('code-block')) return;
-        const wrap = document.createElement('div');
-        wrap.className = 'code-block';
-        pre.parentNode!.insertBefore(wrap, pre);
-        wrap.appendChild(pre);
+      // astro:page-load 在首次加载与每次客户端导航后都触发——
+      // 视图过渡会整体换文档，DOM 增强必须挂在这个生命周期上（见 ClientRouter）
+      document.addEventListener('astro:page-load', () => {
+        // 宽表格包一层横向滚动容器，窄屏不挤压换行
+        document.querySelectorAll('.prose table').forEach((tb) => {
+          if (tb.parentElement?.classList.contains('table-scroll')) return;
+          const wrap = document.createElement('div');
+          wrap.className = 'table-scroll';
+          tb.parentNode!.insertBefore(wrap, tb);
+          wrap.appendChild(tb);
+        });
 
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'copy-btn';
-        btn.textContent = '复制';
-        btn.setAttribute('aria-label', '复制代码');
-        wrap.appendChild(btn);
+        // 为每个代码块加一个「复制」按钮（纯客户端，无依赖）
+        document.querySelectorAll('pre').forEach((pre) => {
+          if (pre.parentElement?.classList.contains('code-block')) return;
+          const wrap = document.createElement('div');
+          wrap.className = 'code-block';
+          pre.parentNode!.insertBefore(wrap, pre);
+          wrap.appendChild(pre);
 
-        btn.addEventListener('click', async () => {
-          const text = pre.querySelector('code')?.textContent ?? pre.textContent ?? '';
-          try {
-            await navigator.clipboard.writeText(text);
-          } catch {
-            const ta = document.createElement('textarea');
-            ta.value = text;
-            ta.style.position = 'fixed';
-            ta.style.opacity = '0';
-            document.body.appendChild(ta);
-            ta.select();
-            document.execCommand('copy');
-            ta.remove();
-          }
-          btn.textContent = '已复制';
-          setTimeout(() => (btn.textContent = '复制'), 2000);
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'copy-btn';
+          btn.textContent = '复制';
+          btn.setAttribute('aria-label', '复制代码');
+          wrap.appendChild(btn);
+
+          btn.addEventListener('click', async () => {
+            const text = pre.querySelector('code')?.textContent ?? pre.textContent ?? '';
+            try {
+              await navigator.clipboard.writeText(text);
+            } catch {
+              const ta = document.createElement('textarea');
+              ta.value = text;
+              ta.style.position = 'fixed';
+              ta.style.opacity = '0';
+              document.body.appendChild(ta);
+              ta.select();
+              document.execCommand('copy');
+              ta.remove();
+            }
+            btn.textContent = '已复制';
+            setTimeout(() => (btn.textContent = '复制'), 2000);
+          });
         });
       });
     </script>
@@ -122,7 +136,6 @@ const ogImage = new URL('/og.png', site).href;
       // 主题切换：跟随系统 → 亮 → 暗 循环，图标 + aria-label 同步，持久化到 localStorage
       (function () {
         const html = document.documentElement;
-        const btn = document.getElementById('theme-toggle');
         const ORDER = ['system', 'light', 'dark'];
         const LABEL = { system: '跟随系统', light: '亮色', dark: '暗色' };
         const ICONS = {
@@ -136,6 +149,7 @@ const ogImage = new URL('/og.png', site).href;
           if (t === 'system') delete html.dataset.theme;
           else html.dataset.theme = t;
           try { localStorage.setItem('theme', t); } catch (e) {}
+          const btn = document.getElementById('theme-toggle');
           if (btn) {
             btn.innerHTML = ICONS[t];
             const label = '主题：' + LABEL[t] + '（点击切换）';
@@ -144,10 +158,13 @@ const ogImage = new URL('/og.png', site).href;
           }
         }
 
-        apply(current());
-        btn && btn.addEventListener('click', () => {
-          const i = ORDER.indexOf(current());
-          apply(ORDER[(i + 1) % ORDER.length]);
+        // 视图过渡换文档后按钮是新元素，需要重新绑定
+        document.addEventListener('astro:page-load', () => {
+          apply(current());
+          document.getElementById('theme-toggle')?.addEventListener('click', () => {
+            const i = ORDER.indexOf(current());
+            apply(ORDER[(i + 1) % ORDER.length]);
+          });
         });
       })();
     </script>

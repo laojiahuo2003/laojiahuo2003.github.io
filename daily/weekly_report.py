@@ -34,13 +34,13 @@ def load_history():
         return json.load(f)
 
 
-def build_language_map():
-    """从近期日报 JSON 聚合 name -> language（历史文件不存语言）"""
-    langs = {}
+def build_repo_info():
+    """从近期日报 JSON 聚合 name -> language/description（历史文件只存星标轨迹）"""
+    langs, descs = {}, {}
     try:
         files = sorted(f for f in os.listdir(REPORTS_DIR) if f.endswith(".json"))
     except OSError:
-        return langs
+        return langs, descs
     for fn in files[-14:]:  # 最近 7 天（每天 2 份）
         try:
             with open(os.path.join(REPORTS_DIR, fn), encoding="utf-8") as f:
@@ -51,14 +51,19 @@ def build_language_map():
         for g in (rep.get("by_category") or []) + (rep.get("new_projects") or []) + (rep.get("explored") or []):
             pools += g.get("projects") or []
         for p in pools:
-            if p.get("name") and p.get("language"):
+            if not p.get("name"):
+                continue
+            if p.get("language"):
                 langs[p["name"]] = p["language"]
-    return langs
+            d = (p.get("description") or "").strip()
+            if d:
+                descs[p["name"]] = d
+    return langs, descs
 
 
 def analyze():
     history = load_history()
-    lang_map = build_language_map()
+    lang_map, desc_map = build_repo_info()
 
     all_dates = sorted({d for r in history.values() for d in r.get("stars_history", {})})
     if not all_dates:
@@ -96,6 +101,7 @@ def analyze():
             "days_seen": days_seen,
             "language": lang_map.get(name, ""),
             "first_seen": first_seen,
+            "description": desc_map.get(name, ""),
         }
 
         if growth >= DARKHORSE_MIN_GROWTH and days_seen >= min_days:

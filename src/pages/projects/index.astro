@@ -155,55 +155,64 @@ const rendered = await Promise.all(
 </style>
 
 <script>
-  // 滚动入场：进入视口后上浮显现（reduced-motion 时 CSS 已禁用，直接标记）
-  const cards = document.querySelectorAll<HTMLElement>('.prj');
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduced) {
-    // 动画被系统禁用：不挂 .anim，内容直接可见
-  } else {
-    cards.forEach((c) => c.classList.add('anim'));
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting) {
-          (e.target as HTMLElement).classList.add('in');
-          io.unobserve(e.target);
-        }
+  // 视图过渡（ClientRouter）换文档后重新初始化；离开页面时断开观察器
+  let prjCleanup: (() => void) | null = null;
+  document.addEventListener('astro:before-swap', () => { prjCleanup?.(); prjCleanup = null; });
+
+  document.addEventListener('astro:page-load', () => {
+    const cards = Array.from(document.querySelectorAll<HTMLElement>('.prj'));
+    if (!cards.length) return; // 非项目页
+
+    // 滚动入场：进入视口后上浮显现（reduced-motion 时 CSS 已禁用，直接标记）
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) {
+      // 动画被系统禁用：不挂 .anim，内容直接可见
+    } else {
+      cards.forEach((c) => c.classList.add('anim'));
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            (e.target as HTMLElement).classList.add('in');
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      cards.forEach((c) => io.observe(c));
+      prjCleanup = () => io.disconnect();
+    }
+
+    // 鼠标跟随光晕：把指针位置写进 CSS 变量
+    cards.forEach((c) => {
+      c.addEventListener('pointermove', (e) => {
+        const b = c.getBoundingClientRect();
+        c.style.setProperty('--mx', `${e.clientX - b.left}px`);
+        c.style.setProperty('--my', `${e.clientY - b.top}px`);
       });
-    }, { threshold: 0.12 });
-    cards.forEach((c) => io.observe(c));
-  }
-
-  // 鼠标跟随光晕：把指针位置写进 CSS 变量
-  cards.forEach((c) => {
-    c.addEventListener('pointermove', (e) => {
-      const b = c.getBoundingClientRect();
-      c.style.setProperty('--mx', `${e.clientX - b.left}px`);
-      c.style.setProperty('--my', `${e.clientY - b.top}px`);
     });
-  });
 
-  // 一键复制简历文案（纯文本，与代码块复制同源的降级策略）
-  document.querySelectorAll<HTMLButtonElement>('.prj-copy').forEach((btn) => {
-    btn.addEventListener('click', async () => {
-      const text = btn.dataset.resume ?? '';
-      try {
-        await navigator.clipboard.writeText(text);
-      } catch {
-        const ta = document.createElement('textarea');
-        ta.value = text;
-        ta.style.position = 'fixed';
-        ta.style.opacity = '0';
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        ta.remove();
-      }
-      btn.textContent = '已复制';
-      btn.classList.add('ok');
-      setTimeout(() => {
-        btn.textContent = '复制';
-        btn.classList.remove('ok');
-      }, 2000);
+    // 一键复制简历文案（纯文本，与代码块复制同源的降级策略）
+    document.querySelectorAll<HTMLButtonElement>('.prj-copy').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const text = btn.dataset.resume ?? '';
+        try {
+          await navigator.clipboard.writeText(text);
+        } catch {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          ta.remove();
+        }
+        btn.textContent = '已复制';
+        btn.classList.add('ok');
+        setTimeout(() => {
+          btn.textContent = '复制';
+          btn.classList.remove('ok');
+        }, 2000);
+      });
     });
   });
 </script>

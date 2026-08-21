@@ -23,10 +23,10 @@
   --sp-12: 48px;
   --sp-16: 64px;
   --sp-18: 72px;
-  /* 动效节奏 */
+  /* 动效节奏：easeOutQuint 起步快收尾长，是全站「丝滑」手感的来源 */
   --dur-fast: 150ms;
   --dur: 250ms;
-  --ease: cubic-bezier(.22, .61, .36, 1);
+  --ease: cubic-bezier(.22, 1, .36, 1);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -64,8 +64,20 @@ body {
   font-size: 15px;
   line-height: 1.75;
   -webkit-font-smoothing: antialiased;
+  /* 主题切换时颜色柔和过渡（data-theme 在首帧前设置，不会引发加载闪动） */
+  transition: background-color .35s var(--ease), color .35s var(--ease);
 }
 ::selection { background: var(--accent-soft); }
+
+/* ============ 视图过渡：页面切换交叉淡入 + 轻微上浮 ============ */
+::view-transition-old(root) { animation: vt-out .16s cubic-bezier(.4, 0, 1, 1) both; }
+::view-transition-new(root) { animation: vt-in .3s var(--ease) both; }
+@keyframes vt-out { to { opacity: 0; } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(6px); } }
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation: none; }
+}
 
 a { color: var(--ink); text-decoration: none; }
 a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }

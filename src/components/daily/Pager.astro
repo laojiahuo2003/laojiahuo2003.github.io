@@ -22,15 +22,24 @@ const { date, total, newer, older } = Astro.props;
 </div>
 
 <script>
-  // 键盘翻期：← 上一期（较新），→ 下一期（较旧）
-  const newer = document.getElementById('pager-newer');
-  const older = document.getElementById('pager-older');
-  document.addEventListener('keydown', (e) => {
-    if (e.altKey || e.metaKey || e.ctrlKey) return;
-    const t = e.target as HTMLElement;
-    if (t && /^(input|textarea|select)$/i.test(t.tagName)) return;
-    if (e.key === 'ArrowLeft' && newer) location.href = (newer as HTMLAnchorElement).href;
-    else if (e.key === 'ArrowRight' && older) location.href = (older as HTMLAnchorElement).href;
+  // 键盘翻期：← 上一期（较新），→ 下一期（较旧）。
+  // 视图过渡换文档后重绑；离开日报页时清理，避免监听跨页累积
+  let keyCleanup: (() => void) | null = null;
+  document.addEventListener('astro:before-swap', () => { keyCleanup?.(); keyCleanup = null; });
+
+  document.addEventListener('astro:page-load', () => {
+    const newer = document.getElementById('pager-newer');
+    const older = document.getElementById('pager-older');
+    if (!newer && !older) return; // 非日报页
+    const onKey = (e: KeyboardEvent) => {
+      if (e.altKey || e.metaKey || e.ctrlKey) return;
+      const t = e.target as HTMLElement;
+      if (t && /^(input|textarea|select)$/i.test(t.tagName)) return;
+      if (e.key === 'ArrowLeft' && newer) location.href = (newer as HTMLAnchorElement).href;
+      else if (e.key === 'ArrowRight' && older) location.href = (older as HTMLAnchorElement).href;
+    };
+    document.addEventListener('keydown', onKey);
+    keyCleanup = () => document.removeEventListener('keydown', onKey);
   });
 </script>
 

@@ -15,7 +15,8 @@
           "growth": 8500,
           "days_seen": 2,
           "language": "TypeScript",
-          "first_seen": "2026-08-19"
+          "first_seen": "2026-08-19",
+          "description": "DeepSeek Harness: Everything is a Plugin."
         },
         {
           "name": "harry0703/MoneyPrinterTurbo",
@@ -24,7 +25,8 @@
           "growth": 3230,
           "days_seen": 2,
           "language": "Python",
-          "first_seen": "2026-08-19"
+          "first_seen": "2026-08-19",
+          "description": "利用 AI 大模型和自动化工作流，根据主题或关键词一键生成高清短视频。Generate HD short videos from a topic or keyword with an automated AI workflow."
         },
         {
           "name": "mattpocock/skills",
@@ -33,7 +35,8 @@
           "growth": 2571,
           "days_seen": 2,
           "language": "Shell",
-          "first_seen": "2026-08-19"
+          "first_seen": "2026-08-19",
+          "description": "Skills for Real Engineers. Straight from my .agents directory."
         },
         {
           "name": "anywhere-labs/deepseek-harness-desktop",
@@ -42,7 +45,8 @@
           "growth": 1921,
           "days_seen": 2,
           "language": "TypeScript",
-          "first_seen": "2026-08-19"
+          "first_seen": "2026-08-19",
+          "description": "为 DeepSeek Harness (DSH) 插件生态打造的现代化桌面端解决方案。万物皆「插件」，桌面本身也是「插件」。"
         },
         {
           "name": "public-apis/public-apis",
@@ -51,7 +55,8 @@
           "growth": 1669,
           "days_seen": 2,
           "language": "Python",
-          "first_seen": "2026-08-19"
+          "first_seen": "2026-08-19",
+          "description": "A collective list of free APIs"
         },
         {
           "name": "cathrynlavery/diagram-design",
@@ -60,7 +65,8 @@
           "growth": 1659,
           "days_seen": 2,
           "language": "HTML",
-          "first_seen": "2026-08-19"
+          "first_seen": "2026-08-19",
+          "description": "38 editorial diagram types for Claude Code, Codex, and Pi. Self-contained HTML + SVG. No shadows. No Mermaid slop."
         },
         {
           "name": "s1dashu/ip-as-logo-skill",
@@ -69,7 +75,8 @@
           "growth": 1526,
           "days_seen": 2,
           "language": "",
-          "first_seen": "2026-08-19"
+          "first_seen": "2026-08-19",
+          "description": "A compact Agent Skill for highly simplified, rounded, subtly neo-skeuomorphic IP mascot logos."
         },
         {
           "name": "awesome-dsh-plugin/awesome-dsh-plugin",
@@ -78,7 +85,8 @@
           "growth": 1098,
           "days_seen": 2,
           "language": "Python",
-          "first_seen": "2026-08-19"
+          "first_seen": "2026-08-19",
+          "description": "A curated list of plugins for DeepSeek Harness (dsh) · DeepSeek Harness 插件精选列表"
         },
         {
           "name": "volcengine/OpenViking",
@@ -87,7 +95,8 @@
           "growth": 1092,
           "days_seen": 2,
           "language": "Python",
-          "first_seen": "2026-04-02"
+          "first_seen": "2026-04-02",
+          "description": "Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills."
         },
         {
           "name": "stablyai/orca",
@@ -105,7 +114,8 @@
           "growth": 968,
           "days_seen": 2,
           "language": "Python",
-          "first_seen": "2026-08-19"
+          "first_seen": "2026-08-19",
+          "description": "Strip multi-vendor AI provenance marks: Unicode text hygiene, statistical rewrite hooks, and C2PA/metadata from PNG/JPEG/SVG/PDF/DOCX/HTML/MD"
         },
         {
           "name": "diegosouzapw/OmniRoute",
@@ -123,7 +133,8 @@
           "growth": 808,
           "days_seen": 2,
           "language": "Python",
-          "first_seen": "2026-08-19"
+          "first_seen": "2026-08-19",
+          "description": "817 structured cybersecurity skills for AI agents · Mapped to 6 frameworks: MITRE ATT&CK, NIST CSF 2.0, MITRE ATLAS, D3FEND, NIST AI RMF & MITRE F3 (Fight Fraud) · agentskills.io standard · Works with Claude Code, GitHub Copilot, Codex CLI, Cursor, Gemini CLI & 20+ platforms · 29 security domains · Apache 2.0"
         },
         {
           "name": "earendil-works/pi",
@@ -141,7 +152,8 @@
           "growth": 685,
           "days_seen": 2,
           "language": "TypeScript",
-          "first_seen": "2026-08-19"
+          "first_seen": "2026-08-19",
+          "description": "local multi-agent harness"
         }
       ],
       "onedayers": [],
@@ -153,7 +165,8 @@
           "growth": 1669,
           "days_seen": 2,
           "language": "Python",
-          "first_seen": "2026-08-19"
+          "first_seen": "2026-08-19",
+          "description": "A collective list of free APIs"
         },
         {
           "name": "mattpocock/skills",
@@ -162,7 +175,8 @@
           "growth": 2571,
           "days_seen": 2,
           "language": "Shell",
-          "first_seen": "2026-08-19"
+          "first_seen": "2026-08-19",
+          "description": "Skills for Real Engineers. Straight from my .agents directory."
         },
         {
           "name": "deepseek-ai/deepseek-harness",
@@ -171,7 +185,8 @@
           "growth": 8500,
           "days_seen": 2,
           "language": "TypeScript",
-          "first_seen": "2026-08-19"
+          "first_seen": "2026-08-19",
+          "description": "DeepSeek Harness: Everything is a Plugin."
         },
         {
           "name": "harry0703/MoneyPrinterTurbo",
@@ -180,7 +195,8 @@
           "growth": 3230,
           "days_seen": 2,
           "language": "Python",
-          "first_seen": "2026-08-19"
+          "first_seen": "2026-08-19",
+          "description": "利用 AI 大模型和自动化工作流，根据主题或关键词一键生成高清短视频。Generate HD short videos from a topic or keyword with an automated AI workflow."
         },
         {
           "name": "earendil-works/pi",
@@ -207,7 +223,8 @@
           "growth": 320,
           "days_seen": 2,
           "language": "Python",
-          "first_seen": "2026-08-19"
+          "first_seen": "2026-08-19",
+          "description": "Local UI to run and train LLMs and diffusion models, including Qwen3.8, Kimi K3, MiniMax-H3, Gemma 4, DeepSeek-V4, FLUX and more."
         },
         {
           "name": "microsoft/AI-For-Beginners",
@@ -216,7 +233,8 @@
           "growth": 295,
           "days_seen": 2,
           "language": "Jupyter Notebook",
-          "first_seen": "2026-08-19"
+          "first_seen": "2026-08-19",
+          "description": "12 Weeks, 24 Lessons, AI for All!..."
         },
         {
           "name": "diegosouzapw/OmniRoute",

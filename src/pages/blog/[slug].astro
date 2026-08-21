@@ -132,36 +132,45 @@ const relatedList = hasRelated
 </Base>
 
 <script>
-  // 若从标签页/分类页进入，返回链接指回来源页
-  const back = document.getElementById('back-link');
-  if (back && document.referrer) {
-    try {
-      const u = new URL(document.referrer);
-      if (u.pathname.startsWith('/tags/')) {
-        back.href = u.pathname;
+  // 视图过渡（ClientRouter）换文档后重跑；window 级监听离开页面时清理
+  let artCleanup: (() => void) | null = null;
+  document.addEventListener('astro:before-swap', () => { artCleanup?.(); artCleanup = null; });
+
+  document.addEventListener('astro:page-load', () => {
+    // 返回链接：客户端导航不更新 document.referrer，优先用导航前记录的上一页（见 Base 布局）
+    const back = document.getElementById('back-link');
+    if (back) {
+      let prev = '';
+      try { prev = sessionStorage.getItem('lastPath') ?? ''; } catch {}
+      if (prev.startsWith('/tags/')) {
+        back.href = prev;
         back.textContent = '← 返回标签';
-      } else if (u.pathname.startsWith('/cat/')) {
-        back.href = u.pathname;
+      } else if (prev.startsWith('/cat/')) {
+        back.href = prev;
         back.textContent = '← 返回分类';
+      } else if (document.referrer) {
+        try {
+          const u = new URL(document.referrer);
+          if (u.pathname.startsWith('/tags/')) {
+            back.href = u.pathname;
+            back.textContent = '← 返回标签';
+          } else if (u.pathname.startsWith('/cat/')) {
+            back.href = u.pathname;
+            back.textContent = '← 返回分类';
+          }
+        } catch {}
       }
-    } catch {}
-  }
-</script>
+    }
 
-<script>
-  // 移动端目录默认收起：窄屏下目录置顶且展开会把正文推出首屏
-  const tocDetails = document.querySelector('.toc');
-  if (tocDetails && matchMedia('(max-width: 900px)').matches) {
-    tocDetails.removeAttribute('open');
-  }
-</script>
+    // 移动端目录默认收起：窄屏下目录置顶且展开会把正文推出首屏
+    const tocDetails = document.querySelector('.toc');
+    if (tocDetails && matchMedia('(max-width: 900px)').matches) {
+      tocDetails.removeAttribute('open');
+    }
 
-<script>
-  // 目录滚动高亮：标记当前可见章节
-  (function () {
-    const links = Array.from(document.querySelectorAll('.toc-list a'));
-    if (!links.length) return;
-    const entries = [];
+    // 目录滚动高亮：标记当前可见章节
+    const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.toc-list a'));
+    const entries: { el: Element; a: HTMLAnchorElement }[] = [];
     for (const a of links) {
       const id = decodeURIComponent(a.getAttribute('href')?.slice(1) ?? '');
       const el = document.getElementById(id);
@@ -178,9 +187,11 @@ const relatedList = hasRelated
       }
       for (const { a } of entries) a.classList.toggle('active', a === active);
     }
+    const ac = new AbortController();
     window.addEventListener('scroll', () => {
       if (!ticking) { ticking = true; requestAnimationFrame(update); }
-    }, { passive: true });
+    }, { passive: true, signal: ac.signal });
+    artCleanup = () => ac.abort();
     update();
-  })();
+  });
 </script>
