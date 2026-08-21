@@ -1,0 +1,208 @@
+---
+// 项目经历：简历素材库。每个项目的正文就是简历要点，一键复制纯文本。
+// 新项目 = src/content/projects/ 加一个 md 文件。
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+const projects = (await getCollection('projects')).sort((a, b) => b.data.order - a.data.order);
+
+// 把正文 markdown 列表转成简历可用的纯文本（标题 + 角色/时间 + 技术栈 + 要点）
+function resumeText(p: (typeof projects)[number]): string {
+  const head = [p.data.title, [p.data.role, p.data.period].filter(Boolean).join('｜')]
+    .filter(Boolean).join('｜');
+  const stack = p.data.stack.length ? `技术栈：${p.data.stack.join(' / ')}` : '';
+  const bullets = (p.body ?? '')
+    .split('\n')
+    .map((l) => l.trim())
+    .filter((l) => l.startsWith('- '))
+    .map((l) => l.slice(2).replace(/\*\*/g, '').replace(/`/g, ''));
+  return [head, stack, ...bullets].filter(Boolean).join('\n');
+}
+
+const rendered = await Promise.all(
+  projects.map(async (p) => ({ p, Content: (await render(p)).Content, text: resumeText(p) }))
+);
+---
+
+<Base title="项目经历 · Jiahuo Lao 的手记" description="做过的项目与简历描述">
+  <header class="prj-header">
+    <h1>项目经历</h1>
+    <p class="prj-note">每个项目的描述即简历文案，右上角「复制」可直接粘贴进简历</p>
+  </header>
+
+  {rendered.map(({ p, Content, text }, i) => (
+    <article class="prj" style={`--d:${Math.min(i * 90, 360)}ms`}>
+      <div class="prj-top">
+        <h2>{p.data.title}</h2>
+        <button class="copy-btn prj-copy" type="button" data-resume={text} aria-label="复制简历文案">复制</button>
+      </div>
+      <p class="prj-meta">
+        {p.data.role && <span>{p.data.role}</span>}
+        {p.data.period && <span> · {p.data.period}</span>}
+        {p.data.links.map((l) => (
+          <a href={l.url} target="_blank" rel="noopener noreferrer"> · {l.label} ↗</a>
+        ))}
+      </p>
+      {p.data.stack.length > 0 && (
+        <p class="prj-stack">{p.data.stack.map((s) => <span class="chip">{s}</span>)}</p>
+      )}
+      <div class="prj-body">
+        <Content />
+      </div>
+    </article>
+  ))}
+</Base>
+
+<style>
+  .prj-header { margin-bottom: 2.75rem; }
+  .prj-header h1 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 2.15rem;
+    line-height: 1.2;
+    margin: 0 0 .6rem;
+    text-wrap: balance;
+  }
+  .prj-note { margin: 0; font-family: var(--mono); font-size: 12px; color: var(--faint); }
+
+  .prj {
+    position: relative;
+    margin: 0 0 1.6rem;
+    padding: 1.6rem 1.8rem;
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color var(--dur) var(--ease), transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+  }
+  /* 滚动入场：JS 先挂 .anim 再观察，禁用 JS 时内容照常显示 */
+  .prj.anim { opacity: 0; transform: translateY(16px); }
+  .prj.anim.in {
+    opacity: 1;
+    transform: none;
+    transition: opacity .6s var(--ease) var(--d), transform .6s var(--ease) var(--d),
+                border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+  }
+  /* 鼠标跟随光晕：JS 写入 --mx/--my */
+  .prj::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), var(--accent-soft), transparent 70%);
+    opacity: 0;
+    transition: opacity var(--dur) var(--ease);
+    pointer-events: none;
+  }
+  .prj:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 6px 24px -12px rgba(0,0,0,.18); }
+  .prj:hover::before { opacity: 1; }
+  .prj > * { position: relative; } /* 内容盖在光晕之上 */
+
+  .prj-top { display: flex; align-items: center; gap: 1rem; }
+  .prj-top h2 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 1.35rem;
+    margin: 0;
+    text-wrap: balance;
+    flex: 1;
+  }
+  .prj-copy {
+    position: static;
+    opacity: .55;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--dim);
+    background: var(--ground);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: .2rem .6rem;
+    cursor: pointer;
+    transition: opacity var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+    flex-shrink: 0;
+  }
+  .prj:hover .prj-copy, .prj-copy:focus-visible { opacity: 1; }
+  .prj-copy:hover { color: var(--accent); border-color: var(--accent); }
+  .prj-copy.ok { color: var(--accent); border-color: var(--accent); animation: pop .3s var(--ease); }
+
+  @keyframes pop {
+    50% { transform: scale(1.12); }
+  }
+
+  .prj-meta { margin: .5rem 0 0; font-family: var(--mono); font-size: 12px; color: var(--dim); }
+  .prj-meta a { color: var(--accent); }
+
+  .prj-stack { margin: .65rem 0 0; display: flex; flex-wrap: wrap; gap: .4rem; }
+  .chip {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--dim);
+    background: var(--code-bg);
+    border-radius: 999px;
+    padding: .12rem .55rem;
+    transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+  }
+  .prj:hover .chip { color: var(--ink); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .prj.anim, .prj.anim.in { opacity: 1; transform: none; transition: none; }
+    .prj-copy.ok { animation: none; }
+  }
+
+  .prj-body { margin-top: .9rem; }
+  .prj-body :global(ul) { margin: 0; padding-left: 1.3rem; }
+  .prj-body :global(li) { margin: .45rem 0; line-height: 1.75; }
+  .prj-body :global(li::marker) { color: var(--accent); }
+</style>
+
+<script>
+  // 滚动入场：进入视口后上浮显现（reduced-motion 时 CSS 已禁用，直接标记）
+  const cards = document.querySelectorAll<HTMLElement>('.prj');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) {
+    // 动画被系统禁用：不挂 .anim，内容直接可见
+  } else {
+    cards.forEach((c) => c.classList.add('anim'));
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          (e.target as HTMLElement).classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    cards.forEach((c) => io.observe(c));
+  }
+
+  // 鼠标跟随光晕：把指针位置写进 CSS 变量
+  cards.forEach((c) => {
+    c.addEventListener('pointermove', (e) => {
+      const b = c.getBoundingClientRect();
+      c.style.setProperty('--mx', `${e.clientX - b.left}px`);
+      c.style.setProperty('--my', `${e.clientY - b.top}px`);
+    });
+  });
+
+  // 一键复制简历文案（纯文本，与代码块复制同源的降级策略）
+  document.querySelectorAll<HTMLButtonElement>('.prj-copy').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const text = btn.dataset.resume ?? '';
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+      }
+      btn.textContent = '已复制';
+      btn.classList.add('ok');
+      setTimeout(() => {
+        btn.textContent = '复制';
+        btn.classList.remove('ok');
+      }, 2000);
+    });
+  });
+</script>
