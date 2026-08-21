@@ -12,23 +12,25 @@ const groups = groupByCategory(posts);
 ---
 
 <aside class="posts-side">
-  <p class="side-cap">分类</p>
-  <nav aria-label="文章分类">
-    <ul class="side-list">
-      <li>
-        <a href="/" aria-current={active === 'all' ? 'page' : undefined}>
-          全部<span class="n">{posts.length}</span>
-        </a>
-      </li>
-      {[...groups.entries()].map(([key, ps]) => (
+  <div class="side-panel">
+    <p class="side-cap">分类</p>
+    <nav aria-label="文章分类">
+      <ul class="side-list">
         <li>
-          <a href={`/cat/${key}/`} aria-current={active === key ? 'page' : undefined}>
-            {categoryLabel(key)}<span class="n">{ps.length}</span>
+          <a href="/" aria-current={active === 'all' ? 'page' : undefined}>
+            全部<span class="n">{posts.length}</span>
           </a>
         </li>
-      ))}
-    </ul>
-  </nav>
+        {[...groups.entries()].map(([key, ps]) => (
+          <li>
+            <a href={`/cat/${key}/`} aria-current={active === key ? 'page' : undefined}>
+              {categoryLabel(key)}<span class="n">{ps.length}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
 </aside>
 
 <style>
@@ -85,23 +87,26 @@ const groups = groupByCategory(posts);
     .side-list a[aria-current="page"]::before { content: none; }
   }
 
-  /* 桌面：侧栏加面板样式，与文章页目录一致，不再是零散浮动文字 */
+  /* 桌面：面板样式在 .side-panel 上（宽屏时 .posts-side 退化为隐形轨道） */
   @media (min-width: 1100px) {
-    .posts-side {
+    .side-panel {
       border: 1px solid var(--rule);
       border-radius: 8px;
       padding: .9rem 1.1rem;
     }
   }
 
-  /* 宽屏：子导航固定在视口最左缘，位置恒定不随窗口宽度移动。
-     内容列已右移（见 global.css .wrap），最窄 1520px 时栏右缘到内容也有 128px 间距 */
+  /* 宽屏：侧栏放进铺满内容列的隐形轨道（absolute），面板在轨道内 sticky——
+     跟随页面滚动、到顶吸附（与日报目录一致的手感），左缘对齐视口 1.5rem */
   @media (min-width: 1520px) {
     .posts-side {
-      position: fixed;
-      left: max(1.5rem, env(safe-area-inset-left));
-      top: 6.5rem; /* 顶部导航条约占 0~75px，避开 */
+      position: absolute;
+      inset: 0 auto 0 calc(28rem - 50vw); /* 面板左缘对齐视口 1.5rem（基准是 wrap 内容盒） */
       width: 11.5rem;
+    }
+    .side-panel {
+      position: sticky;
+      top: 6.5rem; /* 顶部导航条约占 0~75px，避开 */
     }
   }
 </style>

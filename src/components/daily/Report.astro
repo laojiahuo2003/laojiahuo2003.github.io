@@ -43,20 +43,23 @@ const heroTail = r.best
       <nav aria-label="本期日报目录">
         <ul class="toc-list">
         {toc.map((t) => (
-          <li class={t.children ? 'toc-group' : 'toc-item'}>
-            {t.children ? (
-              <>
-                <span class="toc-group-name">{t.title}</span>
+          t.children ? (
+            <li class="toc-group collapsed">
+              {/* 组名可点击收起/展开；滚动联动时自动展开当前分区所在组、收起其他组 */}
+              <button class="toc-group-name" type="button" aria-expanded="false">
+                {t.title}<span class="tg-arrow" aria-hidden="true">▾</span>
+              </button>
+              <div class="toc-group-items">
                 <ul>
                   {t.children.map((c) => (
                     <li class="toc-item toc-sub"><a href={`#${c.id}`} title={c.title}>{c.title}</a></li>
                   ))}
                 </ul>
-              </>
-            ) : (
-              <a href={`#${t.id}`}>{t.title}</a>
-            )}
-          </li>
+              </div>
+            </li>
+          ) : (
+            <li class="toc-item"><a href={`#${t.id}`}>{t.title}</a></li>
+          )
         ))}
         </ul>
       </nav>
@@ -113,7 +116,17 @@ const heroTail = r.best
     tocBox.removeAttribute('open');
   }
 
-  // 目录滚动高亮：标记当前可见分区（与文章页目录同款逻辑）
+  // 组名点击收起/展开（滚动到别的分区时联动逻辑会重新同步）
+  document.querySelectorAll<HTMLButtonElement>('.daily-toc .toc-group-name').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const g = btn.closest('.toc-group');
+      if (!g) return;
+      const collapsed = g.classList.toggle('collapsed');
+      btn.setAttribute('aria-expanded', String(!collapsed));
+    });
+  });
+
+  // 目录滚动高亮 + 自动跟随：当前分区项高亮并平滑滚到面板中部（滚动条隐藏，随页面联动）
   (function () {
     const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.daily-toc a[href^="#"]'));
     if (!links.length) return;
@@ -124,6 +137,17 @@ const heroTail = r.best
     }
     if (!entries.length) return;
 
+    // 滚动容器随断点变化：宽屏(≥1520)是 .toc-box，其余是 .daily-toc；列表放得下则无需跟随
+    const aside = document.querySelector('.daily-toc');
+    const box = aside?.querySelector('details') ?? null;
+    const scrollerOf = (): HTMLElement | null => {
+      for (const el of [box, aside]) {
+        if (el && (el as HTMLElement).scrollHeight > (el as HTMLElement).clientHeight + 4) return el as HTMLElement;
+      }
+      return null;
+    };
+
+    let last: HTMLAnchorElement | null = null;
     let ticking = false;
     function update() {
       ticking = false;
@@ -132,6 +156,21 @@ const heroTail = r.best
         if (el.getBoundingClientRect().top <= 140) active = a;
       }
       for (const { a } of entries) a.classList.toggle('active', a === active);
+      if (active === last) return;
+      last = active;
+      // 手风琴：自动展开当前分区所在组，收起其他组（概览常在，联动更有方向感）
+      const activeGroup = active.closest('.toc-group');
+      document.querySelectorAll('.daily-toc .toc-group').forEach((g) => {
+        const on = g === activeGroup;
+        g.classList.toggle('collapsed', !on);
+        g.querySelector('.toc-group-name')?.setAttribute('aria-expanded', String(on));
+      });
+      const sc = scrollerOf();
+      if (!sc) return; // 列表整个装得下：无需内部滚动
+      const target =
+        active.getBoundingClientRect().top - sc.getBoundingClientRect().top + sc.scrollTop
+        - sc.clientHeight / 2 + active.offsetHeight / 2;
+      sc.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
     }
     window.addEventListener('scroll', () => {
       if (!ticking) { ticking = true; requestAnimationFrame(update); }
@@ -155,13 +194,10 @@ const heroTail = r.best
     overflow-y: auto;
     font-family: var(--mono);
     font-size: 14px;
-    /* 目录超长出现滚动条时，用主题色细条，避免 Windows 默认的白色粗滚动条 */
-    scrollbar-width: thin;
-    scrollbar-color: var(--rule) transparent;
+    /* 滚动条隐藏：目录由 JS 跟随页面滚动自动对位（当前项滚到面板中部），无需手动滚 */
+    scrollbar-width: none;
   }
-  .daily-toc::-webkit-scrollbar { width: 4px; }
-  .daily-toc::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 2px; }
-  .daily-toc::-webkit-scrollbar-track { background: transparent; }
+  .daily-toc::-webkit-scrollbar { display: none; }
   .toc-box summary {
     font-family: var(--mono);
     font-size: 12px;
@@ -176,12 +212,38 @@ const heroTail = r.best
   .toc-box summary::-webkit-details-marker { display: none; }
   .toc-list { list-style: none; margin: 0; padding: 0; }
   .toc-group-name {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: .3rem;
+    width: 100%;
+    padding: 0;
+    background: none;
+    border: none;
+    font: inherit;
     color: var(--ink);
     font-weight: 600;
+    cursor: pointer;
     margin: .8rem 0 .35rem;
   }
   .toc-group:first-child .toc-group-name { margin-top: 0; }
+  .tg-arrow {
+    margin-left: auto;
+    color: var(--faint);
+    font-size: 10px;
+    transition: transform var(--dur) var(--ease);
+  }
+  .toc-group.collapsed .tg-arrow { transform: rotate(-90deg); }
+  /* 手风琴：grid-template-rows 0fr/1fr 过渡，高度平滑收放 */
+  .toc-group-items {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows var(--dur) var(--ease);
+  }
+  .toc-group.collapsed .toc-group-items { grid-template-rows: 0fr; }
+  .toc-group-items > ul { overflow: hidden; min-height: 0; }
+  @media (prefers-reduced-motion: reduce) {
+    .toc-group-items, .tg-arrow { transition: none; }
+  }
   .toc-item { margin: .35rem 0; }
   .toc-item a {
     display: block;
@@ -252,16 +314,31 @@ const heroTail = r.best
     }
   }
 
-  /* 宽屏：子导航固定在视口最左缘，位置恒定不随窗口宽度移动（内容列已右移，间距始终宽裕） */
+  /* 宽屏：目录放进铺满内容列的隐形轨道（absolute），面板在轨道内 sticky——
+     跟随页面滚动、到顶吸附（左右一体的旧手感），位置仍在视口最左缘 */
   @media (min-width: 1520px) {
-    .daily-layout { display: block; }
+    .daily-layout { display: block; position: relative; }
     .daily-toc {
-      position: fixed;
-      left: max(1.5rem, env(safe-area-inset-left));
-      top: 6.5rem;
+      position: absolute;
+      inset: 0 auto 0 calc(28rem - 50vw); /* 面板左缘对齐视口 1.5rem（基准是 wrap 内容盒，勿再加 padding） */
       width: 11.5rem;
-      max-height: calc(100vh - 10rem);
+      border: none;         /* ≥1100 的面板样式移到 .toc-box */
+      padding: 0;
+      max-height: none;
+      overflow: visible;
     }
+    .toc-box {
+      position: sticky;
+      top: 6.5rem;
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      background: var(--ground);
+      padding: .9rem 1.1rem;
+      max-height: calc(100vh - 8rem);
+      overflow-y: auto;
+      scrollbar-width: none; /* 滚动条隐藏，JS 自动跟随对位 */
+    }
+    .toc-box::-webkit-scrollbar { display: none; }
   }
 
   /* ---- 分区标题：衬线大标题 + 色块记号，比旧版 eyebrow 小字醒目 ---- */

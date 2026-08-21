@@ -444,7 +444,7 @@ footer.site a:hover { color: var(--accent); }
 }
 /* 宽屏：子导航挂到内容左缘留白处（见 PostsSidebar），内容列占满容器，与其他板块同框架 */
 @media (min-width: 1520px) {
-  .posts-layout { display: block; }
+  .posts-layout { display: block; position: relative; } /* relative：承载 absolute 侧栏轨道 */
 }
 
 .post-layout {
