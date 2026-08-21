@@ -149,7 +149,8 @@ const rendered = await Promise.all(
 
   .prj-body { margin-top: .9rem; }
   .prj-body :global(ul) { margin: 0; padding-left: 1.3rem; }
-  .prj-body :global(li) { margin: .45rem 0; line-height: 1.75; }
+  /* 卡片随全站 68rem 变宽，但要点保持阅读宽度，行长不失控 */
+  .prj-body :global(li) { margin: .45rem 0; line-height: 1.75; max-width: 46rem; }
   .prj-body :global(li::marker) { color: var(--accent); }
 </style>
 

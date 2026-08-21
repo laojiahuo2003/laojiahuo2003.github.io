@@ -25,7 +25,8 @@ for (const s of sections) {
       g = { title: s.group, children: [] };
       toc.push(g);
     }
-    g.children!.push({ id: s.id, title: s.title });
+    // 目录里去掉 "Topic: " 冗余前缀，长英文标签交给 CSS 省略号处理，不折行
+    g.children!.push({ id: s.id, title: s.title.replace(/^Topic:\s*/, '') });
   }
 }
 
@@ -48,7 +49,7 @@ const heroTail = r.best
                 <span class="toc-group-name">{t.title}</span>
                 <ul>
                   {t.children.map((c) => (
-                    <li class="toc-item toc-sub"><a href={`#${c.id}`}>{c.title}</a></li>
+                    <li class="toc-item toc-sub"><a href={`#${c.id}`} title={c.title}>{c.title}</a></li>
                   ))}
                 </ul>
               </>
@@ -143,8 +144,8 @@ const heroTail = r.best
   /* ---- 双栏布局：粘性目录 + 正文 ---- */
   .daily-layout {
     display: grid;
-    grid-template-columns: 11rem minmax(0, 1fr);
-    gap: 3rem;
+    grid-template-columns: 13rem minmax(0, 1fr);
+    gap: 4.5rem;
     align-items: start;
   }
   .daily-toc {
@@ -153,11 +154,17 @@ const heroTail = r.best
     max-height: calc(100vh - 3rem);
     overflow-y: auto;
     font-family: var(--mono);
-    font-size: 12.5px;
+    font-size: 14px;
+    /* 目录超长出现滚动条时，用主题色细条，避免 Windows 默认的白色粗滚动条 */
+    scrollbar-width: thin;
+    scrollbar-color: var(--rule) transparent;
   }
+  .daily-toc::-webkit-scrollbar { width: 4px; }
+  .daily-toc::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 2px; }
+  .daily-toc::-webkit-scrollbar-track { background: transparent; }
   .toc-box summary {
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: .18em;
     text-transform: uppercase;
     color: var(--faint);
@@ -175,9 +182,17 @@ const heroTail = r.best
     margin: .8rem 0 .35rem;
   }
   .toc-group:first-child .toc-group-name { margin-top: 0; }
-  .toc-item { margin: .3rem 0; }
-  .toc-item a { color: var(--dim); transition: color var(--dur-fast) var(--ease); }
-  .toc-item a:hover, .toc-item a.active { color: var(--accent); }
+  .toc-item { margin: .35rem 0; }
+  .toc-item a {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; /* 长英文标签（如 artificial-intelligence）省略号截断，不折行 */
+    color: var(--ink);
+    opacity: .68;
+    transition: color var(--dur-fast) var(--ease), opacity var(--dur-fast) var(--ease);
+  }
+  .toc-item a:hover, .toc-item a.active { color: var(--accent); opacity: 1; }
   .toc-sub { padding-left: .85rem; }
 
   /* 窄屏：目录改为可折叠块，不再整体隐藏（长页面需要导航入口） */
@@ -187,14 +202,14 @@ const heroTail = r.best
       position: static;
       max-height: none;
       overflow: visible;
-      font-size: 13px;
+      font-size: 14px;
       margin-bottom: 1.4rem;
     }
     .toc-box summary {
       cursor: pointer;
       display: flex;
       align-items: center;
-      font-size: 12.5px;
+      font-size: 13px;
       letter-spacing: .08em;
       text-transform: none;
       color: var(--dim);
@@ -214,6 +229,27 @@ const heroTail = r.best
     .toc-box[open] summary::after { transform: rotate(180deg); }
     .toc-box[open] .toc-list { margin-top: .8rem; }
     .toc-sub { padding-left: 1rem; }
+  }
+
+  /* 桌面：目录加面板样式，与文章页目录一致 */
+  @media (min-width: 1100px) {
+    .daily-toc {
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: .9rem 1.1rem;
+    }
+  }
+
+  /* 宽屏：子导航固定在视口最左缘，位置恒定不随窗口宽度移动（内容列已右移，间距始终宽裕） */
+  @media (min-width: 1520px) {
+    .daily-layout { display: block; }
+    .daily-toc {
+      position: fixed;
+      left: max(1.5rem, env(safe-area-inset-left));
+      top: 6.5rem;
+      width: 11.5rem;
+      max-height: calc(100vh - 10rem);
+    }
   }
 
   /* ---- 分区标题：衬线大标题 + 色块记号，比旧版 eyebrow 小字醒目 ---- */

@@ -70,8 +70,9 @@ body {
 a { color: var(--ink); text-decoration: none; }
 a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
 
+/* 全站统一容器：所有页面（含顶部导航）同宽同左缘，切换页面框架不跳 */
 .wrap {
-  max-width: 42rem;
+  max-width: 68rem;
   margin: 0 auto;
   padding: 0 max(1.5rem, env(safe-area-inset-right)) 5rem max(1.5rem, env(safe-area-inset-left));
 }
@@ -96,26 +97,37 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-
   text-wrap: balance;
 }
 
-/* ============ 导航：通栏边框 + 固定宽度内容，不随页面正文宽度变 ============ */
+/* ============ 导航：通栏边框 + 与正文同宽同对齐 ============ */
 nav.site {
-  padding-top: 4.5rem;
+  padding-top: .75rem;
   border-bottom: 1px solid var(--rule);
   margin-bottom: 2.75rem;
 }
 .site-nav {
-  max-width: 42rem;
+  max-width: 68rem;
   margin: 0 auto;
   display: flex;
   align-items: center;
   gap: 1.75rem;
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: 15px;
   padding: 1rem max(1.5rem, env(safe-area-inset-right)) 1rem max(1.5rem, env(safe-area-inset-left));
 }
-nav.site a { color: var(--dim); transition: color var(--dur-fast) var(--ease); }
-nav.site a:hover { color: var(--accent); }
-nav.site a[aria-current="page"] { color: var(--ink); }
+nav.site a { color: var(--ink); opacity: .68; transition: color var(--dur-fast) var(--ease), opacity var(--dur-fast) var(--ease); }
+nav.site a:hover { color: var(--accent); opacity: 1; }
+nav.site a[aria-current="page"] { color: var(--ink); opacity: 1; font-weight: 600; }
 nav.site a[aria-current="page"]::before { content: "· "; color: var(--accent); }
+
+/* 宽屏：内容列收窄为 62rem 并整体右移 3rem（居中再偏右），左侧留白交给子导航栏。
+   必须放在 .site-nav 基础规则之后（同特异性，后者居中会覆盖） */
+@media (min-width: 1520px) {
+  .wrap,
+  .site-nav {
+    max-width: 62rem;
+    margin-left: calc(50vw - 28rem);
+    margin-right: auto;
+  }
+}
 
 /* ============ 文章列表 ============ */
 .list-head {
@@ -159,7 +171,7 @@ nav.site a[aria-current="page"]::before { content: "· "; color: var(--accent); 
   padding-bottom: 1px;
 }
 .post:hover h2 a, .post h2 a:hover { background-size: 100% 1.5px; }
-.post p { margin: 0; color: var(--dim); font-size: .93rem; }
+.post p { margin: 0; color: var(--dim); font-size: .93rem; max-width: 46rem; }
 .tag {
   font-family: var(--mono);
   font-size: 10.5px;
@@ -278,7 +290,7 @@ footer.site a:hover { color: var(--accent); }
 
 /* ============ 响应式 / 无障碍 ============ */
 @media (max-width: 560px) {
-  nav.site { padding-top: 3rem; }
+  nav.site { padding-top: 1rem; }
   .post { grid-template-columns: 1fr; gap: .35rem; }
   .post time { padding-top: 0; }
 }
@@ -401,7 +413,7 @@ footer.site a:hover { color: var(--accent); }
   padding: .9rem 1.1rem;
   margin: 0 0 2rem;
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: 14px;
 }
 .toc summary {
   cursor: pointer;
@@ -417,21 +429,22 @@ footer.site a:hover { color: var(--accent); }
 .toc-item a.active { color: var(--accent); }
 .toc-item-indent { padding-left: 1.1rem; }
 
-/* ============ 文章页双栏 + 粘性目录 ============ */
-body.post-page .wrap { max-width: 68rem; }
+/* ============ 文章页双栏 + 粘性目录（正文列固定阅读宽度） ============ */
 
 /* ============ 文章列表页（首页/分类页）双栏 + 粘性分类侧栏 ============ */
-body.list-page .wrap { max-width: 62rem; }
 .posts-layout {
   display: grid;
-  grid-template-columns: 11rem minmax(0, 1fr);
-  gap: 3rem;
+  grid-template-columns: 13rem minmax(0, 1fr);
+  gap: 4.5rem;
   align-items: start;
 }
 .posts-main { min-width: 0; }
 @media (max-width: 1100px) {
-  body.list-page .wrap { max-width: 42rem; }
   .posts-layout { grid-template-columns: minmax(0, 1fr); }
+}
+/* 宽屏：子导航挂到内容左缘留白处（见 PostsSidebar），内容列占满容器，与其他板块同框架 */
+@media (min-width: 1520px) {
+  .posts-layout { display: block; }
 }
 
 .post-layout {
@@ -450,10 +463,15 @@ body.list-page .wrap { max-width: 62rem; }
   margin: 0;
   max-height: calc(100vh - 3rem);
   overflow-y: auto;
+  /* 与日报目录一致：主题色细滚动条，避免 Windows 默认白色粗条 */
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule) transparent;
 }
+.toc-aside .toc::-webkit-scrollbar { width: 4px; }
+.toc-aside .toc::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 2px; }
+.toc-aside .toc::-webkit-scrollbar-track { background: transparent; }
 
 @media (max-width: 900px) {
-  body.post-page .wrap { max-width: 42rem; }
   .post-layout { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .toc-aside { position: static; order: -1; }
   .toc-aside .toc { margin: 0 0 2rem; max-height: none; }

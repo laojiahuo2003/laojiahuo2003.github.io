@@ -36,29 +36,30 @@ const groups = groupByCategory(posts);
     position: sticky;
     top: 1.5rem;
     font-family: var(--mono);
-    font-size: 12.5px;
+    font-size: 14px;
   }
   .side-cap {
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: .18em;
     text-transform: uppercase;
     color: var(--faint);
     margin: 0 0 .7rem;
   }
   .side-list { list-style: none; margin: 0; padding: 0; }
-  .side-list li { margin: .3rem 0; }
+  .side-list li { margin: .35rem 0; }
   .side-list a {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
     gap: .8rem;
-    color: var(--dim);
-    transition: color var(--dur-fast) var(--ease);
+    color: var(--ink);
+    opacity: .68;
+    transition: color var(--dur-fast) var(--ease), opacity var(--dur-fast) var(--ease);
   }
-  .side-list a:hover { color: var(--accent); }
-  .side-list a[aria-current="page"] { color: var(--ink); }
+  .side-list a:hover { color: var(--accent); opacity: 1; }
+  .side-list a[aria-current="page"] { color: var(--ink); opacity: 1; font-weight: 600; }
   .side-list a[aria-current="page"]::before { content: "· "; color: var(--accent); }
-  .side-list .n { color: var(--faint); font-size: 11px; }
+  .side-list .n { color: var(--faint); font-size: 12px; }
 
   /* 移动端：竖排侧栏改为横向滚动胶囊条，分类导航不缺席 */
   @media (max-width: 1100px) {
@@ -82,5 +83,25 @@ const groups = groupByCategory(posts);
     }
     .side-list a[aria-current="page"] { color: var(--accent); border-color: var(--accent); }
     .side-list a[aria-current="page"]::before { content: none; }
+  }
+
+  /* 桌面：侧栏加面板样式，与文章页目录一致，不再是零散浮动文字 */
+  @media (min-width: 1100px) {
+    .posts-side {
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: .9rem 1.1rem;
+    }
+  }
+
+  /* 宽屏：子导航固定在视口最左缘，位置恒定不随窗口宽度移动。
+     内容列已右移（见 global.css .wrap），最窄 1520px 时栏右缘到内容也有 128px 间距 */
+  @media (min-width: 1520px) {
+    .posts-side {
+      position: fixed;
+      left: max(1.5rem, env(safe-area-inset-left));
+      top: 6.5rem; /* 顶部导航条约占 0~75px，避开 */
+      width: 11.5rem;
+    }
   }
 </style>
