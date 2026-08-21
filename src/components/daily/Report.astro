@@ -188,11 +188,23 @@ const heroTail = r.best
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap; /* 长英文标签（如 artificial-intelligence）省略号截断，不折行 */
+    padding: .1rem .35rem .1rem .5rem;
+    border-left: 2px solid transparent; /* 常驻占位，激活时文字不跳动 */
+    border-radius: 0 4px 4px 0;
     color: var(--ink);
     opacity: .68;
-    transition: color var(--dur-fast) var(--ease), opacity var(--dur-fast) var(--ease);
+    transition: color var(--dur-fast) var(--ease), opacity var(--dur-fast) var(--ease),
+                background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
   }
-  .toc-item a:hover, .toc-item a.active { color: var(--accent); opacity: 1; }
+  .toc-item a:hover { color: var(--accent); opacity: 1; }
+  /* 滚动联动的当前项：绿字加粗 + 左缘绿条 + 淡绿底，离正文再远也一眼可见 */
+  .toc-item a.active {
+    color: var(--accent);
+    opacity: 1;
+    font-weight: 600;
+    border-left-color: var(--accent);
+    background: var(--accent-soft);
+  }
   .toc-sub { padding-left: .85rem; }
 
   /* 窄屏：目录改为可折叠块，不再整体隐藏（长页面需要导航入口） */
