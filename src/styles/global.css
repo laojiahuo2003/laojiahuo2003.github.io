@@ -283,6 +283,8 @@ nav.site a[aria-current="page"]::before { content: "· "; color: var(--accent); 
 .table-scroll { overflow-x: auto; } /* JS 包裹宽表格，窄屏横向滚动 */
 .prose th, .prose td { border: 1px solid var(--rule); padding: .45em .8em; text-align: left; }
 .prose th { font-family: var(--mono); font-size: .8rem; color: var(--dim); }
+/* 表格内的行内公式禁止折行：防止 σ 与上标 ² 之间被断开（KaTeX 只保护了块级公式） */
+.prose td .katex, .prose th .katex { white-space: nowrap; }
 
 /* ============ 页脚 ============ */
 footer.site {
