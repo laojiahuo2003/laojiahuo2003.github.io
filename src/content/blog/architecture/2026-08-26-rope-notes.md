@@ -1,204 +1,296 @@
 ---
 title: RoPE：位置不是加进去的，是旋转出来的
-description: 从"注意力该知道两个词隔多远"到"把位置变成旋转角度"——RoPE 的复数推导、rotate_half 的实现技巧、频率表的秒针分针直觉，以及为什么只旋转 Q 和 K。
+description: 注意力天生不知道词序——RoPE 用「位置 = 角度」一步解决。从内积的几何含义推出旋转公式，逐行拆解 rotate_half 实现，最后用 head_dim=4 的手算案例把数学和代码焊在一起。
 pubDate: 2026-08-26T00:50:00+08:00
 tags: [模型结构]
 ---
 
-上一篇讲 RMSNorm 时说过：2023 年后的开源模型在归一化层上做出了同一个选择。位置编码也是——Llama、Qwen、DeepSeek、Gemma 全部使用 RoPE。但它和 RMSNorm 的"做减法"不同，RoPE 换了一个提问方式：不问「位置 m 的向量应该长什么样」，而问「位置 m 的 Q 和位置 n 的 K 做内积时，会发生什么」。
+先看一个具体事实：**注意力机制天生不知道词序**。
 
-这一问的差别是本质性的。前者的答案里位置是一个需要**加进去**的东西（可学习位置向量、原始 Transformer 的 sin/cos 相加都是这条路）；后者的答案里位置是一个**旋转角度**——什么都不用加，把 Q、K 转个角度，内积里就自动只剩相对距离。
+「猫追狗」和「狗追猫」用的是同一组词，意思相反。但注意力的核心运算是打分：词 A 对词 B 的分数是 $q_A \cdot k_B$，一个内积。内积只看两个向量的内容，完全不知道 A 在 B 左边还是右边——把词序换掉，所有 q、k 一模一样，分数也一模一样。分不清主语宾语，这不是注意力的缺陷，是它的结构里根本没有「顺序」这个概念。
 
-这篇文章回答三个问题：相对位置为什么难、旋转是怎么把它变简单的、以及三十行代码怎么写出来。
+所以要有位置编码：把「你在第几个位置」注入向量。Llama、Qwen、DeepSeek、Gemma 用的都是同一种——RoPE。这篇文章分三步讲：先把原理和公式讲清楚（不碰代码），再单独讲代码实现，最后用一组能手算的数字把两边焊在一起。
 
-## 前置知识：公式里的每个符号
+## 先约定符号
 
 | 符号 | 是什么 | 说明 |
 |---|---|---|
-| $m,\ n$ | token 的位置下标 | 第几个 token，从 0 数起 |
-| $d$ | 单个注意力头的维度 head_dim | RoPE 逐头作用，和整个模型的隐层宽度无关 |
-| $\theta_i$ | 第 $i$ 对维度的「转速」 | $\theta_i = 10000^{-2i/d}$，直接写死的常数 |
-| $R(m\theta)$ | 二维旋转矩阵 | 把平面上的向量逆时针转 $m\theta$ 弧度 |
-| $\langle q, k\rangle$ | 内积（点积） | 注意力打分 $q\cdot k^\top$ 的核心运算 |
+| $m,\ n$ | 词的位置下标 | 第几个词，从 0 数起 |
+| $d$ | 单个注意力头的维度 | RoPE 逐头作用，head_dim = 128 时下面所有说法不变 |
+| $\theta_i$ | 第 $i$ 对维度的「转速」 | $\theta_i = 10000^{-2i/d}$，写死的常数 |
+| $R(m\theta)$ | 旋转矩阵 | 把平面向量逆时针转 $m\theta$ |
+| $\tilde{q}$ | 旋转后的 $q$ | $\tilde{q} = R_m q$，带上位置信息的版本 |
+| $\langle q, k \rangle$ | 内积 | 也就是 $q \cdot k$ |
 
-RoPE 全文没有可学习参数——位置信息全部来自 $\theta_i$ 这张写死的频率表。
+RoPE 没有任何可学习参数——位置信息全部来自 $\theta_i$ 这张写死的表。
 
-## 相对位置为什么难
+## 设计要求：打分只依赖距离
 
-注意力本身对顺序是无感的：打分就是内积，把输入 token 打乱，每个位置的输出也只是跟着乱，不会变错。位置编码是补上这个缺口的外挂。
+注入位置之前，先想清楚要注入成什么样。
 
-最直接的外挂是**加性绝对位置**——给每个位置学一个向量 $p_m$，加到输入上。问题在内积展开的那一刻暴露：
+一对词，A 在位置 $m$、B 在位置 $n$。我们希望打分取决于：**两个词各是什么，以及它们隔多远（$n - m$）**——而不是它们碰巧出现在句子的第几位。理由很实际：同一段话出现在长文档的开头还是中间，词与词的关系不该变；上下文窗口整体滑动，注意力模式应该跟着平移，而不是变形。
 
-$$
-\langle q + p_m,\ k + p_n\rangle = \underbrace{q\cdot k}_{\text{内容}} + \underbrace{q\cdot p_n + p_m\cdot k + p_m\cdot p_n}_{\text{全都绑定绝对位置}}
-$$
-
-后面三项让「同一个词对，隔 3 个 token 相遇还是隔 300 个」这件事，取决于它们出现在句子的第几位。而我们真正想要的性质是**平移不变**：上下文窗口整体滑动，注意力模式不该变——打分只该依赖 $n - m$。
-
-直接把 $n - m$ 写进注意力公式（T5 的相对 bias、Transformer-XL）确实可行，但它们要么改注意力结构、要么引入随长度增长的 bias 表，和 KV cache、FlashAttention 这些"把标准注意力做快"的工程成果都不对付。
-
-RoPE 的漂亮之处：**标准注意力一个字不改，只把 Q、K 预先旋转一个角度**，平移不变自动成立。
-
-## 旋转是怎么把它变简单的
-
-把想要的东西写成方程：找一个带位置的变换 $f$，使得内积与绝对位置脱钩——
+写成要求：找一个「带位置的变换」$f$，使得
 
 $$
-\big\langle f(q, m),\ f(k, n) \big\rangle \;=\; F\big(q,\ k,\ m-n\big)
+\big\langle f(q, m),\ f(k, n) \big\rangle \;=\; g\big(q,\ k,\ n-m\big)
 $$
 
-$F$ 只通过内容 $q, k$ 和相对距离 $m - n$ 决定。RoPE 的解法分两步：先在二维里找到 $f$，再拼到高维。
+$g$ 是某个只通过内容和距离决定打分的函数。RoPE 做的全部事情，就是找出一个满足这条要求的 $f$。
 
-二维里推导。把一对维度 $(x_1, x_2)$ 看成一个复数 $x_1 + i\,x_2$，定义位置变换「乘上 $e^{im\theta}$」——复数乘法就是旋转。验证内积：
+## 为什么「把位置加进向量」不行
 
-$$
-\big\langle q\,e^{im\theta},\ k\,e^{in\theta} \big\rangle
-= \mathrm{Re}\Big[ q\,e^{im\theta} \cdot \overline{k\,e^{in\theta}} \Big]
-= \mathrm{Re}\Big[ q\bar{k}\ e^{i(m-n)\theta} \Big]
-$$
-
-绝对位置 $m$、$n$ 消失了，只剩 $m - n$。这就是全部的魔法。
-
-高维推广是把 $d$ 维切成 $d/2$ 个二维子空间，各自用不同转速 $\theta_i$ 旋转，写成矩阵即分块对角：
+最直觉的方案：每个位置学一个向量 $p_m$，加到词向量上（GPT-2 的做法）。位置经过投影层后，效果相当于 q、k 各带一个位置项——用 $\langle q + p_m,\ k + p_n\rangle$ 这个简化模型看内积会发生什么：
 
 $$
-R(m\theta) = \begin{pmatrix} \cos m\theta & -\sin m\theta \\ \sin m\theta & \cos m\theta \end{pmatrix},
-\qquad
-R_m = \mathrm{diag}\big(R(m\theta_1),\ \dots,\ R(m\theta_{d/2})\big)
+\langle q + p_m,\ k + p_n\rangle
+= \underbrace{q\cdot k}_{\text{内容}} + \underbrace{q\cdot p_n + p_m\cdot k + p_m\cdot p_n}_{\text{全都绑着绝对位置}}
 $$
 
-写开到分量上（原论文的相邻配对形式，一对维度 $(2i,\ 2i+1)$，记旋转后的向量为 $\tilde{q} = R_m q$）：
+四项里只有第一项是纯内容，后三项全都含 $m$ 或 $n$——「猫」和「狗」的打分取决于句子从第几位开始。违背上面的设计要求。
+
+问题出在哪？**位置在「内积之前」被混进了内容里**，内积没办法再把它们拆开。要满足设计要求，位置必须以一种「内积做完之后自动只剩差值」的方式进入。
+
+RoPE 的路：**不动向量的内容（长度），只动它的方向（角度）。**
+
+## 核心一步：把位置变成角度
+
+从内积的几何含义出发。平面上两个向量：
 
 $$
-\begin{aligned}
-\tilde{q}_{2i}   &= q_{2i}  \cos m\theta_i - q_{2i+1} \sin m\theta_i \\
-\tilde{q}_{2i+1} &= q_{2i+1}\cos m\theta_i + q_{2i}   \sin m\theta_i
-\end{aligned}
+\langle a,\ b \rangle = |a|\,|b|\,\cos\angle(a, b)
 $$
 
-「旋转」二字的全部含义就在这两行：**每对维度在自己的平面上转 $m\theta_i$，不同对转速不同**。
+内积只由两样东西决定：**长度**和**夹角**。长度是内容，夹角是内容——但如果让**位置去改变夹角**呢？
 
-成立的关键是旋转矩阵的正交性 $R(m\theta)^\top R(n\theta) = R\big((n-m)\theta\big)$，于是：
-
-$$
-\langle R_m q,\ R_n k \rangle = q^\top R_m^\top R_n k = q^\top R_{n-m}\, k
-$$
-
-**左边的绝对位置进去，右边的相对位置出来。** 放进完整的注意力打分公式（softmax 在 $n$ 上做，$\sqrt{d}$ 照常缩放）：
+定义：位置 $m$ 的向量，在它原来的方向上逆时针旋转 $m\theta$。旋转用矩阵写就是
 
 $$
-\mathrm{score}(m, n) \;=\; \frac{\tilde{q}_m \cdot \tilde{k}_n}{\sqrt{d}} \;=\; \frac{q^\top R_{n-m}\, k}{\sqrt{d}}
+R(m\theta) = \begin{pmatrix} \cos m\theta & -\sin m\theta \\ \sin m\theta & \cos m\theta \end{pmatrix}
 $$
 
-位置信息全部内嵌在 $R_{n-m}$ 里，注意力公式没有任何附加项——KV cache、FlashAttention 原样可用。
+现在把 $q$ 放到位置 $m$（转 $m\theta$），$k$ 放到位置 $n$（转 $n\theta$）。设 $q$ 原来在角 $\alpha$、$k$ 在角 $\beta$，转完之后两者的夹角是
 
-## 几何图像
+$$
+(\beta + n\theta) - (\alpha + m\theta) \;=\; \underbrace{(\beta - \alpha)}_{\text{内容带来的夹角}} + (n-m)\,\theta
+$$
 
-把上面的代数画出来。每个二维子空间是一张平面，位置编码就是平面上的旋转量：位置 $m$ 的 Q 转过 $m\theta_i$，位置 $n$ 的 K 转过 $n\theta_i$，两者夹角永远是 $(n-m)\theta_i$——无论这对词出现在句首还是句尾。
+**绝对角度 $\alpha + m\theta$、$\beta + n\theta$ 各自消失了，只剩下差 $(n-m)\theta$。**而旋转不改变长度（$|Rq| = |q|$），于是内积
+
+$$
+\big\langle R(m\theta)\,q,\ R(n\theta)\,k \big\rangle
+= |q|\,|k|\,\cos\big(\angle(q,k) + (n{-}m)\,\theta\big)
+$$
+
+只依赖 $q$、$k$ 和 $n-m$——设计要求，达成。
+
+同一件事用代数看是一行矩阵等式：
+
+$$
+R(m\theta)^\top R(n\theta) = R\big((n{-}m)\theta\big)
+\quad\Longrightarrow\quad
+\langle R_m q,\ R_n k \rangle = q^\top R_m^\top R_n\, k = q^\top R_{n-m}\, k
+$$
+
+（旋转矩阵的转置等于反着转，两次旋转叠加角度相加：$-m\theta + n\theta = (n-m)\theta$。）几何视角告诉你**为什么**，代数视角告诉你**怎么算**。
+
+对一对具体维度 $(x, y)$，旋转写开就两行：
+
+$$
+(x,\ y) \;\longmapsto\; \big(x\cos m\theta_i - y\sin m\theta_i,\ \ x\sin m\theta_i + y\cos m\theta_i\big)
+$$
+
+「哪两个维度凑成一对 $(x, y)$」是实现时的约定，下一节代码部分再说；数学上每对维度独立做这件事。
 
 ![RoPE 的几何图像：位置变成旋转角度，夹角只依赖相对距离](/images/rope/rope_1_rotation.png)
 
-「不同转速」是这套设计里最值得细看的部分。转速和波长由两条公式定死：
+看图走一遍：横轴、纵轴是第 $i$ 对维度的两个方向。图里为了看清角度关系，把 $q$、$k$ 的内容方向都画在横轴方向（一般情形夹角是 $\angle(q,k) + (n{-}m)\theta_i$，结论不变）。$q$ 被转 $m\theta_i$ 到蓝箭头，$k$ 被转 $n\theta_i$ 到绿箭头；两个灰色弧标的是相对横轴的**绝对**角度，橙色弧标的是两箭头的夹角 $(n-m)\theta_i$。**这对词整体往后挪 100 个位置：两个灰弧都变，橙弧不变**——而打分只看橙弧。
+
+## 高维：每对维度一个平面
+
+真实的 head_dim 是 128，不是 2。RoPE 的做法：把 $d$ 维切成 $d/2$ 个平面，第 $i$ 个平面用自己的转速 $\theta_i$ 转，互不干扰。整体写成一个分块对角矩阵：
 
 $$
-\theta_i = 10000^{-2i/d}, \qquad \lambda_i = \frac{2\pi}{\theta_i} = 2\pi \cdot 10000^{\,2i/d}
+R_m = \mathrm{diag}\big(R(m\theta_1),\ \ldots,\ R(m\theta_{d/2})\big)
 $$
 
-指数衰减：$i$ 越小的维度对转得越快、波长越短。以 Llama 的 $d = 128$ 为例——
+为什么拼起来还满足设计要求？因为**内积是逐平面求和的**（$q_{(i)}$ 表示 $q$ 的第 $i$ 对维度）：
 
-- 最快的一对：$\theta_0 = 1$，波长 $2\pi \approx 6.3$ 个 token，相邻 token 之间就转了大半圈，负责分辨「贴着的词」；
-- 最慢的一对：$\theta_{63} \approx 1.2\times10^{-4}$，波长约 5.4 万个 token，几千个 token 内几乎不动，负责分辨「隔着很远的词」。
+$$
+\langle R_m q,\ R_n k \rangle
+= \sum_{i=1}^{d/2} \big\langle R(m\theta_i)\, q_{(i)},\ R(n\theta_i)\, k_{(i)} \big\rangle
+= \sum_{i=1}^{d/2} |q_{(i)}|\,|k_{(i)}| \cos\big(\angle(q_{(i)}, k_{(i)}) + (n{-}m)\theta_i\big)
+$$
 
-像时钟：秒针转得快、时针转得慢，快慢针的读数组合起来唯一确定时刻；这里则是 $d/2$ 根转速不同的针，唯一确定相对距离 $n-m$。单一的 $\theta$ 做不到这件事——两根同速的针读不出两个独立的角度。
+求和的**每一项**都只含 $n-m$，加起来自然还是只含 $n-m$。高维没有新的数学，只是同一件事重复 $d/2$ 次。
 
-顺带一提，Llama3 把 base 从 $10^4$ 提到 $5\times10^5$，就是在「把最慢的针弄得更慢」：波长拉长，长上下文里相对距离才不容易转满一圈撞车。
+（RoPE 原论文用复数记号推导：把一对维度写成复数，旋转就是乘 $e^{im\theta_i}$，绝对位置在共轭相乘时相消——本质就是上面的「角度相减」，换了个记号而已。）
 
-## 三十行实现
+## 转速表：$\theta_i$ 为什么取 $10000^{-2i/d}$
 
-实现在 `llama2/model.py` 里，三个函数。第一个把 cos/sin 表预先算好——旋转角只依赖 $(m, i)$，和内容无关，训练开始前算一次，缓存成 buffer：
+只剩一个问题：每对维度转多快？
+
+只用一个平面行不行？不行：$\cos\big((n-m)\theta\big)$ 以 $2\pi/\theta$ 为周期，两个相差整数圈的距离打分完全一样，分不开。所以要多个平面、**不同转速**——不同的 $n-m$ 在「快慢不同的针」上留下不同的读数组合，距离才能被区分开。
+
+$$
+\theta_i = 10000^{-2i/d}, \qquad
+\lambda_i = \frac{2\pi}{\theta_i} = 2\pi \cdot 10000^{\,2i/d}
+$$
+
+转速随 $i$ 指数衰减，波长从最短铺到最长。$d = 128$（Llama）时：
+
+- 第 0 对：$\theta_0 = 1$，波长 $2\pi \approx 6.3$ 个词——相邻词之间就转过大半圈，**分辨近距离**；
+- 第 63 对：$\theta_{63} \approx 1.2\times10^{-4}$，波长约 5.4 万个词——几千个词之内几乎不动，**分辨远距离**。
+
+像时钟：秒针转得快、时针转得慢，快慢针的读数组合确定时刻；这里是 64 根针的组合读出距离。严格说，超出训练见过的长度后慢针也会转满圈撞车（混叠）——这正是长度外推方法要解决的事，见文末。Llama3 把 base 从 $10^4$ 提到 $5\times10^5$，就是在把最慢的针做得更慢。
+
+## 放进注意力：只旋转 Q 和 K
+
+打分公式照旧，只是先旋转再点积：
+
+$$
+\mathrm{score}(m, n) = \frac{\tilde{q}_m \cdot \tilde{k}_n}{\sqrt{d}} = \frac{q^\top R_{n-m}\, k}{\sqrt{d}}
+$$
+
+softmax 照常在 $n$ 上归一化。三个要点：
+
+- **V 不旋转。** 位置信息的唯一用途是参与打分；V 是被打分加权的内容本身，旋转它不提供位置语义，只会破坏内容。
+- **旋转保长度**，$\|\tilde{q}\| = \|q\|$，不干扰 RMSNorm 维持的尺度稳定。
+- 注意力公式没有任何附加项，**KV cache、FlashAttention 原样可用**——这是 RoPE 相对早期相对位置方案（改注意力公式、加随长度增长的 bias 表）的实际优势。
+
+## 代码实现：rotate_half 的机关
+
+原理讲完了，现在单独看实现（`llama2/model.py`）。要解的问题：$R_m$ 是 $d \times d$ 的稀疏矩阵，直接做矩阵乘又大又慢。观察它分块对角、每块只有 cos 和 sin，乘法可以重排成**逐元素乘加**——代价只是要安排好「哪两个维度配成一对」。
+
+**第一步：预先算好 cos/sin 表。** 旋转角只依赖 $(m, i)$，和内容无关，训练前算一次缓存成 buffer：
 
 ```python
-def precompute_rope_cache(seq_len: int, head_dim: int, base: float = 10000.0
-                          ) -> Tuple[torch.Tensor, torch.Tensor]:
+def precompute_rope_cache(seq_len, head_dim, base=10000.0):
     inv_freq = 1.0 / (base ** (torch.arange(0, head_dim, 2).float() / head_dim))
     t = torch.arange(seq_len).float()
-    freqs = torch.outer(t, inv_freq)        # (S, d/2)：角度 m·θ_i
-    emb = torch.cat((freqs, freqs), dim=-1) # (S, d)
+    freqs = torch.outer(t, inv_freq)          # (S, d/2)：第 m 行第 i 列 = m·θᵢ
+    emb = torch.cat((freqs, freqs), dim=-1)   # (S, d)：复制一份，原因见下
     return emb.cos(), emb.sin()
 ```
 
-第二个函数是整个实现里最巧的一步。朴素做法要构造 $d\times d$ 的稀疏旋转矩阵再做矩阵乘——又大又慢。观察到 $R_m$ 分块对角、每块只有 cos/sin，可以把乘法重排成逐元素乘加：
+第一行就是 $\theta_i = \mathrm{base}^{-2i/d}$（`arange(0, d, 2)` 产生 $2i$）；第三行外积 = 转速 × 位置 = 角度表；第四行把角度**复制拼成两份**，是因为下面的配对约定。
+
+**第二步：配对约定。** 论文里相邻配对：$(2i,\ 2i+1)$。这份实现（HuggingFace Llama / NeoX 风格）是**前半与后半配对**：第 $i$ 维和第 $i + d/2$ 维凑成一对。两种约定只差一个维度排列，forward 数学上完全等价——但**预训练权重不互通**：权重里的维度排列跟着训练时的约定走，加载第三方权重时配错了，模型会静默输出乱码。这是手写实现最经典的「跑通但不对」。
+
+**第三步：rotate_half。** 按前后半配对，把向量写成 $\big(x;\, y\big)$（$x$ 是前半，$y$ 是后半，逐对 $(x_i, y_i)$）。上一节的两行旋转公式变成：
+
+$$
+\tilde{q} = \big(x\cos - y\sin;\ \ y\cos + x\sin\big)
+= \big(x;\, y\big)\cos + \big({-y};\, x\big)\sin
+$$
+
+而 $(−y;\ x)$ 正是 `rotate_half` 做的事——前半变负的后半，后半变前半：
 
 ```python
-def rotate_half(x: torch.Tensor) -> torch.Tensor:
-    """x = [x1, x2] → [-x2, x1]"""
+def rotate_half(x):                    # [x1, x2] → [-x2, x1]
     x1, x2 = x.chunk(2, dim=-1)
     return torch.cat((-x2, x1), dim=-1)
 
 def apply_rope(q, k, cos, sin):
-    cos = cos.unsqueeze(0).unsqueeze(0)     # (S,d) → (1,1,S,d) 广播
+    cos = cos.unsqueeze(0).unsqueeze(0)     # (S,d) → (1,1,S,d)：batch、head 维广播
     sin = sin.unsqueeze(0).unsqueeze(0)
     q_rot = (q * cos) + (rotate_half(q) * sin)
     k_rot = (k * cos) + (rotate_half(k) * sin)
     return q_rot, k_rot
 ```
 
-写开验证一下（向量前半 $x$、后半 $y$，逐对 $(x_i, y_i)$ 配对）：
-
-$$
-\begin{aligned}
-\text{RoPE}(v)_{\text{前半}} &= x\cos m\theta_i - y\sin m\theta_i \\
-\text{RoPE}(v)_{\text{后半}} &= y\cos m\theta_i + x\sin m\theta_i
-\end{aligned}
-$$
-
-正是旋转矩阵的每一行——`rotate_half` 把「配对维度交叉」压缩成一次 `chunk + cat`，稀疏矩阵乘变成了逐元素乘加，`v * cos + rotate_half(v) * sin` 一行完成。
+所以旋转是一行：`v * cos + rotate_half(v) * sin`。「配对维度交叉」这个矩阵结构被压缩成一次 `chunk + cat`，稀疏矩阵乘变成逐元素乘加——这就是全部机关。也解释了 cos/sin 表为什么要复制两份：前半的 $x_i$ 和后半的 $y_i$ 用的是**同一个** $\theta_i$。
 
 ![RoPE 在一层注意力里的位置：只作用于 Q 和 K，V 直接通过](/images/rope/rope_2_flow.png)
 
-两个工程细节值得单独说：
+## 案例：head_dim = 4 手算一遍
 
-**只旋转 Q 和 K，V 原样通过。** 位置信息的唯一用途是参与打分；V 是被打分加权的内容本身，旋转它不提供任何位置语义，反而破坏内容表示。这就是图里 V 那条路绕过旋转节点的原因。
+用 $d = 4$（两个平面）、手选好算的转速 $\theta_1 = 30°$、$\theta_2 = 15°$，把上面所有东西用一组数字跑通：
 
-**配对方式有两种，数学等价、权重不互通。** 本文实现是 GPT-NeoX/HF-Llama 风格（前半与后半配对：$(x_i, x_{i+d/2})$）；原始论文和 GPT-J 是相邻配对（$(x_{2i}, x_{2i+1})$）。两者只差一个维度置换，forward 数学上等价——但预训练权重里的维度排列跟着各自风格走，加载第三方权重时用错了配对，模型会静悄悄地输出乱码。这是手写实现里最典型的「跑通但不对」陷阱。
+$$
+q = (1,\ 1,\ 0,\ 0)\ \text{放在位置 } m = 2,
+\qquad
+k = (0,\ 0,\ 1,\ 1)\ \text{放在位置 } n = 5
+$$
 
-## 验证三个性质
+按前/后半配对：平面 1 = $(q_0, q_2) = (1, 0)$，平面 2 = $(q_1, q_3) = (1, 0)$；$k$ 的两个平面都是 $(0, 1)$。
 
-代码写完不算完，三个性质各验一遍：
+**旋转 $q$。** 平面 1 转 $2 \times 30° = 60°$：$(1,0) \to (\cos 60°, \sin 60°) = (0.5,\ 0.866)$；平面 2 转 $2 \times 15° = 30°$：$(1,0) \to (0.866,\ 0.5)$。平面 1 的结果写回维度 0 和 2，平面 2 的写回维度 1 和 3：
+
+$$
+\tilde{q} = (0.5,\ 0.866,\ 0.866,\ 0.5)
+$$
+
+**旋转 $k$。** 平面 1 转 $5 \times 30° = 150°$：$(0,1)$ 原在 90°，转到 $240°$，$(-0.5,\ -0.866)$；平面 2 转 $5 \times 15° = 75°$：转到 $165°$，$(-0.966,\ 0.259)$。
+
+$$
+\tilde{k} = (-0.5,\ -0.966,\ -0.866,\ 0.259)
+$$
+
+**打分**（先不除 $\sqrt{d}$）：
+
+$$
+\tilde{q} \cdot \tilde{k} = -0.25 - 0.837 - 0.75 + 0.13 = -1.707
+$$
+
+逐平面看更清楚：平面 1 里两个单位向量夹角 $240° - 60° = 180°$，贡献 $\cos 180° = -1$；平面 2 里夹角 $165° - 30° = 135°$，贡献 $\cos 135° = -0.707$。$-1 - 0.707 = -1.707$，和逐维计算一致——**打分是两个平面各自读数的和**。
+
+**验证「只看距离」。** 把这对词整体往后挪 10 个位置：$q$ 在 12、$k$ 在 15，距离仍是 3。
+
+- $q$：平面 1 转 $12 \times 30° = 360° \equiv 0°$，$(1,0)$；平面 2 转 $12 \times 15° = 180°$，$(-1, 0)$。
+- $k$：平面 1 转 $15 \times 30° = 450° \equiv 90°$，$(0,1)$ 在 $90°$ 基础上转后到 $540° \equiv 180°$，$(-1, 0)$；平面 2 转 $15 \times 15° = 225°$，到 $315°$，$(0.707, -0.707)$。
+
+$$
+\tilde{q}' = (1, -1, 0, 0), \qquad \tilde{k}' = (-1,\ 0.707,\ 0, -0.707)
+$$
+
+$$
+\tilde{q}' \cdot \tilde{k}' = -1 - 0.707 + 0 + 0 = -1.707 \quad \checkmark
+$$
+
+绝对角度全变了，打分纹丝不动。换成 $k$ 挪到 $n = 4$（距离 2）：平面 1 夹角 $90° + 60° = 150°$，平面 2 夹角 $90° + 30° = 120°$，打分 $\cos 150° + \cos 120° = -0.866 - 0.5 = -1.366$——距离变，打分变。**绝对位置无关、距离敏感**，设计要求在数字上就是这个样子。
+
+**同一组数字过代码。** cos/sin 表在 $m = 2$ 的行：角度 $(60°, 30°)$ 复制两份，$\cos[2] = (0.5,\ 0.866,\ 0.5,\ 0.866)$，$\sin[2] = (0.866,\ 0.5,\ 0.866,\ 0.5)$；
+
+```text
+rotate_half(q) = rotate_half(1, 1, 0, 0) = (0, 0, 1, 1)
+q * cos              = (0.5,   0.866, 0,     0   )
+rotate_half(q) * sin = (0,     0,    0.866, 0.5 )   ← 相加
+= (0.5, 0.866, 0.866, 0.5)                            ← 手算的 q̃，一致
+```
+
+可运行的完整验证：
 
 ```python
 import torch
-# rotate_half / precompute_rope_cache 来自上文，cos/sin 形状 (S, d)
+# rotate_half 来自上一节
+theta = torch.tensor([30, 15]) * torch.pi / 180    # θ₁=30°, θ₂=15°
 
-q = torch.randn(8)                        # 一个 head_dim=8 的头
-k = torch.randn(8)
-cos, sin = precompute_rope_cache(64, 8)
+def rot(x, m):                                      # 前后半配对的 RoPE
+    ang = m * theta
+    c = torch.cat([ang.cos(), ang.cos()])
+    s = torch.cat([ang.sin(), ang.sin()])
+    return x * c + rotate_half(x) * s
 
-def rot(x, m):                            # 把 x 放到位置 m 旋转
-    return x * cos[m] + rotate_half(x) * sin[m]
+q = torch.tensor([1., 1., 0., 0.]); k = torch.tensor([0., 0., 1., 1.])
 
-# ① 相对性：绝对位置平移，打分不变
-a = torch.dot(rot(q, 5),  rot(k, 15))     # 位置 (5, 15)
-b = torch.dot(rot(q, 25), rot(k, 35))     # 位置 (25, 35)，相对距离都是 10
-torch.allclose(a, b, atol=1e-5)           # True
-
-# ② 保范数：旋转不改变向量长度，不干扰归一化后的尺度
-torch.allclose(rot(q, 9).norm(), q.norm(), atol=1e-6)   # True
-
-# ③ 同位置退化：m = n 时打分还原为纯内容内积
-torch.allclose(torch.dot(rot(q, 7), rot(k, 7)), torch.dot(q, k), atol=1e-5)  # True
+print(rot(q, 2))               # [0.5000, 0.8660, 0.8660, 0.5000] — 手算的 q̃
+print(rot(q, 2) @ rot(k, 5))   # -1.7071
+print(rot(q, 12) @ rot(k, 15)) # -1.7071  ← 整体平移 +10，打分不变
+print(rot(q, 2) @ rot(k, 4))   # -1.3660  ← 距离变 2，打分变
 ```
 
-① 是设计目标本身；② 说明 RoPE 不破坏 RMSNorm 辛苦维持的尺度稳定——旋转是正交变换，范数天然不变；③ 是 ① 的边界情形，也是检查配对风格有没有写对的最快方法（配对错了，同位置的内积不会还原）。
+四个输出依次对上上面的手算：数学公式和代码，同一组数字，同一个答案。
 
 ## 总结
 
-- RoPE 的提问方式：不设计「位置 m 的向量长什么样」，而是设计「带位置的 Q·K 内积长什么样」——答案要求只依赖 $n-m$；
-- 二维复数乘 $e^{im\theta}$ 即旋转，内积自动消掉绝对位置；高维 = $d/2$ 个子空间各自转，分块对角矩阵；
-- $\theta_i = 10000^{-2i/d}$ 指数衰减，快慢针组合唯一编码相对距离；
-- 实现核心是 `rotate_half`：把稀疏旋转矩阵乘重排成逐元素乘加；
-- 只旋转 Q、K；配对风格（前后半 vs 相邻）等价但权重不互通。
+- 注意力打分是内积，天生与词序无关；位置编码的设计要求是让打分**只依赖内容与相对距离 $n-m$**；
+- 把位置**加**进向量做不到：位置混进内容，内积展开后剩绝对位置项；
+- 把位置变成**角度**就行：每对维度在自己的平面上转 $m\theta_i$，绝对角度相减只剩 $(n-m)\theta_i$，$\langle R_m q, R_n k\rangle = |q||k|\cos(\angle + (n{-}m)\theta) = q^\top R_{n-m} k$；
+- 高维 = $d/2$ 个平面各自转，内积逐平面求和，相对性在求和后保持；
+- 转速 $\theta_i = 10000^{-2i/d}$ 指数衰减，快针分辨近距离、慢针覆盖远距离；
+- 实现的核心是 `rotate_half`：把分块旋转矩阵压成 `v * cos + rotate_half(v) * sin` 一行；只旋转 Q、K；配对约定（前后半 vs 相邻）等价但权重不互通。
 
 ## 延伸
 
-RoPE 把「相对位置」做对了，但「训练 4K、推理 128K」的外推问题它自己不解决——位置超出训练见过的范围，慢针也开始转满圈。沿这条路长出来一整族长度外推方法：位置插值（PI）把位置线性压缩回训练范围，NTK-aware 调高 base 让慢针更慢，YaRN 两者的非线性组合；Llama3 则干脆把 base 提到 $5\times10^5$ 用长数据重训。另一个方向是把这篇的验证代码扩展成可视化：画出不同 $i$ 的 $\cos(m\theta_i)$ 曲线，秒针、分针、时针的比喻会直接长在眼前。
+RoPE 把「相对位置」做对了，但没解决「训练 4K、推理 128K」：超出训练长度后，慢针也开始转满圈，读数撞车。沿这条线长出一族长度外推方法——位置插值把位置线性压回训练范围、NTK-aware 调大 base 让慢针更慢、YaRN 是两者的组合；Llama3 则直接把 base 提到 $5\times10^5$ 用长数据重训。想继续动手：把案例里的 `rot` 扩展到 $d=128$，画出各平面的 $\cos(m\theta_i)$ 曲线，秒针、分针、时针会直接长在眼前。
