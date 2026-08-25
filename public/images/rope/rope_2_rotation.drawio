@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="drawio" version="26.0.0">
+  <diagram name="rotation-property">
+    <mxGraphModel>
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="公式④ 的几何图像：两个绝对角度相减，只剩相对角度" style="text;html=1;align=left;verticalAlign=middle;fontSize=17;fontStyle=1;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="40" y="25" width="640" height="28" as="geometry" />
+        </mxCell>
+
+        <mxCell id="xaxis" value="" style="endArrow=none;strokeColor=#666666;strokeWidth=1.5;html=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="230" y="360" as="sourcePoint" />
+            <mxPoint x="560" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xaxisLabel" value="维度 2i" style="text;html=1;align=center;verticalAlign=top;fontSize=13;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="480" y="368" width="80" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="yaxis" value="" style="endArrow=none;strokeColor=#666666;strokeWidth=1.5;html=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="300" y="430" as="sourcePoint" />
+            <mxPoint x="300" y="150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="yaxisLabel" value="维度 2i+1" style="text;html=1;align=center;verticalAlign=bottom;fontSize=13;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="200" y="128" width="100" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="originLabel" value="O" style="text;html=1;align=center;verticalAlign=middle;fontSize=13;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="283" y="364" width="18" height="16" as="geometry" />
+        </mxCell>
+
+        <mxCell id="vecQ" value="" style="endArrow=blockThin;endFill=1;strokeColor=#6c8ebf;strokeWidth=3;html=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="300" y="360" as="sourcePoint" />
+            <mxPoint x="415" y="280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="vecQLabel" value="&lt;font color=&quot;#6c8ebf&quot;&gt;&lt;b&gt;q̃ = R(m) q&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="432" y="265" width="140" height="22" as="geometry" />
+        </mxCell>
+
+        <mxCell id="vecK" value="" style="endArrow=blockThin;endFill=1;strokeColor=#82b366;strokeWidth=3;html=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="300" y="360" as="sourcePoint" />
+            <mxPoint x="345" y="191" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="vecKLabel" value="&lt;font color=&quot;#82b366&quot;&gt;&lt;b&gt;k̃ = R(n) k&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="355" y="168" width="140" height="22" as="geometry" />
+        </mxCell>
+
+        <mxCell id="arcM" value="" style="curved=1;endArrow=none;strokeColor=#666666;strokeWidth=1.5;html=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="415" y="360" as="sourcePoint" />
+            <mxPoint x="394" y="294" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="410" y="325" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arcMLabel" value="m·ω&lt;sub&gt;i&lt;/sub&gt;" style="text;html=1;align=left;verticalAlign=middle;fontSize=13;fontStyle=2;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="428" y="318" width="70" height="18" as="geometry" />
+        </mxCell>
+
+        <mxCell id="arcN" value="" style="curved=1;endArrow=none;strokeColor=#666666;strokeWidth=1.5;html=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="455" y="360" as="sourcePoint" />
+            <mxPoint x="340" y="210" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="423" y="266" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arcNLabel" value="n·ω&lt;sub&gt;i&lt;/sub&gt;" style="text;html=1;align=left;verticalAlign=middle;fontSize=13;fontStyle=2;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="448" y="238" width="70" height="18" as="geometry" />
+        </mxCell>
+
+        <mxCell id="arcRel" value="" style="curved=1;endArrow=none;strokeColor=#d79b00;strokeWidth=2.5;html=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="374" y="308" as="sourcePoint" />
+            <mxPoint x="323" y="273" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="352" y="286" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arcRelLabel" value="&lt;font color=&quot;#B45309&quot;&gt;&lt;b&gt;(n−m)·ω&lt;sub&gt;i&lt;/sub&gt;&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="306" y="312" width="84" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="formulaBox" value="&lt;b&gt;&lt;font style=&quot;font-size:16px&quot;&gt;R(m)&lt;sup&gt;T&lt;/sup&gt;R(n) = R(n−m)&lt;/font&gt;&lt;/b&gt;&#xa;&lt;font style=&quot;font-size:12px&quot;&gt;转置 = 反转（−m·ω&lt;sub&gt;i&lt;/sub&gt;），复合 = 相加（+n·ω&lt;sub&gt;i&lt;/sub&gt;）&lt;/font&gt;&#xa;打分 q̃&lt;sup&gt;T&lt;/sup&gt;k̃ = q&lt;sup&gt;T&lt;/sup&gt; R(n−m) k —— m、n 消失，只剩 n − m" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;verticalAlign=middle;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="560" y="150" width="350" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="caption" value="同一对词挪到文中任何地方：两个灰弧变，橙弧不变，打分不变" style="text;html=1;align=left;verticalAlign=top;fontSize=12;fontColor=#666666;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="230" y="445" width="340" height="36" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

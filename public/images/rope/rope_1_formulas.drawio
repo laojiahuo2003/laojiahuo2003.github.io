@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="drawio" version="26.0.0">
+  <diagram name="four-formulas">
+    <mxGraphModel>
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="RoPE 的全部数学：四个公式，一条流水线" style="text;html=1;align=left;verticalAlign=middle;fontSize=17;fontStyle=1;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="40" y="25" width="700" height="28" as="geometry" />
+        </mxCell>
+
+        <mxCell id="b1" value="① 转速表（写死）&#xa;&#xa;ω&lt;sub&gt;i&lt;/sub&gt; = base&lt;sup&gt;−2i/d&lt;/sup&gt;&#xa;&#xa;&lt;font style=&quot;font-size:11px&quot;&gt;i = 0 … d/2−1，base = 10⁴&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="110" width="185" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="b2" value="② 位置 → 角度&#xa;&#xa;θ&lt;sub&gt;m,i&lt;/sub&gt; = m · ω&lt;sub&gt;i&lt;/sub&gt;&#xa;&#xa;&lt;font style=&quot;font-size:11px&quot;&gt;位置编码到此完成&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="300" y="110" width="185" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="b3" value="③ 二维旋转&#xa;&#xa;x&lt;sub&gt;1&lt;/sub&gt;′ = x&lt;sub&gt;1&lt;/sub&gt;cosθ − x&lt;sub&gt;2&lt;/sub&gt;sinθ&#xa;x&lt;sub&gt;2&lt;/sub&gt;′ = x&lt;sub&gt;1&lt;/sub&gt;sinθ + x&lt;sub&gt;2&lt;/sub&gt;cosθ&#xa;&lt;font style=&quot;font-size:11px&quot;&gt;q̃ = R(m) q，k̃ = R(n) k&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="560" y="100" width="250" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="b4" value="&lt;b&gt;④ 核心性质&lt;/b&gt;&#xa;&#xa;&lt;b&gt;R(m)&lt;sup&gt;T&lt;/sup&gt;R(n) = R(n−m)&lt;/b&gt;&#xa;&#xa;绝对位置相消&#xa;打分只依赖 n − m" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="880" y="100" width="260" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e1" value="位置 m" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=12;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="b1" target="b2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="角度 θ" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=12;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="b2" target="b3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="打分 q̃·k̃" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=12;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="b3" target="b4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="note" value="①②③ 是机制：造表、位置变角度、旋转；④ 是原因：内积把 R(m)、R(n) 乘到一起，绝对角度相减只剩 (n−m)·ω&lt;sub&gt;i&lt;/sub&gt;。全文按这四条逐一展开。" style="text;html=1;align=left;verticalAlign=top;fontSize=13;fontColor=#666666;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="290" width="1100" height="46" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
