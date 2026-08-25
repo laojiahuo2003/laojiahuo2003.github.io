@@ -1,0 +1,21 @@
+<mxfile host="app.diagrams.net"><diagram id="d47" name="3 · 公式 ↔ 代码对照"><mxGraphModel dx="900" dy="700" grid="1" gridSize="10" page="1" pageScale="1" pageWidth="860" pageHeight="560"><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="n25" value="一行公式，两行代码" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;arcSize=8;strokeColor=#FFFFFF;strokeWidth=1.2;fontStyle=1;fontSize=15;fontColor=#1A2332" vertex="1" parent="1"><mxGeometry x="60" y="30" width="740" height="40" as="geometry"/></mxCell><mxCell id="n26" value="公式：  yᵢ = γᵢ · xᵢ / √( (1/d)·Σⱼ xⱼ² + ε )" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFDE7;arcSize=8;strokeColor=#5A6B7F;strokeWidth=1.2;fontStyle=1;fontSize=14;fontColor=#1A2332" vertex="1" parent="1"><mxGeometry x="60" y="100" width="740" height="64" as="geometry"/></mxCell><mxCell id="n27" value="class RMSNorm(nn.Module):
+    def __init__(self, dim, eps=1e-5):
+        self.eps = eps
+        self.weight = nn.Parameter(torch.ones(dim))  # γ
+
+    def forward(self, x):                            # x: (B,S,d)
+        x_norm = x * torch.rsqrt(                    # ② 除以 √(ms+ε)
+            x.pow(2).mean(-1, keepdim=True) + self.eps)  # ① ms=mean(x²)
+        return x_norm * self.weight                  # ③ × γ" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F7FA;arcSize=8;strokeColor=#5A6B7F;strokeWidth=1.2;fontSize=12;fontColor=#1A2332" vertex="1" parent="1"><mxGeometry x="60" y="190" width="740" height="190" as="geometry"/></mxCell><mxCell id="n28" value="Llama 系列全部把归一化
+放在子层【前】(pre-norm)
+
+x = x + Attn(Norm(x))
+x = x + FFN(Norm(x))" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;arcSize=8;strokeColor=#5A6B7F;strokeWidth=1.2;fontSize=11;fontColor=#1A2332" vertex="1" parent="1"><mxGeometry x="60" y="400" width="230" height="110" as="geometry"/></mxCell><mxCell id="n29" value="真实模型超参：
+
+Llama-2-7B: d=4096, ε=1e-5
+Qwen3:      d=4096, ε=1e-6
+DeepSeek-V3: d=7168, ε=1e-6" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;arcSize=8;strokeColor=#5A6B7F;strokeWidth=1.2;fontSize=11;fontColor=#1A2332" vertex="1" parent="1"><mxGeometry x="320" y="400" width="230" height="110" as="geometry"/></mxCell><mxCell id="n30" value="为什么敢去掉 β？
+
+β 的一份加法自由度
+在大规模下收益≈0，
+还干扰量化" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;arcSize=8;strokeColor=#5A6B7F;strokeWidth=1.2;fontSize=11;fontColor=#1A2332" vertex="1" parent="1"><mxGeometry x="580" y="400" width="220" height="110" as="geometry"/></mxCell></root></mxGraphModel></diagram></mxfile>
