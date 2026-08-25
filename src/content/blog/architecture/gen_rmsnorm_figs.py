@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-生成 RMSNorm 博客配图（draw.io XML → 本地 CLI 导出 PNG）
-3 页：① LayerNorm vs RMSNorm 对比 ② RMSNorm 前向计算流 ③ 代码-公式对照
+RMSNorm 博客配图 v2：内容驱动布局
+核心改进：框的宽度由「文字实际渲染宽度」决定（用 matplotlib 字体度量估算），
+不再固定框宽硬塞——解决「字挤在一起」的问题。
+公式框用等宽估算 + 加 30% 余量。
 """
 import os
-import sys
+import xml.sax.saxutils as sx
 
-# 引擎（Page/Node/Edge + 布局检查）在 llm-architectures/docs/gen_drawio.py 里。
-# 该文件顶层会执行全部页面定义，所以只 exec 它的「引擎定义区」（Page 1 之前），
-# 拿到 Page / C / nid 三个符号，无副作用。
+# ---------------- 引擎（从 llm-architectures/docs/gen_drawio.py 提取）----------------
 _ENGINE = r"C:\Users\ljh\Desktop\code\llm-architectures\docs\gen_drawio.py"
 _src = open(_ENGINE, encoding="utf-8").read()
 _cut = _src.index("# ================================================================"
@@ -17,131 +17,137 @@ _ns = {"__name__": "drawio_engine"}
 exec(compile(_src[:_cut], "drawio_engine", "exec"), _ns)
 Page, C, nid = _ns["Page"], _ns["C"], _ns["nid"]
 
-STROKE = "#5A6B7F"
-INK = "#1A2332"
+# ---------------- 文字宽度测量（matplotlib 真实字体度量）----------------
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+from matplotlib.font_manager import FontProperties
 
-# ================================================================ Page 1: 对比图
-p1 = Page("1 · LayerNorm vs RMSNorm", w=860, h=620)
+plt.rcParams["font.family"] = ["Microsoft YaHei"]
+_fp = FontProperties(family="Microsoft YaHei")
+_fig = plt.figure(figsize=(10, 8))
+_renderer = _fig.canvas.get_renderer()
+_dpi = _fig.dpi
 
-p1.add(x=60, y=30, w=740, h=40, label="同一个向量，两种归一化",
+
+def text_w(s: str, fontsize: float) -> float:
+    """文字在 fontsize(pt) 下的宽度，单位换算成 drawio 坐标(px @96dpi)。
+    draw.io 默认 1pt 字号在画布上约 1.33px；一个中文字符宽约等于字号 pt。
+    我们用 matplotlib 精确测量，再按 pt→px (×96/72) 转换。"""
+    t = _fig.text(0, 0, s, fontproperties=_fp, fontsize=fontsize)
+    bb = t.get_window_extent(renderer=_renderer)
+    t.remove()
+    return bb.width / _dpi * 96.0  # px
+
+
+def fit_box(label: str, fs: float, min_w=120, pad=56, line_h=None):
+    """按内容计算需要的 (w, h)。多行 label 用 \\n 分行，逐行取最大宽度。"""
+    lines = label.split("\n")
+    w = max(text_w(ln, fs) for ln in lines) + pad * 2
+    h = len(lines) * (line_h or fs * 1.85) + 16
+    return max(w, min_w), h
+
+
+print("测量校准: 'RMSNorm' @12pt ≈", round(text_w("RMSNorm", 12)), "px (预期~60)")
+
+
+def add_fit(page, x, y, label, fill, fs=12, bold=False, **kw):
+    """内容自适应框：宽度=最长行+padding，高度=行数×行高"""
+    w, h = fit_box(label, fs)
+    h = kw.pop("h_override", h)  # 允许手动加高
+    return page.add(x=x, y=y, w=w, h=h, label=label, fill=fill, fs=fs,
+                    bold=bold, **kw), w, h
+
+
+# ================================================================ 图 1：对比图 v2
+p1 = Page("1 · LayerNorm vs RMSNorm", w=980, h=680)
+
+p1.add(x=60, y=24, w=860, h=36, label="同一个向量，两种归一化",
        fill=C["white"], fs=15, bold=True)._stroke = "#FFFFFF"
 
-# 输入向量示例
-vin = p1.add(x=80, y=100, w=280, h=56, label="x = [3.0, 1.0, -2.0, 4.0]",
-             fill=C["input"], fs=13, bold=True)
+# 输入向量（居中放置）
+vin, vw, vh = add_fit(p1, 330, 80, "x = [3.0,  1.0,  -2.0,  4.0]", C["input"],
+                      fs=13, bold=True)
 
-# LayerNorm 分支（左）
-p1.add(x=60, y=190, w=160, h=32, label="LayerNorm", fill=C["norm"], fs=13, bold=True)
-ln1 = p1.add(x=60, y=232, w=160, h=34, label="① 减均值 μ", fill=C["white"], fs=11)
-ln2 = p1.add(x=60, y=278, w=160, h=34, label="② 除标准差 σ", fill=C["white"], fs=11)
-ln3 = p1.add(x=60, y=324, w=160, h=34, label="③ × γ + β", fill=C["white"], fs=11)
-for a, b in [(ln1, ln2), (ln2, ln3)]:
-    p1.edge(a, b, exit_=(0.5, 1), entry=(0.5, 0))
-p1.edge(vin, ln1, exit_=(0.25, 1), entry=(0.5, 0))
-
-ln_out = p1.add(x=60, y=396, w=160, h=60,
-                label="μ=1.5  σ≈2.29\n→ [-0.22, -0.66, -1.53, 0.66]",
-                fill="#FFF3E0", fs=10)
-p1.edge(ln3, ln_out, exit_=(0.5, 1), entry=(0.5, 0))
-
-# RMSNorm 分支（右）
-p1.add(x=560, y=190, w=160, h=32, label="RMSNorm", fill=C["norm"], fs=13, bold=True)
-rn1 = p1.add(x=560, y=232, w=160, h=34, label="① 求均方根 RMS", fill=C["white"], fs=11)
-rn2 = p1.add(x=560, y=278, w=160, h=34, label="② x / RMS", fill=C["white"], fs=11)
-rn3 = p1.add(x=560, y=324, w=160, h=34, label="③ × γ", fill=C["white"], fs=11)
-for a, b in [(rn1, rn2), (rn2, rn3)]:
-    p1.edge(a, b, exit_=(0.5, 1), entry=(0.5, 0))
-p1.edge(vin, rn1, exit_=(0.75, 1), entry=(0.5, 0))
-
-rn_out = p1.add(x=560, y=396, w=160, h=60,
-                label="RMS≈2.74\n→ [1.10, 0.37, -0.73, 1.46]",
-                fill="#FFF3E0", fs=10)
-p1.edge(rn3, rn_out, exit_=(0.5, 1), entry=(0.5, 0))
-
-# 中间公式对比（两侧各留 40px 给步骤框：框宽160 起 x=60/x=560，中间可用 240~540）
-p1.add(x=250, y=232, w=280, h=96,
-       label="LayerNorm: (x−μ)/σ · γ + β\n\nRMSNorm:  x / RMS(x) · γ\n\n"
-             "RMS(x) = √( (1/d)·Σxᵢ² )",
-       fill=C["note"], fs=12)
-
-p1.add(x=60, y=490, w=740, h=90,
-       label="省掉的东西：μ（一次求和归约）、β（一份参数+一次加法）\n"
-             "省掉的理由：归一化真正起作用的是「缩放不变性」，中心化贡献很小\n"
-             "收益：少一次完整的数据依赖归约 → 训练/推理都更快；参数少一半",
-       fill=C["panel"], fs=12)
-
-# ================================================================ Page 2: 前向计算流
-p2 = Page("2 · RMSNorm 前向与反向", w=860, h=640)
-
-p2.add(x=60, y=30, w=740, h=40, label="RMSNorm 前向数据流（张量形状标注）",
-       fill=C["white"], fs=15, bold=True)._stroke = "#FFFFFF"
-
-flow = [
-    ("x  (B, S, d)", C["input"], 34),
-    ("x.pow(2)  → x²  (B, S, d)", C["attn"], 34),
-    (".mean(dim=-1, keepdim=True)  →  (B, S, 1)", C["attn"], 34),
-    ("+ eps 后 rsqrt  →  1/√(mean(x²)+ε)  (B, S, 1)", C["norm"], 40),
-    ("x · 1/√(...)  广播相乘  →  (B, S, d)", C["attn"], 34),
-    ("× γ (逐维缩放)  →  (B, S, d)", C["norm"], 34),
+# ---- 左右两条流程（每行拆成「步骤」+「计算」两行，宽度自适应，避免挤在一行）----
+steps_ln = [
+    ("① 减均值 μ", "x − 1.50"),
+    ("② 除标准差 σ", "÷ 2.29"),
+    ("③ 仿射变换", "× γ + β"),
 ]
-nodes = []
-y = 90
-for label, fill, h in flow:
-    n = p2.add(x=200, y=y, w=460, h=h, label=label, fill=fill, fs=12)
-    if nodes:
-        p2.edge(nodes[-1], n, exit_=(0.5, 1), entry=(0.5, 0))
-    nodes.append(n)
-    y += h + 24
+steps_rn = [
+    ("① 求均方根 RMS", "RMS(x) = sqrt(mean(x²)) = 2.74"),
+    ("② 除以 RMS", "x ÷ 2.74"),
+    ("③ 缩放", "× γ"),
+]
 
-p2.add(x=60, y=100, w=120, h=300, label="γ 可学习\n初始化为全 1",
-       fill=C["gray"], fs=11)
-p2.edge(p2.nodes[-1], nodes[5], exit_=(0.5, 1), entry=(0, 0.5), dashed=True,
-        color="#8E24AA")
+# 预计算两条流程的最大框宽（每框两行文字，取两行较长者），保证左右对称
+def step_box_w(s):
+    return max(fit_box(s[0], 11)[0], fit_box(s[1], 11)[0]) + 30
 
-p2.add(x=60, y=440, w=740, h=160,
-       label="反向传播要点（autograd 自动做，但值得知道）：\n"
-             "∂L/∂xᵢ = γᵢ/√(ms+ε) · (∂L/∂yᵢ − xᵢ·Σⱼ(∂L/∂yⱼ·γⱼ·xⱼ)/(d·(ms+ε)))\n"
-             "（ms = mean(x²)）——梯度不只走「直接路径」，还有一项通过 ms 回头\n\n"
-             "数值细节：eps 在 rsqrt 里防除零；fp16 训练时归一化通常保持 fp32 计算",
-       fill=C["panel"], fs=11)
+col_w = max(max(step_box_w(s) for s in steps_ln),
+            max(step_box_w(s) for s in steps_rn), 210)
 
-# ================================================================ Page 3: 代码对照
-p3 = Page("3 · 公式 ↔ 代码对照", w=860, h=560)
+x_left, x_right = 60, 980 - 60 - col_w
+y = 170
+heads = []
+for x0, name, color in [(x_left, "LayerNorm", C["norm"]),
+                        (x_right, "RMSNorm", C["norm"])]:
+    h = p1.add(x=x0, y=y, w=col_w, h=34, label=name, fill=color, fs=14, bold=True)
+    heads.append(h)
 
-p3.add(x=60, y=30, w=740, h=40, label="一行公式，两行代码",
-       fill=C["white"], fs=15, bold=True)._stroke = "#FFFFFF"
+y = 224
+boxes_ln, boxes_rn = [], []
+for (s1, calc1), (s2, calc2) in zip(steps_ln, steps_rn):
+    b1 = p1.add(x=x_left, y=y, w=col_w, h=46,
+                label=f"{s1}\n{calc1}", fill=C["white"], fs=11)
+    b2 = p1.add(x=x_right, y=y, w=col_w, h=46,
+                label=f"{s2}\n{calc2}", fill=C["white"], fs=11)
+    boxes_ln.append(b1); boxes_rn.append(b2)
+    if y == 224:
+        p1.edge(heads[0], b1, exit_=(0.5, 1), entry=(0.5, 0))
+        p1.edge(heads[1], b2, exit_=(0.5, 1), entry=(0.5, 0))
+    else:
+        p1.edge(boxes_ln[-2], b1, exit_=(0.5, 1), entry=(0.5, 0))
+        p1.edge(boxes_rn[-2], b2, exit_=(0.5, 1), entry=(0.5, 0))
+    y += 64
 
-p3.add(x=60, y=100, w=740, h=64,
-       label="公式：  yᵢ = γᵢ · xᵢ / √( (1/d)·Σⱼ xⱼ² + ε )",
-       fill=C["note"], fs=14, bold=True)
+# 输出（两行，宽度与列对齐）
+y_out = y + 6
+out_ln = p1.add(x=x_left, y=y_out, w=col_w, h=52,
+                label="μ=1.50  σ=2.29\n[ 0.65, -0.22, -1.53,  1.09 ]",
+                fill="#FFF3E0", fs=11)
+out_rn = p1.add(x=x_right, y=y_out, w=col_w, h=52,
+                label="RMS=2.74\n[ 1.10,  0.37, -0.73,  1.46 ]",
+                fill="#FFF3E0", fs=11)
+p1.edge(boxes_ln[-1], out_ln, exit_=(0.5, 1), entry=(0.5, 0))
+p1.edge(boxes_rn[-1], out_rn, exit_=(0.5, 1), entry=(0.5, 0))
 
-code = """class RMSNorm(nn.Module):
-    def __init__(self, dim, eps=1e-5):
-        self.eps = eps
-        self.weight = nn.Parameter(torch.ones(dim))  # γ
+# ---- 中间公式（按最长行自适应宽度；列变宽后中间空间可能不足，则压缩表述）----
+mid_x = x_left + col_w + 24
+mid_w = x_right - 24 - mid_x
+mid_label = "LayerNorm\n(x−μ)/σ · γ + β\n\nRMSNorm\nx / RMS(x) · γ"
+# 若中间区域放不下（含 padding），把公式框改为「竖排窄版」
+if fit_box("x / RMS(x) · γ", 12)[0] + 40 > mid_w:
+    mid_label = "LayerNorm\n(x−μ)/σ·γ+β\n\nRMSNorm\nx/RMS·γ"
+p1.add(x=mid_x, y=224, w=mid_w, h=110, label=mid_label, fill=C["note"], fs=12)
 
-    def forward(self, x):                            # x: (B,S,d)
-        x_norm = x * torch.rsqrt(                    # ② 除以 √(ms+ε)
-            x.pow(2).mean(-1, keepdim=True) + self.eps)  # ① ms=mean(x²)
-        return x_norm * self.weight                  # ③ × γ"""
+# 输入到两条流程的箭头
+p1.edge(vin, heads[0], exit_=(0.25, 1), entry=(0.5, 0))
+p1.edge(vin, heads[1], exit_=(0.75, 1), entry=(0.5, 0))
 
-p3.add(x=60, y=190, w=740, h=190, label=code, fill="#F5F7FA", fs=12)
-# 代码框右边注释箭头
-p3.add(x=60, y=400, w=230, h=110,
-       label="Llama 系列全部把归一化\n放在子层【前】(pre-norm)\n\n"
-             "x = x + Attn(Norm(x))\nx = x + FFN(Norm(x))",
-       fill=C["attn"], fs=11)
-p3.add(x=320, y=400, w=230, h=110,
-       label="真实模型超参：\n\nLlama-2-7B: d=4096, ε=1e-5\n"
-             "Qwen3:      d=4096, ε=1e-6\nDeepSeek-V3: d=7168, ε=1e-6",
-       fill=C["gray"], fs=11)
-p3.add(x=580, y=400, w=220, h=110,
-       label="为什么敢去掉 β？\n\nβ 的一份加法自由度\n在大规模下收益≈0，\n还干扰量化",
-       fill=C["panel"], fs=11)
+# 底部总结（拆成三行短句，每行自适应测量，保证不超宽）
+summary_lines = [
+    "省掉：μ（一次归约）· β（一份参数）· σ²（二次归约）",
+    "依据：归一化的价值在缩放不变性，中心化贡献很小",
+    "收益：更快 · 参数少一半 · fp16 更稳",
+]
+sw = max(fit_box(s, 12)[0] for s in summary_lines)
+sh = len(summary_lines) * 12 * 1.85 + 24
+p1.add(x=(980 - sw) / 2, y=y_out + 100, w=sw, h=sh,
+       label="\n".join(summary_lines), fill=C["panel"], fs=12)
 
-# ================================================================ 输出（单页一个文件）
-import xml.sax.saxutils as sx
-
+# ================================================================ 导出函数（单文件）
 def write_page(page, path):
     problems = page.check()
     if problems:
@@ -154,7 +160,8 @@ def write_page(page, path):
     for n in page.nodes:
         geom = (f'<mxGeometry x="{n.x}" y="{n.y}" width="{n.w}" '
                 f'height="{n.h}" as="geometry"/>')
-        cells.append(f'<mxCell id="{n.id}" value="{sx.escape(n.label)}" '
+        _lbl = sx.escape(n.label).replace(chr(10), "&#xa;")
+        cells.append(f'<mxCell id="{n.id}" value="{_lbl}" '
                      f'style="{n.style()}" vertex="1" parent="{n.parent}">'
                      f'{geom}</mxCell>')
     for e in page.edges:
@@ -166,7 +173,8 @@ def write_page(page, path):
             st += f";exitX={e.exit_[0]};exitY={e.exit_[1]};exitDx=0;exitDy=0"
         if e.entry:
             st += f";entryX={e.entry[0]};entryY={e.entry[1]};entryDx=0;entryDy=0"
-        lbl = f' value="{sx.escape(e.label)}"' if e.label else ""
+        _elbl = sx.escape(e.label).replace(chr(10), "&#xa;") if e.label else ""
+        lbl = f' value="{_elbl}"' if e.label else ""
         cells.append(f'<mxCell id="{nid("e")}"{lbl} style="{st}" edge="1" '
                      f'parent="1" source="{e.src}" target="{e.dst}">'
                      f'<mxGeometry relative="1" as="geometry"/></mxCell>')
@@ -183,5 +191,3 @@ def write_page(page, path):
 
 OUT_DIR = os.path.dirname(os.path.abspath(__file__))
 write_page(p1, os.path.join(OUT_DIR, "rmsnorm_1_compare.drawio"))
-write_page(p2, os.path.join(OUT_DIR, "rmsnorm_2_forward.drawio"))
-write_page(p3, os.path.join(OUT_DIR, "rmsnorm_3_code.drawio"))
