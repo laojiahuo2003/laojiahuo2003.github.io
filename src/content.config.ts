@@ -7,6 +7,7 @@ const blog = defineCollection({
     title: z.string(),
     description: z.string(),
     pubDate: z.coerce.date(),
+    updated: z.coerce.date().optional(),   // 文章实质性修订时间（可选）
     tags: z.array(z.string()).default([]),
   }),
 });

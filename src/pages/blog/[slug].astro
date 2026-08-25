@@ -28,6 +28,7 @@ const wordCount = cjkChars + latinWords;
 const readingMinutes = Math.max(1, Math.round(wordCount / 400));
 
 // JSON-LD 结构化数据（BlogPosting），利于搜索结果富摘要
+const updatedDate = post.data.updated ?? post.data.pubDate;
 const siteUrl = Astro.site ?? new URL('https://laojiahuo2003.github.io');
 const ldJson = {
   '@context': 'https://schema.org',
@@ -35,7 +36,7 @@ const ldJson = {
   headline: post.data.title,
   description: post.data.description,
   datePublished: post.data.pubDate.toISOString(),
-  dateModified: post.data.pubDate.toISOString(),
+  dateModified: updatedDate.toISOString(),
   author: { '@type': 'Person', name: 'Jiahuo Lao', url: siteUrl.href },
   mainEntityOfPage: new URL(Astro.url.pathname, siteUrl).href,
   image: new URL('/og.png', siteUrl).href,
@@ -82,6 +83,12 @@ const relatedList = hasRelated
       <h1>{post.data.title}</h1>
       <p class="article-meta">
         <time datetime={post.data.pubDate.toISOString().slice(0, 10)}>{dateStr}</time>
+        {post.data.updated && (
+          <>
+            <span aria-hidden="true"> · </span>
+            <span>更新于 {fmtDate(post.data.updated)}</span>
+          </>
+        )}
         <span aria-hidden="true"> · </span>
         <span>{readingMinutes} 分钟 · {wordCount} 字</span>
       </p>

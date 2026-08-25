@@ -266,6 +266,8 @@ nav.site a[aria-current="page"]::before { content: "· "; color: var(--accent); 
   background: var(--code-bg);
   border-radius: 4px;
   padding: .15em .4em;
+  /* 长 token（如 x.pow(2).mean(-1, keepdim=True)）在窄屏任意位置断行，不撑破列宽 */
+  overflow-wrap: break-word;
 }
 .prose pre {
   background: var(--code-bg);
