@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      actions: write  # 允许 gh workflow run 触发部署
 
     steps:
       - name: 检出
@@ -30,8 +31,19 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add src/data/weekly.json
-          git diff --quiet && git diff --staged --quiet || git commit -m "Add weekly report $(TZ='Asia/Shanghai' date +'%Y-%m-%d')"
-          git pull --rebase
-          git push
+          if git diff --quiet && git diff --staged --quiet; then
+            echo "无新数据，跳过提交"
+          else
+            git commit -m "Add weekly report $(TZ='Asia/Shanghai' date +'%Y-%m-%d')"
+            git pull --rebase
+            git push
+            echo "PUSHED=1" >> "$GITHUB_ENV"
+          fi
 
-      # push 到 main 自动触发 deploy.yml 部署 Pages
+      # 注意：GITHUB_TOKEN 的 push 不会触发其他 workflow（GitHub 防递归），
+      # 必须显式 dispatch 部署，否则 Pages 停留在旧构建
+      - name: 触发 Pages 部署
+        if: env.PUSHED == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml --ref main
