@@ -1,6 +1,378 @@
 {
-  "updated": "2026-08-31T15:22:50Z",
+  "updated": "2026-09-07T14:29:26Z",
   "reports": [
+    {
+      "week_start": "2026-09-01",
+      "week_end": "2026-09-07",
+      "generated": "2026-09-07 14:29",
+      "coverage": 7,
+      "warmup": false,
+      "darkhorses": [
+        {
+          "name": "mattpocock/skills",
+          "url": "https://github.com/mattpocock/skills",
+          "stars": 255021,
+          "growth": 17662,
+          "days_seen": 6,
+          "language": "Shell",
+          "first_seen": "2026-08-19",
+          "description": "Skills for Real Engineers. Straight from my .agents directory."
+        },
+        {
+          "name": "tt-a1i/archify",
+          "url": "https://github.com/tt-a1i/archify",
+          "stars": 51243,
+          "growth": 15468,
+          "days_seen": 7,
+          "language": "JavaScript",
+          "first_seen": "2026-08-27",
+          "description": "Agent skill for beautiful, verifiable architecture, workflow, sequence, data-flow, and lifecycle diagrams—self-contained HTML with motion and crisp export."
+        },
+        {
+          "name": "DietrichGebert/ponytail",
+          "url": "https://github.com/DietrichGebert/ponytail",
+          "stars": 129754,
+          "growth": 13661,
+          "days_seen": 6,
+          "language": "JavaScript",
+          "first_seen": "2026-08-26",
+          "description": "Makes your AI agent think like the laziest senior dev in the room. The best code is the code you never wrote."
+        },
+        {
+          "name": "deepseek-ai/deepseek-harness",
+          "url": "https://github.com/deepseek-ai/deepseek-harness",
+          "stars": 214295,
+          "growth": 9035,
+          "days_seen": 7,
+          "language": "",
+          "first_seen": "2026-08-19",
+          "description": ""
+        },
+        {
+          "name": "affaan-m/ECC",
+          "url": "https://github.com/affaan-m/ECC",
+          "stars": 251721,
+          "growth": 8967,
+          "days_seen": 7,
+          "language": "JavaScript",
+          "first_seen": "2026-08-22",
+          "description": "The agent harness performance optimization system. Skills, instincts, memory, security, and research-first development for Claude Code, Codex, Opencode, Cursor and beyond."
+        },
+        {
+          "name": "THU-MAIC/OpenMAIC",
+          "url": "https://github.com/THU-MAIC/OpenMAIC",
+          "stars": 32568,
+          "growth": 7708,
+          "days_seen": 7,
+          "language": "TypeScript",
+          "first_seen": "2026-08-30",
+          "description": "Open Multi-Agent Interactive Classroom — Get an immersive, multi-agent learning experience in just one click"
+        },
+        {
+          "name": "cathrynlavery/diagram-design",
+          "url": "https://github.com/cathrynlavery/diagram-design",
+          "stars": 32635,
+          "growth": 7006,
+          "days_seen": 4,
+          "language": "HTML",
+          "first_seen": "2026-08-19",
+          "description": "38 editorial diagram types for Claude Code, Codex, and Pi. Self-contained HTML + SVG. No shadows. No Mermaid slop."
+        },
+        {
+          "name": "debpalash/VoiceStudio",
+          "url": "https://github.com/debpalash/VoiceStudio",
+          "stars": 20022,
+          "growth": 6756,
+          "days_seen": 7,
+          "language": "Python",
+          "first_seen": "2026-09-01",
+          "description": "VoiceStudio is the open-source, fully-local ElevenLabs alternative — voice cloning, voice design, video dubbing, dictation, transcription & audiobook creation in 646 languages."
+        },
+        {
+          "name": "NousResearch/hermes-agent",
+          "url": "https://github.com/NousResearch/hermes-agent",
+          "stars": 242661,
+          "growth": 6521,
+          "days_seen": 6,
+          "language": "Python",
+          "first_seen": "2026-08-24",
+          "description": "The agent that grows with you"
+        },
+        {
+          "name": "bilawalsidhu/gods-eye-view",
+          "url": "https://github.com/bilawalsidhu/gods-eye-view",
+          "stars": 18271,
+          "growth": 5392,
+          "days_seen": 5,
+          "language": "JavaScript",
+          "first_seen": "2026-08-28",
+          "description": "A spy satellite simulator in your browser, except the data is real. Live open source spatial intelligence on a photorealistic 3D globe."
+        },
+        {
+          "name": "blader/humanizer",
+          "url": "https://github.com/blader/humanizer",
+          "stars": 44481,
+          "growth": 4541,
+          "days_seen": 6,
+          "language": "Python",
+          "first_seen": "2026-09-02",
+          "description": "Agent skill that removes signs of AI-generated writing from text"
+        },
+        {
+          "name": "lnkiai/m3e-canvas",
+          "url": "https://github.com/lnkiai/m3e-canvas",
+          "stars": 4373,
+          "growth": 4332,
+          "days_seen": 6,
+          "language": "TypeScript",
+          "first_seen": "2026-09-02",
+          "description": "Sketch Material 3 Expressive screens in the browser and turn them into vibe-coding prompts."
+        },
+        {
+          "name": "JuliusBrussee/caveman",
+          "url": "https://github.com/JuliusBrussee/caveman",
+          "stars": 103630,
+          "growth": 3739,
+          "days_seen": 4,
+          "language": "Go",
+          "first_seen": "2026-08-21",
+          "description": "🪨 why use many token when few token do trick — Claude Code skill that cuts 65% of tokens by talking like caveman"
+        },
+        {
+          "name": "K-Dense-AI/scientific-agent-skills",
+          "url": "https://github.com/K-Dense-AI/scientific-agent-skills",
+          "stars": 43388,
+          "growth": 3619,
+          "days_seen": 7,
+          "language": "Python",
+          "first_seen": "2026-08-27",
+          "description": "Turn any AI agent into an AI Scientist. The #1 Agent Skills library for science, used by 190,000+ scientists worldwide. 165 ready-to-use validated skills plus 100+ scientific databases covering biology, chemistry, medicine, and drug discovery. Compatible with Cursor, Claude Code, Codex, Pi, Antigravity, and the open Agent Skills standard."
+        },
+        {
+          "name": "public-apis/public-apis",
+          "url": "https://github.com/public-apis/public-apis",
+          "stars": 476606,
+          "growth": 3191,
+          "days_seen": 4,
+          "language": "",
+          "first_seen": "2026-08-19",
+          "description": ""
+        }
+      ],
+      "onedayers": [
+        {
+          "name": "obra/superpowers",
+          "url": "https://github.com/obra/superpowers",
+          "stars": 281437,
+          "growth": 5001,
+          "days_seen": 2,
+          "language": "Shell",
+          "first_seen": "2026-04-02",
+          "description": "An agentic skills framework & software development methodology that works."
+        },
+        {
+          "name": "calesthio/OpenMontage",
+          "url": "https://github.com/calesthio/OpenMontage",
+          "stars": 55755,
+          "growth": 1541,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-08-28",
+          "description": ""
+        },
+        {
+          "name": "zhaoxuya520/reverse-skill",
+          "url": "https://github.com/zhaoxuya520/reverse-skill",
+          "stars": 33847,
+          "growth": 1538,
+          "days_seen": 2,
+          "language": "PowerShell",
+          "first_seen": "2026-08-19",
+          "description": "Reverse Engineering / Authorized Penetration Testing / Security Research Skill Router Pack AI-powered routing + On-demand toolchain bootstrapping + Self-evolving knowledge base Supports Claude Code, Kiro, Cursor, Cline, and other AI coding clients 逆向/渗透/安全技能路由包 - AI 自动路由 + 按需自举工具链 + 自动进化经验库 | 支持 Claude Code / Kiro / Cursor / Cline 等代码 AI 客户端"
+        },
+        {
+          "name": "addyosmani/agent-skills",
+          "url": "https://github.com/addyosmani/agent-skills",
+          "stars": 92091,
+          "growth": 1303,
+          "days_seen": 2,
+          "language": "JavaScript",
+          "first_seen": "2026-08-30",
+          "description": "Production-grade engineering skills for AI coding agents."
+        },
+        {
+          "name": "OpenCut-app/OpenCut",
+          "url": "https://github.com/OpenCut-app/OpenCut",
+          "stars": 88387,
+          "growth": 1054,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-08-19",
+          "description": ""
+        },
+        {
+          "name": "CodebuffAI/freebuff",
+          "url": "https://github.com/CodebuffAI/freebuff",
+          "stars": 11401,
+          "growth": 1045,
+          "days_seen": 1,
+          "language": "",
+          "first_seen": "2026-08-20",
+          "description": ""
+        },
+        {
+          "name": "pathwaycom/arc-task-gen",
+          "url": "https://github.com/pathwaycom/arc-task-gen",
+          "stars": 10114,
+          "growth": 1043,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-08-19",
+          "description": ""
+        },
+        {
+          "name": "pollen-robotics/microduck_rl",
+          "url": "https://github.com/pollen-robotics/microduck_rl",
+          "stars": 1837,
+          "growth": 942,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-08-30",
+          "description": "RL training environments for Microduck (mjlab)"
+        },
+        {
+          "name": "GangTailorUpgrade/CoomeRtool",
+          "url": "https://github.com/GangTailorUpgrade/CoomeRtool",
+          "stars": 841,
+          "growth": 749,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-08-31",
+          "description": "Coomer Tool"
+        },
+        {
+          "name": "thedotmack/claude-mem",
+          "url": "https://github.com/thedotmack/claude-mem",
+          "stars": 92945,
+          "growth": 747,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-08-28",
+          "description": ""
+        }
+      ],
+      "newcomers": [
+        {
+          "name": "donnemartin/system-design-primer",
+          "url": "https://github.com/donnemartin/system-design-primer",
+          "stars": 367570,
+          "growth": 349,
+          "days_seen": 3,
+          "language": "Python",
+          "first_seen": "2026-09-01",
+          "description": "Learn how to design large-scale systems. Prep for the system design interview. Includes Anki flashcards."
+        },
+        {
+          "name": "anomalyco/opencode",
+          "url": "https://github.com/anomalyco/opencode",
+          "stars": 205380,
+          "growth": 1588,
+          "days_seen": 4,
+          "language": "TypeScript",
+          "first_seen": "2026-09-04",
+          "description": "The open source coding agent."
+        },
+        {
+          "name": "anthropics/skills",
+          "url": "https://github.com/anthropics/skills",
+          "stars": 174772,
+          "growth": 1309,
+          "days_seen": 4,
+          "language": "Python",
+          "first_seen": "2026-09-03",
+          "description": "Public repository for Agent Skills"
+        },
+        {
+          "name": "f/prompts.chat",
+          "url": "https://github.com/f/prompts.chat",
+          "stars": 169104,
+          "growth": 346,
+          "days_seen": 2,
+          "language": "HTML",
+          "first_seen": "2026-09-03",
+          "description": "f.k.a. Awesome ChatGPT Prompts. Share, discover, and collect prompts from the community. Free and open source — self-host for your organization with complete privacy."
+        },
+        {
+          "name": "VoltAgent/awesome-design-md",
+          "url": "https://github.com/VoltAgent/awesome-design-md",
+          "stars": 113029,
+          "growth": 669,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-09-01",
+          "description": "A collection of DESIGN.md files analysis by popular brand design systems. Drop one into your project and let coding agents generate a matching UI."
+        },
+        {
+          "name": "nvm-sh/nvm",
+          "url": "https://github.com/nvm-sh/nvm",
+          "stars": 94999,
+          "growth": 149,
+          "days_seen": 2,
+          "language": "Shell",
+          "first_seen": "2026-09-05",
+          "description": "Node Version Manager - POSIX-compliant bash script to manage multiple active node.js versions. $nvm: 3ArcxqLtXMmBnWbbtfwQgVL3MNnDsggzgGDtXMnjpump"
+        },
+        {
+          "name": "ByteByteGoHq/system-design-101",
+          "url": "https://github.com/ByteByteGoHq/system-design-101",
+          "stars": 88459,
+          "growth": 311,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-09-03",
+          "description": "Explain complex systems using visuals and simple terms. Help you prepare for system design interviews."
+        },
+        {
+          "name": "jingyaogong/minimind",
+          "url": "https://github.com/jingyaogong/minimind",
+          "stars": 59235,
+          "growth": 2412,
+          "days_seen": 7,
+          "language": "Python",
+          "first_seen": "2026-09-01",
+          "description": "🧠 Train a 64M-parameter LLM from scratch in just 2h!"
+        },
+        {
+          "name": "bannedbook/fanqiang",
+          "url": "https://github.com/bannedbook/fanqiang",
+          "stars": 52851,
+          "growth": 898,
+          "days_seen": 3,
+          "language": "Kotlin",
+          "first_seen": "2026-09-03",
+          "description": "翻墙-科学上网"
+        },
+        {
+          "name": "Imbad0202/academic-research-skills",
+          "url": "https://github.com/Imbad0202/academic-research-skills",
+          "stars": 46632,
+          "growth": 1967,
+          "days_seen": 5,
+          "language": "Python",
+          "first_seen": "2026-09-01",
+          "description": "Academic Research Skills for Claude Code: research → write → review → revise → finalize"
+        }
+      ],
+      "langs": {
+        "Python": 8,
+        "JavaScript": 4,
+        "TypeScript": 3,
+        "Shell": 2,
+        "HTML": 2,
+        "Go": 1,
+        "Kotlin": 1
+      }
+    },
     {
       "week_start": "2026-08-25",
       "week_end": "2026-08-31",
