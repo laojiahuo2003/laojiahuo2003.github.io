@@ -21,6 +21,12 @@ CREATED_REPOS_STRATEGIES = {
         "desc": "本周最新创建的项目最多 star",
         "sort": "stars"
     },
+    "llm_week": {
+        "query_template": "(llm OR vllm OR sglang OR triton OR tensorrt) created:>{date} stars:>10 fork:false archived:false",
+        "date_delta": 7,
+        "desc": "本周新生的 LLM / 推理 infra 项目",
+        "sort": "stars"
+    },
     "this_month": {
         "query_template": "created:>{date} stars:>5 fork:false archived:false",
         "date_delta": 30,
@@ -53,16 +59,17 @@ LANGUAGE_EXPLORATION = {
 }
 
 TOPIC_EXPLORATION = [
-    "artificial-intelligence",
-    "machine-learning",
+    # AI Infra 精准 topic（实测信号干净：vllm/llm-inference 等能捞出
+    # zero-to-sglang、pd-bridge 这类真 infra 项目；泛 topic 噪音大已移除）
+    "llm",
+    "vllm",
+    "llm-inference",
+    "llms",
+    "inference",
+    "cuda",
+    # 通用开发 topic 保留
     "developer-tools",
-    "productivity",
-    "automation",
     "cli",
-    "api",
-    "framework",
-    "library",
-    "tool"
 ]
 
 TRENDING_LANGUAGES = ["python", "typescript", "rust", "go"]

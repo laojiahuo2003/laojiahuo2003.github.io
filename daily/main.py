@@ -103,11 +103,11 @@ def render_category_section(title: str, repos: List[Dict], max_total: int = 20,
 
 
 def collect_trending_for_categories(trending_repos: Dict[str, List[Dict]]) -> Tuple[List[Dict], set]:
-    """合并日/周/月趋势榜（日榜优先），标注来源标签，返回 (列表, 已出现的项目名)"""
-    period_labels = {"daily": "今日", "weekly": "本周", "monthly": "本月"}
+    """合并日/周/月/CUDA 趋势榜（日榜优先），标注来源标签，返回 (列表, 已出现的项目名)"""
+    period_labels = {"daily": "今日", "weekly": "本周", "monthly": "本月", "cuda": "CUDA 榜"}
     merged, shown = [], set()
 
-    for period in ["daily", "weekly", "monthly"]:
+    for period in ["daily", "weekly", "monthly", "cuda"]:
         for repo in trending_repos.get(period, []):
             name = repo.get("full_name", "")
             if not name or name in shown:
@@ -184,7 +184,7 @@ def generate_markdown_report(trending_repos: Dict[str, List[Dict]], created_repo
 
     # 🌱 新项目速递 · 按分类（今天/本周创建）
     new_repos = []
-    for period in ["today", "this_week"]:
+    for period in ["today", "this_week", "llm_week"]:
         for repo in created_repos.get(period, []):
             name = repo.get("full_name", "")
             if not name or name in shown_repos:
@@ -311,9 +311,9 @@ def build_report_data(trending_repos, created_repos, explored_repos,
     trending_merged, shown_repos = collect_trending_for_categories(trending_repos)
     data["by_category"] = _build_category_groups(trending_merged, max_total=25, max_per_category=8)
 
-    # 🌱 新项目（今天/本周创建）
+    # 🌱 新项目（今天/本周/LLM infra 新项目）
     new_repos = []
-    for period in ["today", "this_week"]:
+    for period in ["today", "this_week", "llm_week"]:
         for repo in created_repos.get(period, []):
             name = repo.get("full_name", "")
             if not name or name in shown_repos:

@@ -3,10 +3,9 @@ from bs4 import BeautifulSoup
 from typing import List, Dict, Optional
 from config import TRENDING_LANGUAGES
 
-def fetch_trending_by_period(since: str = "daily") -> List[Dict]:
-    url = "https://github.com/trending"
+def _fetch_trending_url(url: str, since: str) -> List[Dict]:
     params = {"since": since}
-    
+
     headers = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
@@ -15,15 +14,15 @@ def fetch_trending_by_period(since: str = "daily") -> List[Dict]:
         "Connection": "keep-alive",
         "Upgrade-Insecure-Requests": "1"
     }
-    
+
     try:
         response = requests.get(url, headers=headers, params=params, timeout=30)
         response.raise_for_status()
         soup = BeautifulSoup(response.text, "html.parser")
-        
+
         repos = []
         articles = soup.select("article.Box-row")
-        
+
         for article in articles:
             try:
                 repo_link = article.select_one("h2 a")
@@ -68,14 +67,28 @@ def fetch_trending_by_period(since: str = "daily") -> List[Dict]:
                 })
             except Exception as e:
                 continue
-                
+
         return repos
     except requests.exceptions.RequestException as e:
         print(f"Trending fetch error: {e}")
         return []
 
+
+def fetch_trending_by_period(since: str = "daily") -> List[Dict]:
+    return _fetch_trending_url("https://github.com/trending", since)
+
 def fetch_trending_repos(language: str = "", since: str = "daily") -> List[Dict]:
-    return fetch_trending_by_period(since)
+    return fetch_trending_by_period(since=since)
+
+
+def fetch_trending_by_language(language: str, since: str = "daily") -> List[Dict]:
+    """按主语言抓 GitHub trending 子榜（如 cuda），页面结构与总榜一致"""
+    url = f"https://github.com/trending/{language.lower()}"
+    # 复用 fetch_trending_by_period 的解析逻辑：直接请求子榜 URL
+    repos = _fetch_trending_url(url, since)
+    for repo in repos:
+        repo["_language_board"] = language.lower()
+    return repos
 
 def parse_number(s: str) -> int:
     s = s.strip().lower()
@@ -102,6 +115,17 @@ def fetch_all_trending() -> Dict[str, List[Dict]]:
         for repo in repos:
             repo["_period_label"] = label
         result[period] = repos
+
+    # CUDA 语言榜：AI Infra 核心项目（flashinfer/DeepEP/DeepGEMM 这类）
+    # 在语言子榜上浓度远高于泛 trending，单独补一路信号
+    try:
+        cuda_repos = fetch_trending_by_language(language="cuda", since="weekly")
+        for repo in cuda_repos:
+            repo["_period_label"] = "CUDA 榜"
+        result["cuda"] = cuda_repos
+    except Exception as e:
+        print(f"CUDA trending fetch error: {e}")
+        result["cuda"] = []
 
     return result
 
