@@ -98,12 +98,13 @@ def format_repos_for_wechat(trending_repos: Dict[str, List[Dict]], created_repos
     trending_labels = {
         "daily": "今天获得最多新 star 的项目",
         "weekly": "本周获得最多新 star 的项目",
-        "monthly": "本月获得最多新 star 的项目"
+        "monthly": "本月获得最多新 star 的项目",
+        "cuda": "CUDA 语言榜 · AI Infra"
     }
-    
+
     shown_repos = set()
-    
-    for period in ["daily", "weekly", "monthly"]:
+
+    for period in ["daily", "weekly", "monthly", "cuda"]:
         repos = trending_repos.get(period, [])
         if repos:
             html += '<div class="section">'

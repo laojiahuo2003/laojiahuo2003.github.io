@@ -184,7 +184,7 @@ def generate_markdown_report(trending_repos: Dict[str, List[Dict]], created_repo
 
     # 🌱 新项目速递 · 按分类（今天/本周创建）
     new_repos = []
-    for period in ["today", "this_week", "llm_week"]:
+    for period in ["today", "this_week"]:
         for repo in created_repos.get(period, []):
             name = repo.get("full_name", "")
             if not name or name in shown_repos:
@@ -313,7 +313,7 @@ def build_report_data(trending_repos, created_repos, explored_repos,
 
     # 🌱 新项目（今天/本周/LLM infra 新项目）
     new_repos = []
-    for period in ["today", "this_week", "llm_week"]:
+    for period in ["today", "this_week"]:
         for repo in created_repos.get(period, []):
             name = repo.get("full_name", "")
             if not name or name in shown_repos:
@@ -406,11 +406,20 @@ def main():
     print(f"Found {len(newly_discovered)} newly discovered repos")
 
     print("\nGenerating markdown report...")
-    md_content = generate_markdown_report(trending_repos, created_repos, explored_repos, fast_growing, newly_discovered, date_str)
+    # llm_render：llm_week 并入「探索发现」的策略分组渲染——进「新项目速递」的
+    # star 全局池会被高星泛项目挤出前 30，strategy 分组（与 Topic: vllm 同构）才有
+    # 保底展示位；微信推送仍用原始 created_repos，保留独立 infra 分区
+    llm_render = [dict(r) for r in created_repos.get("llm_week", [])]
+    for repo in llm_render:
+        repo["_strategy"] = "LLM / 推理 infra 新项目"
+    render_created = {k: v for k, v in created_repos.items() if k != "llm_week"}
+    render_explored = llm_render + explored_repos
+
+    md_content = generate_markdown_report(trending_repos, render_created, render_explored, fast_growing, newly_discovered, date_str)
     report_path = save_report(md_content, date_str)
 
     print("\nGenerating structured JSON report...")
-    report_data = build_report_data(trending_repos, created_repos, explored_repos, fast_growing, newly_discovered, date_str)
+    report_data = build_report_data(trending_repos, render_created, render_explored, fast_growing, newly_discovered, date_str)
     save_report_json(report_data)
 
     print("\nGenerating report index, RSS and JSON feeds...")
