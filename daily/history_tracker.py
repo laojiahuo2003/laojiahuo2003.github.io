@@ -68,7 +68,7 @@ def clean_old_history(history: Dict, keep_days: int = 30):
 
 def calculate_growth(repo_name: str, history: Dict) -> Dict:
     if repo_name not in history:
-        return {"daily_growth": 0, "weekly_growth": 0, "growth_rate": 0}
+        return {"daily_growth": 0, "weekly_growth": 0, "growth_rate": 0, "first_seen": ""}
     
     repo_history = history[repo_name]
     stars_history = repo_history.get("stars_history", {})
@@ -110,8 +110,18 @@ def get_fast_growing_repos(repos: List[Dict], min_weekly_growth: int = 50) -> Li
     
     growing_repos = [r for r in repos if r.get("_weekly_growth", 0) >= min_weekly_growth]
     growing_repos.sort(key=lambda x: x.get("_weekly_growth", 0), reverse=True)
-    
-    return growing_repos
+
+    # 防御性去重：上游聚合可能带入同一仓库的多份副本（trending/created/explored
+    # 数据源互相重叠），过滤和排序都不消除副本，会导致表格渲染出重复行
+    unique, seen = [], set()
+    for repo in growing_repos:
+        name = repo.get("full_name", "")
+        if name in seen:
+            continue
+        seen.add(name)
+        unique.append(repo)
+
+    return unique
 
 def get_newly_discovered_repos(repos: List[Dict], days: int = 3) -> List[Dict]:
     history = load_history()

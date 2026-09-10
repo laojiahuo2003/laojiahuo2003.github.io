@@ -376,11 +376,24 @@ def main():
     explored_repos = explore_all()
     print(f"Found {len(explored_repos)} explored repos")
 
-    all_repos = []
+    # 聚合时按 full_name 去重：日/周/月榜 + today/this_week 的查询窗口互相重叠，
+    # 同一仓库会以多份 dict 副本进入管线，导致 fast_growing 表格出现重复行。
+    # trending 在前（日榜优先），保留首个副本（星标数据最新）。
+    all_repos, seen_repo_names = [], set()
     for repos in trending_repos.values():
-        all_repos.extend(repos)
+        for repo in repos:
+            name = repo.get("full_name", "")
+            if not name or name in seen_repo_names:
+                continue
+            seen_repo_names.add(name)
+            all_repos.append(repo)
     for repos in created_repos.values():
-        all_repos.extend(repos)
+        for repo in repos:
+            name = repo.get("full_name", "")
+            if not name or name in seen_repo_names:
+                continue
+            seen_repo_names.add(name)
+            all_repos.append(repo)
     all_repos.extend(explored_repos)
 
     print("\nRecording repos to history...")

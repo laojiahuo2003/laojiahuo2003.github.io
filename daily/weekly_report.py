@@ -77,6 +77,7 @@ def analyze():
     min_days = DARKHORSE_MIN_DAYS if not warmup else max(2, coverage - 1)
 
     darkhorses, onedayers, newcomers = [], [], []
+    darkhorses_name_set = set()  # 黑马/一日游已收录的项目名，供 newcomers 互斥判断用
     for name, rec in history.items():
         sh = rec.get("stars_history", {})
         cur = rec.get("current_stars", 0)
@@ -106,10 +107,16 @@ def analyze():
 
         if growth >= DARKHORSE_MIN_GROWTH and days_seen >= min_days:
             darkhorses.append(entry)
+            darkhorses_name_set.add(name)
         elif growth >= ONEDAYER_MIN_GROWTH and days_seen <= ONEDAYER_MAX_DAYS and not warmup:
             onedayers.append(entry)
+            darkhorses_name_set.add(name)
 
-        if week_start.isoformat() <= first_seen <= week_end.isoformat() and cur >= NEWCOMER_MIN_STARS:
+        # 新面孔与黑马/一日游互斥：黑马项目本周首次出现是常态（涨得快才会被
+        # 首次追踪到），若不互斥，周报里同一项目会同时出现在两个板块
+        if (week_start.isoformat() <= first_seen <= week_end.isoformat()
+                and cur >= NEWCOMER_MIN_STARS
+                and name not in darkhorses_name_set):
             newcomers.append(entry)
 
     darkhorses.sort(key=lambda x: -x["growth"])
