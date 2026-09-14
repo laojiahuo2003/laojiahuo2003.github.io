@@ -1,6 +1,380 @@
 {
-  "updated": "2026-09-07T14:29:26Z",
+  "updated": "2026-09-14T14:48:22Z",
   "reports": [
+    {
+      "week_start": "2026-09-08",
+      "week_end": "2026-09-14",
+      "generated": "2026-09-14 14:48",
+      "coverage": 7,
+      "warmup": false,
+      "darkhorses": [
+        {
+          "name": "ayghri/i-have-adhd",
+          "url": "https://github.com/ayghri/i-have-adhd",
+          "stars": 44590,
+          "growth": 17827,
+          "days_seen": 7,
+          "language": "Python",
+          "first_seen": "2026-08-19",
+          "description": "A skill to stop your coding agent from burying the answer. ADHD-friendly output."
+        },
+        {
+          "name": "bilawalsidhu/gods-eye-view",
+          "url": "https://github.com/bilawalsidhu/gods-eye-view",
+          "stars": 32321,
+          "growth": 14050,
+          "days_seen": 7,
+          "language": "JavaScript",
+          "first_seen": "2026-08-28",
+          "description": "A spy satellite simulator in your browser, except the data is real. Live open source spatial intelligence on a photorealistic 3D globe."
+        },
+        {
+          "name": "tt-a1i/archify",
+          "url": "https://github.com/tt-a1i/archify",
+          "stars": 61137,
+          "growth": 8979,
+          "days_seen": 7,
+          "language": "",
+          "first_seen": "2026-08-27",
+          "description": ""
+        },
+        {
+          "name": "debpalash/VoiceStudio",
+          "url": "https://github.com/debpalash/VoiceStudio",
+          "stars": 27377,
+          "growth": 6969,
+          "days_seen": 7,
+          "language": "Python",
+          "first_seen": "2026-09-01",
+          "description": "VoiceStudio is the open-source, fully-local ElevenLabs alternative — voice cloning, voice design, video dubbing, dictation, transcription & audiobook creation in 646 languages."
+        },
+        {
+          "name": "DietrichGebert/ponytail",
+          "url": "https://github.com/DietrichGebert/ponytail",
+          "stars": 137552,
+          "growth": 6957,
+          "days_seen": 7,
+          "language": "",
+          "first_seen": "2026-08-26",
+          "description": ""
+        },
+        {
+          "name": "cathrynlavery/diagram-design",
+          "url": "https://github.com/cathrynlavery/diagram-design",
+          "stars": 39355,
+          "growth": 6196,
+          "days_seen": 7,
+          "language": "HTML",
+          "first_seen": "2026-08-19",
+          "description": "38 editorial diagram types for Claude Code, Codex, and Pi. Self-contained HTML + SVG. No shadows. No Mermaid slop."
+        },
+        {
+          "name": "mattpocock/skills",
+          "url": "https://github.com/mattpocock/skills",
+          "stars": 260614,
+          "growth": 5593,
+          "days_seen": 6,
+          "language": "Shell",
+          "first_seen": "2026-08-19",
+          "description": "Skills for Real Engineers. Straight from my .agents directory."
+        },
+        {
+          "name": "affaan-m/ECC",
+          "url": "https://github.com/affaan-m/ECC",
+          "stars": 257869,
+          "growth": 5414,
+          "days_seen": 7,
+          "language": "JavaScript",
+          "first_seen": "2026-08-22",
+          "description": "The agent harness performance optimization system. Skills, instincts, memory, security, and research-first development for Claude Code, Codex, Opencode, Cursor and beyond."
+        },
+        {
+          "name": "deepseek-ai/deepseek-harness",
+          "url": "https://github.com/deepseek-ai/deepseek-harness",
+          "stars": 220208,
+          "growth": 5235,
+          "days_seen": 4,
+          "language": "",
+          "first_seen": "2026-08-19",
+          "description": ""
+        },
+        {
+          "name": "obra/superpowers",
+          "url": "https://github.com/obra/superpowers",
+          "stars": 286302,
+          "growth": 4865,
+          "days_seen": 7,
+          "language": "Shell",
+          "first_seen": "2026-04-02",
+          "description": "An agentic skills framework & software development methodology that works."
+        },
+        {
+          "name": "heygen-com/hyperframes",
+          "url": "https://github.com/heygen-com/hyperframes",
+          "stars": 49710,
+          "growth": 4575,
+          "days_seen": 7,
+          "language": "TypeScript",
+          "first_seen": "2026-09-07",
+          "description": "Write HTML. Render video. Built for agents."
+        },
+        {
+          "name": "microsoft/markitdown",
+          "url": "https://github.com/microsoft/markitdown",
+          "stars": 183692,
+          "growth": 4059,
+          "days_seen": 7,
+          "language": "Python",
+          "first_seen": "2026-09-07",
+          "description": "Python tool for converting files and office documents to Markdown."
+        },
+        {
+          "name": "THU-MAIC/OpenMAIC",
+          "url": "https://github.com/THU-MAIC/OpenMAIC",
+          "stars": 36573,
+          "growth": 3667,
+          "days_seen": 7,
+          "language": "TypeScript",
+          "first_seen": "2026-08-30",
+          "description": "Open Multi-Agent Interactive Classroom — Get an immersive, multi-agent learning experience in just one click"
+        },
+        {
+          "name": "blader/humanizer",
+          "url": "https://github.com/blader/humanizer",
+          "stars": 47764,
+          "growth": 3283,
+          "days_seen": 7,
+          "language": "",
+          "first_seen": "2026-09-02",
+          "description": ""
+        },
+        {
+          "name": "freestylefly/awesome-gpt-image-2",
+          "url": "https://github.com/freestylefly/awesome-gpt-image-2",
+          "stars": 31715,
+          "growth": 3264,
+          "days_seen": 7,
+          "language": "JavaScript",
+          "first_seen": "2026-08-24",
+          "description": "Prompt as Code | GPT Image 2 / 2.5 提示词与案例库，530+ 个案例、20+ 套工业级模板与可复用 Skills，新增 2.5 同提示词对比专区，附完整提示词与生成记录，持续更新。"
+        }
+      ],
+      "onedayers": [
+        {
+          "name": "diegosouzapw/OmniRoute",
+          "url": "https://github.com/diegosouzapw/OmniRoute",
+          "stars": 64397,
+          "growth": 4979,
+          "days_seen": 2,
+          "language": "TypeScript",
+          "first_seen": "2026-08-19",
+          "description": "Never stop coding. Free MIT AI gateway: one endpoint, 352 providers (150+ free), 1200+ models Kimi, Claude, GPT, Gemini, GLM, DeepSeek, MiniMax. Works with Claude Code, Codex, Cursor, OpenCode, Cline & Copilot. Quota-aware auto-fallback, RTK+Caveman compression saves 15-95% tokens, MCP/A2A, Desktop/PWA. Built by 550+ contributors"
+        },
+        {
+          "name": "harry0703/MoneyPrinterTurbo",
+          "url": "https://github.com/harry0703/MoneyPrinterTurbo",
+          "stars": 122308,
+          "growth": 4974,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-08-19",
+          "description": ""
+        },
+        {
+          "name": "multica-ai/andrej-karpathy-skills",
+          "url": "https://github.com/multica-ai/andrej-karpathy-skills",
+          "stars": 211591,
+          "growth": 4108,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-08-23",
+          "description": "A single CLAUDE.md file to improve Claude Code behavior, derived from Andrej Karpathy's observations on LLM coding pitfalls."
+        },
+        {
+          "name": "Shubhamsaboo/awesome-llm-apps",
+          "url": "https://github.com/Shubhamsaboo/awesome-llm-apps",
+          "stars": 137711,
+          "growth": 3242,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-08-26",
+          "description": "100+ AI Agents, Agent Skills and RAG Apps - Free and Open Source."
+        },
+        {
+          "name": "TauricResearch/TradingAgents",
+          "url": "https://github.com/TauricResearch/TradingAgents",
+          "stars": 104141,
+          "growth": 3029,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-08-26",
+          "description": "TradingAgents: Multi-Agents LLM Financial Trading Framework"
+        },
+        {
+          "name": "calesthio/OpenMontage",
+          "url": "https://github.com/calesthio/OpenMontage",
+          "stars": 58663,
+          "growth": 2908,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-08-28",
+          "description": "World's first open-source, agentic video production system. 12 production pipelines, 100+ tools, 700+ agent skill and production-knowledge files. Turn your AI coding assistant into a full video production studio."
+        },
+        {
+          "name": "browser-use/browser-use",
+          "url": "https://github.com/browser-use/browser-use",
+          "stars": 113677,
+          "growth": 2322,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-08-27",
+          "description": "Agents that use the browser."
+        },
+        {
+          "name": "unslothai/unsloth",
+          "url": "https://github.com/unslothai/unsloth",
+          "stars": 75897,
+          "growth": 1562,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-08-19",
+          "description": ""
+        },
+        {
+          "name": "rohitg00/ai-engineering-from-scratch",
+          "url": "https://github.com/rohitg00/ai-engineering-from-scratch",
+          "stars": 53835,
+          "growth": 1512,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-08-25",
+          "description": "Learn it. Build it. Ship it for others."
+        },
+        {
+          "name": "FireRedTeam/FireRedAudio",
+          "url": "https://github.com/FireRedTeam/FireRedAudio",
+          "stars": 1244,
+          "growth": 1241,
+          "days_seen": 1,
+          "language": "",
+          "first_seen": "2026-08-21",
+          "description": ""
+        }
+      ],
+      "newcomers": [
+        {
+          "name": "asgeirtj/system_prompts_leaks",
+          "url": "https://github.com/asgeirtj/system_prompts_leaks",
+          "stars": 66225,
+          "growth": 1177,
+          "days_seen": 3,
+          "language": "JavaScript",
+          "first_seen": "2026-09-12",
+          "description": "Extracted system prompts from Anthropic - Claude Fable 5.1, Opus 5, Claude Design, Claude Code. OpenAI - ChatGPT GPT-6-Astra, Codex. Google - Gemini 3.8 Flash, 3.1 Pro, Antigravity. xAI - Grok, Grok Bot, Cursor, Kimi and more! Updated regularly."
+        },
+        {
+          "name": "yuliskov/SmartTube",
+          "url": "https://github.com/yuliskov/SmartTube",
+          "stars": 33506,
+          "growth": 418,
+          "days_seen": 3,
+          "language": "Java",
+          "first_seen": "2026-09-12",
+          "description": "Browse media content with your own rules on Android TV"
+        },
+        {
+          "name": "Flowseal/zapret-discord-youtube",
+          "url": "https://github.com/Flowseal/zapret-discord-youtube",
+          "stars": 33219,
+          "growth": 51,
+          "days_seen": 2,
+          "language": "Batchfile",
+          "first_seen": "2026-09-12",
+          "description": ""
+        },
+        {
+          "name": "karpathy/llm.c",
+          "url": "https://github.com/karpathy/llm.c",
+          "stars": 30994,
+          "growth": 33,
+          "days_seen": 5,
+          "language": "",
+          "first_seen": "2026-09-10",
+          "description": ""
+        },
+        {
+          "name": "facebook/zstd",
+          "url": "https://github.com/facebook/zstd",
+          "stars": 27770,
+          "growth": 31,
+          "days_seen": 2,
+          "language": "C",
+          "first_seen": "2026-09-08",
+          "description": "Zstandard - Fast real-time compression algorithm"
+        },
+        {
+          "name": "titanwings/distilly",
+          "url": "https://github.com/titanwings/distilly",
+          "stars": 24553,
+          "growth": 67,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-09-09",
+          "description": ""
+        },
+        {
+          "name": "vxcontrol/pentagi",
+          "url": "https://github.com/vxcontrol/pentagi",
+          "stars": 24117,
+          "growth": 992,
+          "days_seen": 3,
+          "language": "Go",
+          "first_seen": "2026-09-12",
+          "description": "Fully autonomous AI Agents system capable of performing complex penetration testing tasks"
+        },
+        {
+          "name": "liquidslr/system-design-notes",
+          "url": "https://github.com/liquidslr/system-design-notes",
+          "stars": 18961,
+          "growth": 1328,
+          "days_seen": 3,
+          "language": "",
+          "first_seen": "2026-09-09",
+          "description": "Notes of the book System Desgin Interview - An Insider's Guide"
+        },
+        {
+          "name": "nashsu/llm_wiki",
+          "url": "https://github.com/nashsu/llm_wiki",
+          "stars": 18829,
+          "growth": 963,
+          "days_seen": 3,
+          "language": "TypeScript",
+          "first_seen": "2026-09-10",
+          "description": "LLM Wiki is a cross-platform desktop application that turns your documents into an organized, interlinked knowledge base — automatically. Instead of traditional RAG (retrieve-and-answer from scratch every time), the LLM incrementally builds and maintains a persistent wiki from your sources。"
+        },
+        {
+          "name": "NVlabs/instant-ngp",
+          "url": "https://github.com/NVlabs/instant-ngp",
+          "stars": 17548,
+          "growth": 5,
+          "days_seen": 5,
+          "language": "",
+          "first_seen": "2026-09-10",
+          "description": ""
+        }
+      ],
+      "langs": {
+        "JavaScript": 4,
+        "Python": 3,
+        "TypeScript": 3,
+        "Shell": 2,
+        "HTML": 1,
+        "Java": 1,
+        "Batchfile": 1,
+        "C": 1,
+        "Go": 1
+      }
+    },
     {
       "week_start": "2026-09-01",
       "week_end": "2026-09-07",
