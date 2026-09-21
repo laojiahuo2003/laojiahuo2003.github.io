@@ -1,6 +1,380 @@
 {
-  "updated": "2026-09-14T14:48:22Z",
+  "updated": "2026-09-21T14:50:04Z",
   "reports": [
+    {
+      "week_start": "2026-09-15",
+      "week_end": "2026-09-21",
+      "generated": "2026-09-21 14:50",
+      "coverage": 7,
+      "warmup": false,
+      "darkhorses": [
+        {
+          "name": "alibaba/open-code-review",
+          "url": "https://github.com/alibaba/open-code-review",
+          "stars": 38589,
+          "growth": 14805,
+          "days_seen": 7,
+          "language": "Go",
+          "first_seen": "2026-09-13",
+          "description": "Secure, fast, efficient, battle-tested at Alibaba's scale. Hybrid architecture code review tool: deterministic pipelines + LLM Agent, precise line-level comments, built-in multi-language ruleset (NPE, thread-safety, XSS, SQL injection), OpenAI & Anthropic compatible."
+        },
+        {
+          "name": "cloudflare/security-audit-skill",
+          "url": "https://github.com/cloudflare/security-audit-skill",
+          "stars": 18257,
+          "growth": 12299,
+          "days_seen": 6,
+          "language": "JavaScript",
+          "first_seen": "2026-09-16",
+          "description": "A coding-agent skill for multi-phase security audits with independently verified, machine-readable findings"
+        },
+        {
+          "name": "browser-use/jev-ultrafast",
+          "url": "https://github.com/browser-use/jev-ultrafast",
+          "stars": 12815,
+          "growth": 11724,
+          "days_seen": 5,
+          "language": "Python",
+          "first_seen": "2026-09-17",
+          "description": "i. am. speed."
+        },
+        {
+          "name": "eternity4719/HowToLiveBetter",
+          "url": "https://github.com/eternity4719/HowToLiveBetter",
+          "stars": 9444,
+          "growth": 7638,
+          "days_seen": 6,
+          "language": "HTML",
+          "first_seen": "2026-09-16",
+          "description": "按性价比排序的循证生活指南：长寿防病、急救、省钱理财、法律红线、失业与工伤、医保社保、恋爱婚育、怀孕育儿、创业与做平台合规、出国与技能。每条写明成本、收益、证据等级和原始出处，只引期刊论文与官方文件。"
+        },
+        {
+          "name": "bilawalsidhu/gods-eye-view",
+          "url": "https://github.com/bilawalsidhu/gods-eye-view",
+          "stars": 39834,
+          "growth": 7513,
+          "days_seen": 7,
+          "language": "JavaScript",
+          "first_seen": "2026-08-28",
+          "description": "A spy satellite simulator in your browser, except the data is real. Live open source spatial intelligence on a photorealistic 3D globe."
+        },
+        {
+          "name": "tt-a1i/archify",
+          "url": "https://github.com/tt-a1i/archify",
+          "stars": 68468,
+          "growth": 7331,
+          "days_seen": 7,
+          "language": "",
+          "first_seen": "2026-08-27",
+          "description": ""
+        },
+        {
+          "name": "debpalash/VoiceStudio",
+          "url": "https://github.com/debpalash/VoiceStudio",
+          "stars": 33621,
+          "growth": 6244,
+          "days_seen": 7,
+          "language": "Python",
+          "first_seen": "2026-09-01",
+          "description": "VoiceStudio is the open-source, fully-local ElevenLabs alternative — voice cloning, voice design, video dubbing, dictation, transcription & audiobook creation in 646 languages."
+        },
+        {
+          "name": "affaan-m/ECC",
+          "url": "https://github.com/affaan-m/ECC",
+          "stars": 263966,
+          "growth": 6097,
+          "days_seen": 7,
+          "language": "JavaScript",
+          "first_seen": "2026-08-22",
+          "description": "The agent harness performance optimization system. Skills, instincts, memory, security, and research-first development for Claude Code, Codex, Opencode, Cursor and beyond."
+        },
+        {
+          "name": "addyosmani/agent-skills",
+          "url": "https://github.com/addyosmani/agent-skills",
+          "stars": 97806,
+          "growth": 5715,
+          "days_seen": 7,
+          "language": "JavaScript",
+          "first_seen": "2026-08-30",
+          "description": "Production-grade engineering skills for AI coding agents."
+        },
+        {
+          "name": "JustVugg/colibri",
+          "url": "https://github.com/JustVugg/colibri",
+          "stars": 35844,
+          "growth": 5592,
+          "days_seen": 4,
+          "language": "C",
+          "first_seen": "2026-09-10",
+          "description": "Run frontier MoE models on hardware you already own — pure C, zero deps, experts streamed from disk. Tiny engine, immense model. 🐦"
+        },
+        {
+          "name": "NandhaKishorM/laya",
+          "url": "https://github.com/NandhaKishorM/laya",
+          "stars": 5351,
+          "growth": 5271,
+          "days_seen": 4,
+          "language": "Python",
+          "first_seen": "2026-09-18",
+          "description": ""
+        },
+        {
+          "name": "Tencent/WeKnora",
+          "url": "https://github.com/Tencent/WeKnora",
+          "stars": 28163,
+          "growth": 5214,
+          "days_seen": 7,
+          "language": "Go",
+          "first_seen": "2026-09-11",
+          "description": "Open-source LLM knowledge platform: turn raw documents into a queryable RAG, an autonomous reasoning agent, and a self-maintaining Wiki."
+        },
+        {
+          "name": "ayghri/i-have-adhd",
+          "url": "https://github.com/ayghri/i-have-adhd",
+          "stars": 49363,
+          "growth": 4773,
+          "days_seen": 7,
+          "language": "Python",
+          "first_seen": "2026-08-19",
+          "description": "A skill to stop your coding agent from burying the answer. ADHD-friendly output."
+        },
+        {
+          "name": "NationalSecurityAgency/ghidra",
+          "url": "https://github.com/NationalSecurityAgency/ghidra",
+          "stars": 78629,
+          "growth": 4607,
+          "days_seen": 4,
+          "language": "Java",
+          "first_seen": "2026-08-28",
+          "description": "Ghidra is a software reverse engineering (SRE) framework"
+        },
+        {
+          "name": "anthropics/claude-code",
+          "url": "https://github.com/anthropics/claude-code",
+          "stars": 147246,
+          "growth": 4553,
+          "days_seen": 6,
+          "language": "TypeScript",
+          "first_seen": "2026-08-23",
+          "description": "Claude Code is an agentic coding tool that lives in your terminal, understands your codebase, and helps you code faster by executing routine tasks, explaining complex code, and handling git workflows - all through natural language commands."
+        }
+      ],
+      "onedayers": [
+        {
+          "name": "earendil-works/pi",
+          "url": "https://github.com/earendil-works/pi",
+          "stars": 105896,
+          "growth": 5778,
+          "days_seen": 2,
+          "language": "TypeScript",
+          "first_seen": "2026-08-19",
+          "description": "AI agent toolkit: unified LLM API, agent loop, TUI, coding agent CLI"
+        },
+        {
+          "name": "n8n-io/n8n",
+          "url": "https://github.com/n8n-io/n8n",
+          "stars": 205097,
+          "growth": 3085,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-08-23",
+          "description": ""
+        },
+        {
+          "name": "pacifio/atlas",
+          "url": "https://github.com/pacifio/atlas",
+          "stars": 4712,
+          "growth": 1716,
+          "days_seen": 2,
+          "language": "Rust",
+          "first_seen": "2026-09-02",
+          "description": "Source control for agents. Use multiple coding agents, track their changes and query them in one place"
+        },
+        {
+          "name": "dani-garcia/vaultwarden",
+          "url": "https://github.com/dani-garcia/vaultwarden",
+          "stars": 67589,
+          "growth": 1393,
+          "days_seen": 1,
+          "language": "Rust",
+          "first_seen": "2026-08-24",
+          "description": "Unofficial Bitwarden compatible server written in Rust, formerly known as bitwarden_rs"
+        },
+        {
+          "name": "mizorewww/laya-mlx",
+          "url": "https://github.com/mizorewww/laya-mlx",
+          "stars": 2001,
+          "growth": 1263,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-09-20",
+          "description": "Native MLX runtime for Laya typed decision models — 7–14 ms short decisions on M3 Max. No text generation, PyTorch, or cloud API."
+        },
+        {
+          "name": "tonhowtf/omniget",
+          "url": "https://github.com/tonhowtf/omniget",
+          "stars": 13126,
+          "growth": 1211,
+          "days_seen": 2,
+          "language": "Rust",
+          "first_seen": "2026-09-13",
+          "description": "Download Udemy and Hotmart courses, YouTube videos, music and books — 1,800+ sites, no terminal. Free open-source desktop app for Windows, macOS and Linux, with a built-in course player, PDF/EPUB reader and music library. Powered by yt-dlp. Your files stay on your computer."
+        },
+        {
+          "name": "securo-finance/securo",
+          "url": "https://github.com/securo-finance/securo",
+          "stars": 3553,
+          "growth": 1179,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-08-28",
+          "description": ""
+        },
+        {
+          "name": "cactus-compute/needle",
+          "url": "https://github.com/cactus-compute/needle",
+          "stars": 11680,
+          "growth": 823,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-08-19",
+          "description": "Automation foundation model for tiny devices: 2-bit, 8-29 MB, tool calls, structured extraction and embeddings on phones, wearables, smart homes, robots, cars and microcontrollers."
+        },
+        {
+          "name": "public-apis/public-apis",
+          "url": "https://github.com/public-apis/public-apis",
+          "stars": 480289,
+          "growth": 800,
+          "days_seen": 1,
+          "language": "",
+          "first_seen": "2026-08-19",
+          "description": ""
+        },
+        {
+          "name": "asgeirtj/system_prompts_leaks",
+          "url": "https://github.com/asgeirtj/system_prompts_leaks",
+          "stars": 66941,
+          "growth": 716,
+          "days_seen": 1,
+          "language": "JavaScript",
+          "first_seen": "2026-09-12",
+          "description": "Extracted system prompts from Anthropic - Claude Fable 5.1, Opus 5, Claude Design, Claude Code. OpenAI - ChatGPT GPT-6-Astra, Codex. Google - Gemini 3.8 Flash, 3.1 Pro, Antigravity. xAI - Grok, Grok Bot, Cursor, Kimi and more! Updated regularly."
+        }
+      ],
+      "newcomers": [
+        {
+          "name": "jamiepine/voicebox",
+          "url": "https://github.com/jamiepine/voicebox",
+          "stars": 54935,
+          "growth": 786,
+          "days_seen": 3,
+          "language": "TypeScript",
+          "first_seen": "2026-09-16",
+          "description": "The open-source AI voice studio. Clone, dictate, create."
+        },
+        {
+          "name": "roboflow/supervision",
+          "url": "https://github.com/roboflow/supervision",
+          "stars": 50857,
+          "growth": 390,
+          "days_seen": 3,
+          "language": "Python",
+          "first_seen": "2026-09-16",
+          "description": "We write your reusable computer vision tools. 💜"
+        },
+        {
+          "name": "trycua/cua",
+          "url": "https://github.com/trycua/cua",
+          "stars": 25294,
+          "growth": 1350,
+          "days_seen": 3,
+          "language": "HTML",
+          "first_seen": "2026-09-19",
+          "description": "Scale computer-use 2.0 with open-source drivers, cross-OS fleets, and benchmarks for training, evaluation, and data generation."
+        },
+        {
+          "name": "Open-Dev-Society/OpenStock",
+          "url": "https://github.com/Open-Dev-Society/OpenStock",
+          "stars": 17004,
+          "growth": 1249,
+          "days_seen": 3,
+          "language": "TypeScript",
+          "first_seen": "2026-09-19",
+          "description": "OpenStock is an open-source alternative to expensive market platforms. Track real-time prices, set personalized alerts, and explore detailed company insights — built openly, for everyone, forever free."
+        },
+        {
+          "name": "higgsfield-ai/higgsfield",
+          "url": "https://github.com/higgsfield-ai/higgsfield",
+          "stars": 5469,
+          "growth": 733,
+          "days_seen": 3,
+          "language": "Jupyter Notebook",
+          "first_seen": "2026-09-19",
+          "description": "Fault-tolerant, highly scalable GPU orchestration, and a machine learning framework designed for training models with billions to trillions of parameters"
+        },
+        {
+          "name": "TencentCloud/Octop",
+          "url": "https://github.com/TencentCloud/Octop",
+          "stars": 4023,
+          "growth": 753,
+          "days_seen": 3,
+          "language": "Python",
+          "first_seen": "2026-09-17",
+          "description": "A smarter, self-hosted AI assistant — multi-user, multi-agent."
+        },
+        {
+          "name": "robbietilton/Compositor",
+          "url": "https://github.com/robbietilton/Compositor",
+          "stars": 3828,
+          "growth": 2142,
+          "days_seen": 3,
+          "language": "Swift",
+          "first_seen": "2026-09-19",
+          "description": "The Photoshop alternative for Mac"
+        },
+        {
+          "name": "HazyResearch/ThunderKittens",
+          "url": "https://github.com/HazyResearch/ThunderKittens",
+          "stars": 3721,
+          "growth": 20,
+          "days_seen": 7,
+          "language": "",
+          "first_seen": "2026-09-15",
+          "description": ""
+        },
+        {
+          "name": "Player-YN/BrowserKitten",
+          "url": "https://github.com/Player-YN/BrowserKitten",
+          "stars": 2906,
+          "growth": 62,
+          "days_seen": 2,
+          "language": "JavaScript",
+          "first_seen": "2026-09-20",
+          "description": "Paw Work - selection-first web agent for Chrome: select on the live page, describe the outcome, take away an editable office file. BYOK, sandboxed, no server."
+        },
+        {
+          "name": "rlaope/oh-my-hermes",
+          "url": "https://github.com/rlaope/oh-my-hermes",
+          "stars": 2613,
+          "growth": 419,
+          "days_seen": 3,
+          "language": "Python",
+          "first_seen": "2026-09-15",
+          "description": "All in one plugin for Hermes Agent ⚚ the coding intelligence, a long-term memory system and model optimized workflow packages"
+        }
+      ],
+      "langs": {
+        "Python": 7,
+        "JavaScript": 5,
+        "TypeScript": 3,
+        "Go": 2,
+        "HTML": 2,
+        "C": 1,
+        "Java": 1,
+        "Jupyter Notebook": 1,
+        "Swift": 1
+      }
+    },
     {
       "week_start": "2026-09-08",
       "week_end": "2026-09-14",
