@@ -319,7 +319,44 @@ footer.site a:hover { color: var(--accent); }
 }
 
 /* ============ KaTeX 数学 ============ */
+/* 兜底：未被 rehypeEquation 包裹的块级公式（理论上不该出现） */
 .katex-display { overflow-x: auto; overflow-y: hidden; padding: .35em 0; }
+
+/* 块级公式 + 编号。
+   KaTeX 原本把 \tag 编号绝对定位在公式盒子右缘，而公式又是 nowrap —— 公式一超宽
+   就会盖住编号。这里把编号拆成 flex 的兄弟节点，让「公式溢出」与「编号位置」互不
+   干扰：公式宽了只在自己那一格里横向滚动，编号始终稳在右侧。 */
+.equation {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin: 1.35em 0;
+}
+.equation-body {
+  flex: 1 1 auto;
+  min-width: 0; /* 允许收缩，溢出交给自身滚动而不是撑破父级 */
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule) transparent;
+}
+.equation-body .katex-display {
+  margin: 0;
+  padding: .35em 0;
+  overflow: visible; /* 溢出交给 .equation-body 统一处理 */
+}
+.equation-number {
+  flex: 0 0 auto;
+  font-family: var(--mono);
+  font-size: .8rem;
+  color: var(--dim);
+  user-select: none;
+}
+/* 窄屏：编号落到公式下方右对齐，整行宽度让给公式 */
+@media (max-width: 700px) {
+  .equation { flex-direction: column; align-items: stretch; gap: .25rem; }
+  .equation-number { text-align: right; }
+}
 
 /* ============ 代码块复制按钮 ============ */
 .code-block { position: relative; }

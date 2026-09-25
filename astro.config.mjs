@@ -2,6 +2,7 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import rehypeEquation from './src/lib/rehype-equation.mjs';
 
 // 正文图片懒加载：构建期直接写进 <img> 属性（比客户端 JS 早，首屏外的图不会抢先下载）
 function rehypeLazyImages() {
@@ -22,7 +23,8 @@ export default defineConfig({
   integrations: [sitemap()],
   markdown: {
     remarkPlugins: [remarkMath],
-    rehypePlugins: [rehypeKatex, rehypeLazyImages],
+    // rehypeEquation 必须在 rehypeKatex 之后：它依赖 KaTeX 已生成的 DOM 结构
+    rehypePlugins: [rehypeKatex, rehypeEquation, rehypeLazyImages],
     shikiConfig: {
       themes: { light: 'github-light', dark: 'github-dark' },
       defaultColor: 'light',

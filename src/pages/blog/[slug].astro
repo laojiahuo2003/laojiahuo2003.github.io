@@ -169,6 +169,39 @@ const relatedList = hasRelated
       }
     }
 
+    // 过宽公式自动缩字号：优先保证「整条公式一眼看全」，而不是甩出一条横向滚动条。
+    // 缩到 0.8 倍为止，再宽就交回 .equation-body 滚动 —— 免得把公式压到读不清。
+    const fitEquations = () => {
+      document.querySelectorAll<HTMLElement>('.equation-body').forEach((box) => {
+        const display = box.querySelector<HTMLElement>('.katex-display');
+        if (!display) return;
+        display.style.fontSize = '';
+        let size = 1;
+        while (box.scrollWidth > box.clientWidth + 1 && size > 0.8) {
+          size = Math.round((size - 0.02) * 100) / 100;
+          display.style.fontSize = `${size}em`;
+        }
+      });
+    };
+    fitEquations();
+    // KaTeX 自带字体加载完后宽度才是准的，加载完再校准一次
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitEquations, fitEquations);
+
+    let fitTimer = 0;
+    const onResize = () => {
+      clearTimeout(fitTimer);
+      fitTimer = window.setTimeout(fitEquations, 150);
+    };
+    window.addEventListener('resize', onResize, { passive: true });
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        window.removeEventListener('resize', onResize);
+        clearTimeout(fitTimer);
+      },
+      { once: true },
+    );
+
     // 移动端目录默认收起：窄屏下目录置顶且展开会把正文推出首屏
     const tocDetails = document.querySelector('.toc');
     if (tocDetails && matchMedia('(max-width: 900px)').matches) {
