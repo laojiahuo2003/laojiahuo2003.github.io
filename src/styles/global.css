@@ -69,6 +69,27 @@ body {
 }
 ::selection { background: var(--accent-soft); }
 
+/* 全站细滚动条：暗色主题下不出现刺眼的默认白色粗条 */
+html { scrollbar-width: thin; scrollbar-color: var(--rule) transparent; }
+html::-webkit-scrollbar { width: 10px; }
+html::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 5px; border: 2px solid var(--ground); }
+html::-webkit-scrollbar-thumb:hover { background: var(--faint); }
+html::-webkit-scrollbar-track { background: transparent; }
+
+/* ============ 阅读进度条（文章页 JS 驱动，贴顶 2px 细线） ============ */
+.reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--accent);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  z-index: 60;
+  pointer-events: none;
+}
+
 /* ============ 视图过渡：页面切换交叉淡入 + 轻微上浮 ============ */
 ::view-transition-old(root) { animation: vt-out .16s cubic-bezier(.4, 0, 1, 1) both; }
 ::view-transition-new(root) { animation: vt-in .3s var(--ease) both; }
@@ -105,12 +126,25 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-
   font-size: 2.15rem;
   line-height: 1.2;
   letter-spacing: .01em;
-  margin: 0;
+  margin: 0 0 .55rem;
   text-wrap: balance;
 }
+.home-sub {
+  margin: 0;
+  color: var(--dim);
+  font-size: .95rem;
+}
 
-/* ============ 导航：通栏边框 + 与正文同宽同对齐 ============ */
+/* ============ 导航：吸顶 + 毛玻璃，与正文同宽同对齐 ============ */
 nav.site {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--ground); /* 旧浏览器兜底 */
+  background: color-mix(in srgb, var(--ground) 86%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition: background-color .35s var(--ease), border-color .35s var(--ease);
   padding-top: .75rem;
   border-bottom: 1px solid var(--rule);
   margin-bottom: 2.75rem;
@@ -126,6 +160,15 @@ nav.site {
   padding: 1rem max(1.5rem, env(safe-area-inset-right)) 1rem max(1.5rem, env(safe-area-inset-left));
 }
 nav.site a { color: var(--ink); opacity: .68; transition: color var(--dur-fast) var(--ease), opacity var(--dur-fast) var(--ease); }
+/* 链接悬停：主题色下划线滑入（当前页与图标除外） */
+nav.site a:not([aria-current="page"]):not(.nav-icon) {
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1.5px;
+  transition: background-size var(--dur) var(--ease), color var(--dur-fast) var(--ease), opacity var(--dur-fast) var(--ease);
+}
+nav.site a:not(.nav-icon):hover { background-size: 100% 1.5px; }
 nav.site a:hover { color: var(--accent); opacity: 1; }
 nav.site a[aria-current="page"] { color: var(--ink); opacity: 1; font-weight: 600; }
 nav.site a[aria-current="page"]::before { content: "· "; color: var(--accent); }
@@ -179,10 +222,10 @@ nav.site a[aria-current="page"]::before { content: "· "; color: var(--accent); 
   background-repeat: no-repeat;
   background-position: 0 100%;
   background-size: 0% 1.5px;
-  transition: background-size var(--dur) var(--ease);
+  transition: background-size var(--dur) var(--ease), color var(--dur-fast) var(--ease);
   padding-bottom: 1px;
 }
-.post:hover h2 a, .post h2 a:hover { background-size: 100% 1.5px; }
+.post:hover h2 a, .post h2 a:hover { background-size: 100% 1.5px; color: var(--accent); }
 .post p { margin: 0; color: var(--dim); font-size: .93rem; max-width: 46rem; }
 .tag {
   font-family: var(--mono);
@@ -195,7 +238,9 @@ nav.site a[aria-current="page"]::before { content: "· "; color: var(--accent); 
   margin-left: .5rem;
   vertical-align: 2px;
   white-space: nowrap;
+  transition: border-color var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease);
 }
+a.tag:hover { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 22%, transparent); }
 .more {
   display: inline-block;
   margin-top: 1.75rem;
@@ -245,7 +290,9 @@ nav.site a[aria-current="page"]::before { content: "· "; color: var(--accent); 
   font-size: 1.12rem;
   margin: 2.2em 0 .6em;
 }
-.prose p { margin: 0 0 1.2em; }
+/* 吸顶导航下锚点跳转不遮标题 */
+.prose h2, .prose h3 { scroll-margin-top: 5.5rem; }
+.prose p { margin: 0 0 1.2em; text-wrap: pretty; }
 .prose a {
   color: var(--accent);
   background-image: linear-gradient(var(--accent-soft), var(--accent-soft));
@@ -254,12 +301,18 @@ nav.site a[aria-current="page"]::before { content: "· "; color: var(--accent); 
   background-size: 100% 1px;
 }
 .prose a:hover { background-size: 100% 2px; }
+/* 「要点」等引用块：浅底 + 主题色左缘，一眼扫出重点 */
 .prose blockquote {
-  margin: 1.5em 0;
-  padding: .1em 0 .1em 1.2em;
-  border-left: 3px solid var(--rule);
+  margin: 1.6em 0;
+  padding: .85em 1.2em;
+  background: var(--code-bg);
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 10px 10px 0;
   color: var(--dim);
 }
+.prose blockquote p { margin: 0; }
+.prose blockquote p + p { margin-top: .6em; }
 .prose code {
   font-family: var(--mono);
   font-size: .88em;
@@ -277,14 +330,19 @@ nav.site a[aria-current="page"]::before { content: "· "; color: var(--accent); 
   overflow-x: auto;
   line-height: 1.6;
   font-size: .86rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule) transparent;
 }
+.prose pre::-webkit-scrollbar { height: 8px; }
+.prose pre::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 4px; }
+.prose pre::-webkit-scrollbar-track { background: transparent; }
 .prose pre code { background: none; padding: 0; font-size: 1em; }
 .prose img { max-width: 100%; border-radius: 8px; }
 .prose hr { border: none; border-top: 1px solid var(--rule); margin: 3em 0; }
 .prose table { border-collapse: collapse; width: 100%; font-size: .9rem; }
 .table-scroll { overflow-x: auto; } /* JS 包裹宽表格，窄屏横向滚动 */
 .prose th, .prose td { border: 1px solid var(--rule); padding: .45em .8em; text-align: left; }
-.prose th { font-family: var(--mono); font-size: .8rem; color: var(--dim); }
+.prose th { font-family: var(--mono); font-size: .8rem; color: var(--dim); background: var(--code-bg); }
 /* 表格内的行内公式禁止折行：防止 σ 与上标 ² 之间被断开（KaTeX 只保护了块级公式） */
 .prose td .katex, .prose th .katex { white-space: nowrap; }
 
@@ -315,7 +373,7 @@ footer.site a:hover { color: var(--accent); }
   nav.site .theme-toggle, nav.site .nav-icon { padding: .55rem; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .post h2 a, nav.site a, .more, .prose a { transition: none; }
+  .post h2 a, nav.site a, .more, .prose a, a.tag { transition: none; }
 }
 
 /* ============ KaTeX 数学 ============ */
@@ -511,10 +569,10 @@ footer.site a:hover { color: var(--accent); }
 .post-main { min-width: 0; }
 .post-layout--flat { grid-template-columns: minmax(0, 1fr); }
 
-.toc-aside { position: sticky; top: 1.5rem; }
+.toc-aside { position: sticky; top: 5.5rem; }
 .toc-aside .toc {
   margin: 0;
-  max-height: calc(100vh - 3rem);
+  max-height: calc(100vh - 7rem);
   overflow-y: auto;
   /* 与日报目录一致：主题色细滚动条，避免 Windows 默认白色粗条 */
   scrollbar-width: thin;

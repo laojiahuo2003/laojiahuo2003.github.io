@@ -143,7 +143,29 @@ const relatedList = hasRelated
   let artCleanup: (() => void) | null = null;
   document.addEventListener('astro:before-swap', () => { artCleanup?.(); artCleanup = null; });
 
+  // 阅读进度条：滚动监听独立成组，换文档时单独清理
+  let barAbort: AbortController | null = null;
+  document.addEventListener('astro:before-swap', () => { barAbort?.abort(); barAbort = null; });
+
   document.addEventListener('astro:page-load', () => {
+    // 阅读进度条：贴顶 2px 主题色细线，宽度 = 已读进度
+    let bar = document.querySelector<HTMLElement>('.reading-progress');
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.className = 'reading-progress';
+      bar.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(bar);
+    }
+    const updateBar = () => {
+      const doc = document.documentElement;
+      const max = doc.scrollHeight - doc.clientHeight;
+      bar!.style.transform = `scaleX(${max > 0 ? doc.scrollTop / max : 0})`;
+    };
+    updateBar();
+    const bac = new AbortController();
+    barAbort = bac;
+    window.addEventListener('scroll', () => requestAnimationFrame(updateBar), { passive: true, signal: bac.signal });
+    window.addEventListener('resize', updateBar, { passive: true, signal: bac.signal });
     // 返回链接：客户端导航不更新 document.referrer，优先用导航前记录的上一页（见 Base 布局）
     const back = document.getElementById('back-link');
     if (back) {
