@@ -41,7 +41,7 @@ def build_repo_info():
         files = sorted(f for f in os.listdir(REPORTS_DIR) if f.endswith(".json"))
     except OSError:
         return langs, descs
-    for fn in files[-14:]:  # 最近 7 天（每天 2 份）
+    for fn in files:  # reports 目录由日报按 30 天滚动清理，全量扫描保证窗口内项目都有元数据
         try:
             with open(os.path.join(REPORTS_DIR, fn), encoding="utf-8") as f:
                 rep = json.load(f)
@@ -68,7 +68,14 @@ def analyze():
     all_dates = sorted({d for r in history.values() for d in r.get("stars_history", {})})
     if not all_dates:
         return None
-    week_end = date.fromisoformat(all_dates[-1])
+    # 统计上一完整自然周（周一~周日）。周报周一上午生成，若直接取最新记录日，
+    # 周一早上的日报会把窗口顶成 周二~周一；是否顶偏取决于当天日报是否先于周报跑完。
+    sundays = [d for d in all_dates if date.fromisoformat(d).weekday() == 6]
+    latest = date.fromisoformat(all_dates[-1])
+    if sundays and (latest - date.fromisoformat(sundays[-1])).days <= 6:
+        week_end = date.fromisoformat(sundays[-1])
+    else:
+        week_end = latest
     week_start = week_end - timedelta(days=6)
     window = {(week_start + timedelta(days=i)).isoformat() for i in range(7)}
     coverage = len(window & set(all_dates))
