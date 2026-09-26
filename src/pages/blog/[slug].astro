@@ -152,18 +152,12 @@ const relatedList = hasRelated
       if (prev.startsWith('/tags/')) {
         back.href = prev;
         back.textContent = '← 返回标签';
-      } else if (prev.startsWith('/cat/')) {
-        back.href = prev;
-        back.textContent = '← 返回分类';
       } else if (document.referrer) {
         try {
           const u = new URL(document.referrer);
           if (u.pathname.startsWith('/tags/')) {
             back.href = u.pathname;
             back.textContent = '← 返回标签';
-          } else if (u.pathname.startsWith('/cat/')) {
-            back.href = u.pathname;
-            back.textContent = '← 返回分类';
           }
         } catch {}
       }

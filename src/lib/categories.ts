@@ -1,46 +1,40 @@
-// 文章分类：文件夹即分类（src/content/blog/<folder>/*.md），根目录文件归入 misc。
-// URL 只用文件名（/blog/<slug>/），文件夹不进 URL——加分类后外链不失效。
+// 文章分类：分类即标签（frontmatter 的 tags）。侧栏按声明顺序展示已知标签，
+// 未知标签按字典序补在后面；无标签的文章归入未分类。
+// 文件夹只做内部组织（src/content/blog/<folder>/），不进 URL 也不进分类。
 import type { CollectionEntry } from 'astro:content';
 
 export type Post = CollectionEntry<'blog'>;
 
-// 展示名映射；侧栏顺序即此处的声明顺序
-export const CATEGORIES: Record<string, string> = {
-  inference: '推理',
-  architecture: '模型结构',
-  training: '训练',
-  agent: 'Agent',
-  basics: '基础',
-  automation: '自动化',
-};
+// 侧栏顺序即此处的声明顺序；新增文章标签若不在列表里会自动追加到后面
+export const CATEGORY_ORDER: string[] = [
+  '强化学习',
+  '后训练',
+  '大模型',
+  '训练工程',
+  '模型结构',
+];
 
-export const MISC_KEY = 'misc';
-export const MISC_LABEL = '未分类';
+export const MISC_KEY = '未分类';
 
-export function categoryOf(post: Post): string {
-  return post.id.includes('/') ? post.id.split('/')[0] : MISC_KEY;
-}
-
-export function categoryLabel(key: string): string {
-  if (key === MISC_KEY) return MISC_LABEL;
-  return CATEGORIES[key] ?? key;
-}
-
-// URL slug：文件夹路径只做分类，链接只用文件名
+// URL slug：链接只用文件名（/blog/<slug>/），文件夹不进入 URL
 export function slugOf(post: Post): string {
   return post.id.split('/').pop()!;
 }
 
-// 按声明顺序（未知文件夹按字典序补在后面，misc 永远最后）分组
-export function groupByCategory(posts: Post[]): Map<string, Post[]> {
+// 按标签分组：一篇文章可以属于多个分类（多标签即多分类）
+export function groupByTag(posts: Post[]): Map<string, Post[]> {
   const groups = new Map<string, Post[]>();
   for (const p of posts) {
-    const k = categoryOf(p);
-    if (!groups.has(k)) groups.set(k, []);
-    groups.get(k)!.push(p);
+    const tags = p.data.tags.length > 0 ? p.data.tags : [MISC_KEY];
+    for (const t of tags) {
+      if (!groups.has(t)) groups.set(t, []);
+      groups.get(t)!.push(p);
+    }
   }
-  const known = Object.keys(CATEGORIES).filter((k) => groups.has(k));
-  const unknown = [...groups.keys()].filter((k) => !(k in CATEGORIES) && k !== MISC_KEY).sort();
+  const known = CATEGORY_ORDER.filter((t) => groups.has(t));
+  const unknown = [...groups.keys()]
+    .filter((t) => !CATEGORY_ORDER.includes(t) && t !== MISC_KEY)
+    .sort();
   const ordered = groups.has(MISC_KEY) ? [...known, ...unknown, MISC_KEY] : [...known, ...unknown];
   return new Map(ordered.map((k) => [k, groups.get(k)!]));
 }

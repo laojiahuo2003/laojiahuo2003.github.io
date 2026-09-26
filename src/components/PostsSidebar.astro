@@ -1,14 +1,15 @@
 ---
-// 文章分类侧栏：全部 + 各文件夹，计数右对齐，当前项高亮。首页与分类页共用。
-import { categoryLabel, groupByCategory, type Post } from '../lib/categories';
+// 文章分类侧栏：全部 + 各标签，计数右对齐，当前项高亮。首页与标签页共用。
+// 分类即标签（见 lib/categories.ts），链接指向 /tags/<tag>/。
+import { groupByTag, type Post } from '../lib/categories';
 
 interface Props {
-  active: string; // 'all' 或分类 key
+  active: string; // 'all' 或标签名
   posts: Post[];
 }
 
 const { active, posts } = Astro.props;
-const groups = groupByCategory(posts);
+const groups = groupByTag(posts);
 ---
 
 <aside class="posts-side">
@@ -23,8 +24,8 @@ const groups = groupByCategory(posts);
         </li>
         {[...groups.entries()].map(([key, ps]) => (
           <li>
-            <a href={`/cat/${key}/`} aria-current={active === key ? 'page' : undefined}>
-              {categoryLabel(key)}<span class="n">{ps.length}</span>
+            <a href={`/tags/${key}/`} aria-current={active === key ? 'page' : undefined}>
+              {key}<span class="n">{ps.length}</span>
             </a>
           </li>
         ))}
