@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="660" height="445" viewBox="0 0 660 445" font-family="'Microsoft YaHei', 'PingFang SC', system-ui, sans-serif">
+  <rect width="660" height="445" fill="#ffffff"/>
+
+  <!-- ===== 矩阵标签 ===== -->
+  <text x="315" y="28" font-size="14" font-weight="bold" fill="#b23a2e" text-anchor="middle">Kᵀ（d×N）</text>
+  <text x="70" y="102" font-size="14" font-weight="bold" fill="#2d5a8c" text-anchor="middle">Q（N×d）</text>
+  <text x="520" y="102" font-size="14" font-weight="bold" fill="#2e7d4f" text-anchor="middle">V（N×d）</text>
+  <text x="615" y="102" font-size="14" font-weight="bold" fill="#1f4e79" text-anchor="middle">O（累加中）</text>
+
+  <!-- ===== Kᵀ ===== -->
+  <rect x="170" y="40" width="290" height="50" fill="#f6dcd8" stroke="#c05a4d"/>
+  <rect x="286" y="40" width="58" height="50" fill="#e8a9a0" stroke="#b23a2e" stroke-width="2"/>
+  <text x="315" y="70" font-size="14" font-weight="bold" fill="#7d221a" text-anchor="middle">K_j</text>
+
+  <!-- ===== Q ===== -->
+  <rect x="30" y="110" width="80" height="280" fill="#e4edf6" stroke="#4a7fb5"/>
+  <rect x="30" y="180" width="80" height="70" fill="#bcd4ea" stroke="#2d5a8c" stroke-width="2"/>
+  <text x="70" y="220" font-size="14" font-weight="bold" fill="#1f4e79" text-anchor="middle">Q_i</text>
+
+  <!-- ===== S 网格（5 列 × 4 行） ===== -->
+  <g stroke="#c8d2de" stroke-width="1">
+    <g fill="#f2f5f9">
+      <rect x="170" y="110" width="58" height="70"/><rect x="228" y="110" width="58" height="70"/>
+      <rect x="286" y="110" width="58" height="70"/><rect x="344" y="110" width="58" height="70"/>
+      <rect x="402" y="110" width="58" height="70"/>
+      <rect x="170" y="180" width="58" height="70"/><rect x="228" y="180" width="58" height="70"/>
+      <rect x="344" y="180" width="58" height="70"/><rect x="402" y="180" width="58" height="70"/>
+      <rect x="170" y="250" width="58" height="70"/><rect x="228" y="250" width="58" height="70"/>
+      <rect x="286" y="250" width="58" height="70"/><rect x="344" y="250" width="58" height="70"/>
+      <rect x="402" y="250" width="58" height="70"/>
+      <rect x="170" y="320" width="58" height="70"/><rect x="228" y="320" width="58" height="70"/>
+      <rect x="286" y="320" width="58" height="70"/><rect x="344" y="320" width="58" height="70"/>
+      <rect x="402" y="320" width="58" height="70"/>
+    </g>
+  </g>
+  <!-- 高亮块 S_ij -->
+  <rect x="286" y="180" width="58" height="70" fill="#ffe3b3" stroke="#e8a33d" stroke-width="2"/>
+  <text x="315" y="210" font-size="11.5" font-weight="bold" fill="#7a4a00" text-anchor="middle">S_ij = Q_i·K_jᵀ</text>
+  <text x="315" y="228" font-size="11.5" fill="#7a4a00" text-anchor="middle">（B_r × B_c）</text>
+
+  <!-- 虚线框：S 从不落地 HBM -->
+  <rect x="166" y="106" width="298" height="288" fill="none" stroke="#999999" stroke-width="1" stroke-dasharray="4 4"/>
+  <text x="170" y="412" font-size="12.5" fill="#555555">S：N×N，从不写回 HBM</text>
+
+  <!-- ===== V 与 O ===== -->
+  <rect x="490" y="110" width="60" height="280" fill="#e3f0e7" stroke="#2e7d4f"/>
+  <rect x="580" y="110" width="70" height="280" fill="#dce8f5" stroke="#1f4e79"/>
+  <rect x="580" y="180" width="70" height="70" fill="#a9c7e8" stroke="#1f4e79" stroke-width="2"/>
+  <text x="615" y="220" font-size="14" font-weight="bold" fill="#10375e" text-anchor="middle">O_i</text>
+  <text x="615" y="403" font-size="11.5" fill="#1f4e79" text-anchor="middle">m、ℓ 每块更新</text>
+
+  <!-- ===== 箭头 ===== -->
+  <!-- 外层循环（红，沿列） -->
+  <line x1="170" y1="100" x2="442" y2="100" stroke="#c0392b" stroke-width="2.5"/>
+  <polygon points="450,100 438,95 438,105" fill="#c0392b"/>
+  <text x="310" y="94" font-size="12.5" font-weight="bold" fill="#c0392b" text-anchor="middle">外层循环 j：K、V 一块块进 SRAM</text>
+  <!-- K_j 指向 S_ij -->
+  <line x1="315" y1="92" x2="315" y2="178" stroke="#c0392b" stroke-width="2"/>
+  <polygon points="315,178 310,166 320,166" fill="#c0392b"/>
+
+  <!-- 内层循环（蓝，沿行） -->
+  <line x1="125" y1="112" x2="125" y2="388" stroke="#2d5a8c" stroke-width="2.5"/>
+  <polygon points="125,388 120,376 130,376" fill="#2d5a8c"/>
+  <text x="125" y="427" font-size="12.5" font-weight="bold" fill="#2d5a8c" text-anchor="middle">内层循环 i：遍历所有 Q_i 块</text>
+  <!-- Q_i 指向 S_ij -->
+  <line x1="112" y1="215" x2="166" y2="215" stroke="#2d5a8c" stroke-width="2"/>
+  <polygon points="166,215 154,210 154,220" fill="#2d5a8c"/>
+
+  <!-- S_ij 块 → P̃_ij·V_j 累加进 O_i（橙） -->
+  <line x1="346" y1="215" x2="646" y2="215" stroke="#e8a33d" stroke-width="2.5"/>
+  <polygon points="646,215 634,210 634,220" fill="#e8a33d"/>
+  <text x="520" y="206" font-size="11.5" fill="#b26a00" text-anchor="middle">P̃_ij · V_j（softmax 后）</text>
+
+  <!-- 底部说明 -->
+  <text x="40" y="440" font-size="12.5" fill="#444444">每轮：K_j、V_j 进 SRAM → 内层循环过所有 Q_i → 在片上算 S_ij、在线更新 (m, ℓ)，把结果累加进 O_i 后写回。</text>
+</svg>

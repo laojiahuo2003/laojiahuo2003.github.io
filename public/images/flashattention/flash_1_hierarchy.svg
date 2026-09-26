@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="660" height="380" viewBox="0 0 660 380" font-family="'Microsoft YaHei', 'PingFang SC', system-ui, sans-serif">
+  <rect width="660" height="380" fill="#ffffff"/>
+
+  <!-- ===== 左面板：带宽 ===== -->
+  <text x="40" y="40" font-size="17" font-weight="bold" fill="#1a1a1a">带宽（读写速度）</text>
+
+  <!-- SRAM 19 TB/s -->
+  <text x="40" y="78" font-size="13" fill="#333333">片上 SRAM</text>
+  <rect x="150" y="64" width="380" height="20" rx="3" fill="#e8a33d"/>
+  <text x="540" y="79" font-size="13" font-weight="bold" fill="#b26a00">19 TB/s</text>
+
+  <!-- HBM 1.5 TB/s -->
+  <text x="40" y="122" font-size="13" fill="#333333">高带宽显存 HBM</text>
+  <rect x="150" y="108" width="30" height="20" rx="3" fill="#4a7fb5"/>
+  <text x="190" y="123" font-size="13" font-weight="bold" fill="#2d5a8c">1.5 TB/s</text>
+
+  <!-- 比例标注 -->
+  <line x1="150" y1="145" x2="150" y2="165" stroke="#888888" stroke-width="1" stroke-dasharray="3 3"/>
+  <line x1="530" y1="145" x2="530" y2="165" stroke="#888888" stroke-width="1" stroke-dasharray="3 3"/>
+  <text x="340" y="160" font-size="12" fill="#666666" text-anchor="middle">SRAM 约快 12.7 倍</text>
+
+  <!-- ===== 右面板：容量 ===== -->
+  <text x="40" y="212" font-size="17" font-weight="bold" fill="#1a1a1a">容量</text>
+
+  <!-- HBM 40GB -->
+  <text x="40" y="250" font-size="13" fill="#333333">HBM</text>
+  <rect x="150" y="236" width="380" height="20" rx="3" fill="#4a7fb5"/>
+  <text x="540" y="251" font-size="13" font-weight="bold" fill="#2d5a8c">40 GB</text>
+
+  <!-- SRAM 20MB（细条） -->
+  <text x="40" y="294" font-size="13" fill="#333333">片上 SRAM</text>
+  <rect x="150" y="280" width="5" height="20" rx="2" fill="#e8a33d"/>
+  <text x="165" y="295" font-size="13" font-weight="bold" fill="#b26a00">≈ 20 MB（192KB × 108 个 SM）</text>
+
+  <line x1="150" y1="317" x2="150" y2="337" stroke="#888888" stroke-width="1" stroke-dasharray="3 3"/>
+  <line x1="530" y1="317" x2="530" y2="337" stroke="#888888" stroke-width="1" stroke-dasharray="3 3"/>
+  <text x="340" y="332" font-size="12" fill="#666666" text-anchor="middle">容量小约 2000 倍</text>
+
+  <!-- 底部结论 -->
+  <line x1="40" y1="355" x2="620" y2="355" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="40" y="374" font-size="12.5" fill="#444444">mask / softmax / dropout 是逐元素操作：每读写一个数只做几次加减乘除——memory-bound，时间几乎全花在 HBM 这条窄路上。</text>
+</svg>
