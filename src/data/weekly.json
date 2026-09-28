@@ -1,6 +1,376 @@
 {
-  "updated": "2026-09-26T14:08:28Z",
+  "updated": "2026-09-28T15:22:49Z",
   "reports": [
+    {
+      "week_start": "2026-09-21",
+      "week_end": "2026-09-27",
+      "generated": "2026-09-28 15:22",
+      "coverage": 7,
+      "warmup": false,
+      "darkhorses": [
+        {
+          "name": "NandhaKishorM/laya",
+          "url": "https://github.com/NandhaKishorM/laya",
+          "stars": 26956,
+          "growth": 24474,
+          "days_seen": 7,
+          "language": "Python",
+          "first_seen": "2026-09-18",
+          "description": "Non-autoregressive System 1 decision engine. Typed choice, score and yes/no decisions over any text in a single forward pass, in 100+ languages, with a router that picks the right checkpoint per request."
+        },
+        {
+          "name": "eternity4719/HowToLiveBetter",
+          "url": "https://github.com/eternity4719/HowToLiveBetter",
+          "stars": 21949,
+          "growth": 14683,
+          "days_seen": 7,
+          "language": "HTML",
+          "first_seen": "2026-09-16",
+          "description": "按性价比排序的循证生活指南：长寿防病、急救、省钱理财、法律红线、失业与工伤、医保社保、恋爱婚育、怀孕育儿、创业与做平台合规、出国与技能。每条写明成本、收益、证据等级和原始出处，只引期刊论文与官方文件。"
+        },
+        {
+          "name": "vectorize-io/hindsight",
+          "url": "https://github.com/vectorize-io/hindsight",
+          "stars": 38235,
+          "growth": 11120,
+          "days_seen": 4,
+          "language": "Python",
+          "first_seen": "2026-09-24",
+          "description": "Hindsight: Agent Memory That Learns"
+        },
+        {
+          "name": "browser-use/jev-ultrafast",
+          "url": "https://github.com/browser-use/jev-ultrafast",
+          "stars": 20904,
+          "growth": 10199,
+          "days_seen": 7,
+          "language": "Python",
+          "first_seen": "2026-09-17",
+          "description": "Fastest and cheapest web agent"
+        },
+        {
+          "name": "debpalash/VoiceStudio",
+          "url": "https://github.com/debpalash/VoiceStudio",
+          "stars": 40786,
+          "growth": 7412,
+          "days_seen": 7,
+          "language": "Python",
+          "first_seen": "2026-09-01",
+          "description": "VoiceStudio is the open-source, fully-local ElevenLabs alternative — voice cloning, voice design, video dubbing, dictation, transcription & audiobook creation in 646 languages."
+        },
+        {
+          "name": "jaredpalmer/kev",
+          "url": "https://github.com/jaredpalmer/kev",
+          "stars": 7474,
+          "growth": 6711,
+          "days_seen": 7,
+          "language": "Python",
+          "first_seen": "2026-09-19",
+          "description": "tiny Jev-like family of decision models built on top of Qwen3.5 you can train and run on your own"
+        },
+        {
+          "name": "stablyai/orca",
+          "url": "https://github.com/stablyai/orca",
+          "stars": 79900,
+          "growth": 6685,
+          "days_seen": 7,
+          "language": "TypeScript",
+          "first_seen": "2026-08-19",
+          "description": "Orca is the ADE for working with a fleet of parallel agents. Run any coding agent with your own subscription. Available on desktop, mobile and remote runtime."
+        },
+        {
+          "name": "rohitg00/ai-engineering-from-scratch",
+          "url": "https://github.com/rohitg00/ai-engineering-from-scratch",
+          "stars": 59657,
+          "growth": 5822,
+          "days_seen": 4,
+          "language": "Python",
+          "first_seen": "2026-08-25",
+          "description": "Learn it. Build it. Ship it for others."
+        },
+        {
+          "name": "mizorewww/laya-mlx",
+          "url": "https://github.com/mizorewww/laya-mlx",
+          "stars": 6501,
+          "growth": 5763,
+          "days_seen": 7,
+          "language": "Python",
+          "first_seen": "2026-09-20",
+          "description": "Native MLX runtime for Laya typed decision models — 7–14 ms short decisions on M3 Max. No text generation, PyTorch, or cloud API."
+        },
+        {
+          "name": "dream-num/univer",
+          "url": "https://github.com/dream-num/univer",
+          "stars": 20758,
+          "growth": 5723,
+          "days_seen": 6,
+          "language": "TypeScript",
+          "first_seen": "2026-09-22",
+          "description": "The Office Harness for AI Agents — Spreadsheets, Docs, Slides, Canvas, Relational Tables, and PDF in one runtime."
+        },
+        {
+          "name": "affaan-m/ECC",
+          "url": "https://github.com/affaan-m/ECC",
+          "stars": 268536,
+          "growth": 5190,
+          "days_seen": 7,
+          "language": "JavaScript",
+          "first_seen": "2026-08-22",
+          "description": "The agent harness performance optimization system. Skills, instincts, memory, security, and research-first development for Claude Code, Codex, Opencode, Cursor and beyond."
+        },
+        {
+          "name": "bilawalsidhu/gods-eye-view",
+          "url": "https://github.com/bilawalsidhu/gods-eye-view",
+          "stars": 44160,
+          "growth": 5075,
+          "days_seen": 7,
+          "language": "JavaScript",
+          "first_seen": "2026-08-28",
+          "description": "A spy satellite simulator in your browser, except the data is real. Live open source spatial intelligence on a photorealistic 3D globe."
+        },
+        {
+          "name": "tt-a1i/archify",
+          "url": "https://github.com/tt-a1i/archify",
+          "stars": 72989,
+          "growth": 5008,
+          "days_seen": 7,
+          "language": "JavaScript",
+          "first_seen": "2026-08-27",
+          "description": "Agent skill for beautiful, verifiable architecture, workflow, sequence, data-flow, and lifecycle diagrams—self-contained HTML with motion and crisp export."
+        },
+        {
+          "name": "cloudflare/security-audit-skill",
+          "url": "https://github.com/cloudflare/security-audit-skill",
+          "stars": 22425,
+          "growth": 4903,
+          "days_seen": 7,
+          "language": "JavaScript",
+          "first_seen": "2026-09-16",
+          "description": "A coding-agent skill for multi-phase security audits with independently verified, machine-readable findings"
+        },
+        {
+          "name": "google/ax",
+          "url": "https://github.com/google/ax",
+          "stars": 11613,
+          "growth": 4597,
+          "days_seen": 5,
+          "language": "Go",
+          "first_seen": "2026-09-22",
+          "description": "Google's open agentic orchestration runtime"
+        }
+      ],
+      "onedayers": [
+        {
+          "name": "mattpocock/skills",
+          "url": "https://github.com/mattpocock/skills",
+          "stars": 269821,
+          "growth": 9207,
+          "days_seen": 2,
+          "language": "Shell",
+          "first_seen": "2026-08-19",
+          "description": "Skills for Real Engineers. Straight from my .agents directory."
+        },
+        {
+          "name": "zhaoxuya520/reverse-skill",
+          "url": "https://github.com/zhaoxuya520/reverse-skill",
+          "stars": 38110,
+          "growth": 4263,
+          "days_seen": 2,
+          "language": "PowerShell",
+          "first_seen": "2026-08-19",
+          "description": "Reverse Engineering / Authorized Penetration Testing / Security Research Skill Router Pack AI-powered routing + On-demand toolchain bootstrapping + Self-evolving knowledge base Supports Claude Code, Kiro, Cursor, Cline, and other AI coding clients 逆向/渗透/安全技能路由包 - AI 自动路由 + 按需自举工具链 + 自动进化经验库 | 支持 Claude Code / Kiro / Cursor / Cline 等代码 AI 客户端"
+        },
+        {
+          "name": "block/buzz",
+          "url": "https://github.com/block/buzz",
+          "stars": 34876,
+          "growth": 3495,
+          "days_seen": 2,
+          "language": "Rust",
+          "first_seen": "2026-08-20",
+          "description": "A hive mind communication platform"
+        },
+        {
+          "name": "anthropics/skills",
+          "url": "https://github.com/anthropics/skills",
+          "stars": 178394,
+          "growth": 2688,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-09-03",
+          "description": "Public repository for Agent Skills"
+        },
+        {
+          "name": "vastsa/PI-Desktop",
+          "url": "https://github.com/vastsa/PI-Desktop",
+          "stars": 5040,
+          "growth": 2187,
+          "days_seen": 1,
+          "language": "TypeScript",
+          "first_seen": "2026-09-09",
+          "description": "Local-first AI coding agent desktop: Electron + Rust host core + pi Agent Harness + user-installable plugins"
+        },
+        {
+          "name": "MakazhanAlpamys/Soup",
+          "url": "https://github.com/MakazhanAlpamys/Soup",
+          "stars": 7337,
+          "growth": 2022,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-09-04",
+          "description": ""
+        },
+        {
+          "name": "LAMDA-NeSy/Research-Starter-Kit",
+          "url": "https://github.com/LAMDA-NeSy/Research-Starter-Kit",
+          "stars": 1725,
+          "growth": 1435,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-09-02",
+          "description": ""
+        },
+        {
+          "name": "anthropics/claude-plugins-official",
+          "url": "https://github.com/anthropics/claude-plugins-official",
+          "stars": 36977,
+          "growth": 1219,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-08-26",
+          "description": "Official, Anthropic-managed directory of high quality Claude Code Plugins."
+        },
+        {
+          "name": "Crosstalk-Solutions/project-nomad",
+          "url": "https://github.com/Crosstalk-Solutions/project-nomad",
+          "stars": 37960,
+          "growth": 952,
+          "days_seen": 1,
+          "language": "TypeScript",
+          "first_seen": "2026-09-15",
+          "description": "Project NOMAD is an offline-first knowledge and education server. Wikipedia, thousands of books, courses, maps, and optional local AI, all running on hardware you own with no internet required."
+        },
+        {
+          "name": "trycua/cua",
+          "url": "https://github.com/trycua/cua",
+          "stars": 25792,
+          "growth": 872,
+          "days_seen": 2,
+          "language": "HTML",
+          "first_seen": "2026-09-19",
+          "description": "Scale computer-use 2.0 with open-source drivers, cross-OS fleets, and benchmarks for training, evaluation, and data generation."
+        }
+      ],
+      "newcomers": [
+        {
+          "name": "paperclipai/paperclip",
+          "url": "https://github.com/paperclipai/paperclip",
+          "stars": 90635,
+          "growth": 6794,
+          "days_seen": 3,
+          "language": "TypeScript",
+          "first_seen": "2026-09-25",
+          "description": "The open-source app everyone uses to manage agents at work"
+        },
+        {
+          "name": "odoo/odoo",
+          "url": "https://github.com/odoo/odoo",
+          "stars": 54662,
+          "growth": 62,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-09-25",
+          "description": "Odoo. Open Source Apps To Grow Your Business."
+        },
+        {
+          "name": "LibreChat-AI/LibreChat",
+          "url": "https://github.com/LibreChat-AI/LibreChat",
+          "stars": 44917,
+          "growth": 63,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-09-24",
+          "description": ""
+        },
+        {
+          "name": "FlashML-org/FreeToken",
+          "url": "https://github.com/FlashML-org/FreeToken",
+          "stars": 13641,
+          "growth": 73,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-09-22",
+          "description": "FreeToken brings datacenter-scale model serving to your desktop. Run massive models locally, fast and efficiently."
+        },
+        {
+          "name": "strands-agents/harness-sdk",
+          "url": "https://github.com/strands-agents/harness-sdk",
+          "stars": 8321,
+          "growth": 655,
+          "days_seen": 3,
+          "language": "Python",
+          "first_seen": "2026-09-23",
+          "description": "Build an agent harness and control it end-to-end. Open-source SDK for production AI agents in Python & TypeScript - any model, any cloud."
+        },
+        {
+          "name": "openbao/openbao",
+          "url": "https://github.com/openbao/openbao",
+          "stars": 8050,
+          "growth": 480,
+          "days_seen": 3,
+          "language": "Go",
+          "first_seen": "2026-09-25",
+          "description": "OpenBao is a software solution to manage, store, and distribute sensitive data including secrets, certificates, and keys."
+        },
+        {
+          "name": "FxEmbed/FxEmbed",
+          "url": "https://github.com/FxEmbed/FxEmbed",
+          "stars": 5518,
+          "growth": 227,
+          "days_seen": 3,
+          "language": "TypeScript",
+          "first_seen": "2026-09-24",
+          "description": "Fix X/Twitter and Bluesky embeds! Use multiple images, videos, polls, translations and more on Discord, Telegram and others"
+        },
+        {
+          "name": "agent-substrate/substrate",
+          "url": "https://github.com/agent-substrate/substrate",
+          "stars": 3573,
+          "growth": 799,
+          "days_seen": 3,
+          "language": "Go",
+          "first_seen": "2026-09-22",
+          "description": "Agent Substrate: the core system"
+        },
+        {
+          "name": "cdyforever/how-to-live-better",
+          "url": "https://github.com/cdyforever/how-to-live-better",
+          "stars": 2801,
+          "growth": 2339,
+          "days_seen": 3,
+          "language": "HTML",
+          "first_seen": "2026-09-23",
+          "description": "《高性价比人生指南》全书 528 条的在线单页阅读版：手机可读、可搜索、零依赖、支持离线"
+        },
+        {
+          "name": "rapidsai/cugraph",
+          "url": "https://github.com/rapidsai/cugraph",
+          "stars": 2238,
+          "growth": 0,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-09-26",
+          "description": ""
+        }
+      ],
+      "langs": {
+        "Python": 10,
+        "TypeScript": 4,
+        "JavaScript": 4,
+        "Go": 3,
+        "HTML": 2
+      }
+    },
     {
       "week_start": "2026-09-14",
       "week_end": "2026-09-20",
