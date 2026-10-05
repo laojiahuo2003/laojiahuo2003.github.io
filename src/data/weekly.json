@@ -1,6 +1,381 @@
 {
-  "updated": "2026-09-28T15:22:49Z",
+  "updated": "2026-10-05T15:29:17Z",
   "reports": [
+    {
+      "week_start": "2026-09-28",
+      "week_end": "2026-10-04",
+      "generated": "2026-10-05 15:29",
+      "coverage": 7,
+      "warmup": false,
+      "darkhorses": [
+        {
+          "name": "eternity4719/HowToLiveBetter",
+          "url": "https://github.com/eternity4719/HowToLiveBetter",
+          "stars": 41441,
+          "growth": 21387,
+          "days_seen": 7,
+          "language": "HTML",
+          "first_seen": "2026-09-16",
+          "description": "按性价比排序的循证生活指南：长寿防病、急救、省钱理财、法律红线、失业与工伤、医保社保、恋爱婚育、怀孕育儿、创业与做平台合规、出国与技能。每条写明成本、收益、证据等级和原始出处，只引期刊论文与官方文件。"
+        },
+        {
+          "name": "debpalash/VoiceStudio",
+          "url": "https://github.com/debpalash/VoiceStudio",
+          "stars": 53301,
+          "growth": 14298,
+          "days_seen": 7,
+          "language": "Python",
+          "first_seen": "2026-09-01",
+          "description": "VoiceStudio is the open-source, fully-local ElevenLabs alternative — voice cloning, voice design, video dubbing, dictation, transcription & audiobook creation in 646 languages."
+        },
+        {
+          "name": "Niko1221/Strata",
+          "url": "https://github.com/Niko1221/Strata",
+          "stars": 11710,
+          "growth": 11404,
+          "days_seen": 7,
+          "language": "C++",
+          "first_seen": "2026-09-27",
+          "description": "Qwen3.8-Flash-Next (125B MoE) on a 8GB+ NVIDIA GPU: one-click install for Windows / Linux. Strata inference engine, OpenAI/Anthropic API on localhost, optional image input."
+        },
+        {
+          "name": "vectorize-io/hindsight",
+          "url": "https://github.com/vectorize-io/hindsight",
+          "stars": 45593,
+          "growth": 9784,
+          "days_seen": 7,
+          "language": "Python",
+          "first_seen": "2026-09-24",
+          "description": "Hindsight: Agent Memory That Learns"
+        },
+        {
+          "name": "DietrichGebert/ponytail",
+          "url": "https://github.com/DietrichGebert/ponytail",
+          "stars": 155176,
+          "growth": 8573,
+          "days_seen": 6,
+          "language": "JavaScript",
+          "first_seen": "2026-08-26",
+          "description": "Makes your AI agent think like the laziest senior dev in the room. The best code is the code you never wrote."
+        },
+        {
+          "name": "paperclipai/paperclip",
+          "url": "https://github.com/paperclipai/paperclip",
+          "stars": 97285,
+          "growth": 8453,
+          "days_seen": 7,
+          "language": "TypeScript",
+          "first_seen": "2026-09-25",
+          "description": "The open-source app everyone uses to manage agents at work"
+        },
+        {
+          "name": "mattpocock/skills",
+          "url": "https://github.com/mattpocock/skills",
+          "stars": 275497,
+          "growth": 5676,
+          "days_seen": 4,
+          "language": "Shell",
+          "first_seen": "2026-08-19",
+          "description": "Skills for Real Engineers. Straight from my .agents directory."
+        },
+        {
+          "name": "cdyforever/how-to-live-better",
+          "url": "https://github.com/cdyforever/how-to-live-better",
+          "stars": 7486,
+          "growth": 5457,
+          "days_seen": 7,
+          "language": "HTML",
+          "first_seen": "2026-09-23",
+          "description": "《高性价比人生指南》全书 528 条的在线单页阅读版：手机可读、可搜索、零依赖、支持离线"
+        },
+        {
+          "name": "pbakaus/impeccable",
+          "url": "https://github.com/pbakaus/impeccable",
+          "stars": 76497,
+          "growth": 5218,
+          "days_seen": 5,
+          "language": "JavaScript",
+          "first_seen": "2026-09-23",
+          "description": "The design language that makes your AI harness better at design."
+        },
+        {
+          "name": "rohitg00/ai-engineering-from-scratch",
+          "url": "https://github.com/rohitg00/ai-engineering-from-scratch",
+          "stars": 64073,
+          "growth": 5182,
+          "days_seen": 7,
+          "language": "Python",
+          "first_seen": "2026-08-25",
+          "description": "Learn it. Build it. Ship it for others."
+        },
+        {
+          "name": "tt-a1i/archify",
+          "url": "https://github.com/tt-a1i/archify",
+          "stars": 77640,
+          "growth": 5043,
+          "days_seen": 7,
+          "language": "",
+          "first_seen": "2026-08-27",
+          "description": ""
+        },
+        {
+          "name": "affaan-m/ECC",
+          "url": "https://github.com/affaan-m/ECC",
+          "stars": 273105,
+          "growth": 4914,
+          "days_seen": 6,
+          "language": "JavaScript",
+          "first_seen": "2026-08-22",
+          "description": "The agent harness performance optimization system. Skills, instincts, memory, security, and research-first development for Claude Code, Codex, Opencode, Cursor and beyond."
+        },
+        {
+          "name": "heygen-com/hyperframes",
+          "url": "https://github.com/heygen-com/hyperframes",
+          "stars": 56888,
+          "growth": 4886,
+          "days_seen": 5,
+          "language": "TypeScript",
+          "first_seen": "2026-09-07",
+          "description": "Write HTML. Render video. Built for agents."
+        },
+        {
+          "name": "NandhaKishorM/laya",
+          "url": "https://github.com/NandhaKishorM/laya",
+          "stars": 30756,
+          "growth": 4332,
+          "days_seen": 7,
+          "language": "Python",
+          "first_seen": "2026-09-18",
+          "description": "Non-autoregressive System 1 decision engine. Typed choice, score and yes/no decisions over any text in a single forward pass, in 100+ languages, with a router that picks the right checkpoint per request."
+        },
+        {
+          "name": "mvschwarz/openrig",
+          "url": "https://github.com/mvschwarz/openrig",
+          "stars": 5028,
+          "growth": 4330,
+          "days_seen": 7,
+          "language": "TypeScript",
+          "first_seen": "2026-09-27",
+          "description": "Build your own network of agents from Claude Code, Codex and Pi: persistent teams with roles, shared context and owned work."
+        }
+      ],
+      "onedayers": [
+        {
+          "name": "Panniantong/Agent-Reach",
+          "url": "https://github.com/Panniantong/Agent-Reach",
+          "stars": 91152,
+          "growth": 6252,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-09-15",
+          "description": "Give your AI agent eyes to see the entire internet. Read & search Twitter, Reddit, YouTube, GitHub, Bilibili, XiaoHongShu — one CLI, zero API fees."
+        },
+        {
+          "name": "JuliusBrussee/caveman",
+          "url": "https://github.com/JuliusBrussee/caveman",
+          "stars": 109617,
+          "growth": 5987,
+          "days_seen": 2,
+          "language": "Go",
+          "first_seen": "2026-08-21",
+          "description": "🪨 why use many token when few token do trick. Viral skill + proxy for coding agents that cuts 65% of tokens by talking like a caveman."
+        },
+        {
+          "name": "calesthio/OpenMontage",
+          "url": "https://github.com/calesthio/OpenMontage",
+          "stars": 63373,
+          "growth": 4710,
+          "days_seen": 1,
+          "language": "Python",
+          "first_seen": "2026-08-28",
+          "description": "World's first open-source, agentic video production system. 12 production pipelines, 100+ tools, 700+ agent skill and production-knowledge files. Turn your AI coding assistant into a full video production studio."
+        },
+        {
+          "name": "coreyhaines31/marketingskills",
+          "url": "https://github.com/coreyhaines31/marketingskills",
+          "stars": 53188,
+          "growth": 2884,
+          "days_seen": 2,
+          "language": "JavaScript",
+          "first_seen": "2026-09-07",
+          "description": "Marketing skills for Claude Code and AI agents. CRO, copywriting, SEO, analytics, and growth engineering."
+        },
+        {
+          "name": "NationalSecurityAgency/ghidra",
+          "url": "https://github.com/NationalSecurityAgency/ghidra",
+          "stars": 80651,
+          "growth": 2022,
+          "days_seen": 1,
+          "language": "Java",
+          "first_seen": "2026-08-28",
+          "description": "Ghidra is a software reverse engineering (SRE) framework"
+        },
+        {
+          "name": "addyosmani/agent-skills",
+          "url": "https://github.com/addyosmani/agent-skills",
+          "stars": 101286,
+          "growth": 1965,
+          "days_seen": 2,
+          "language": "JavaScript",
+          "first_seen": "2026-08-30",
+          "description": "Production-grade engineering skills for AI coding agents."
+        },
+        {
+          "name": "byoungd/up",
+          "url": "https://github.com/byoungd/up",
+          "stars": 66502,
+          "growth": 1497,
+          "days_seen": 2,
+          "language": "JavaScript",
+          "first_seen": "2026-09-29",
+          "description": "An advanced guide which might benefit you a lot 🎉 . 韩先凯的人生进阶指南 人生进阶指南 离谱的人生 人生进阶 AI学习 AI指南 韩先凯的AI学习指南 英语学习指南/英语学习教程/英语学习/学英语"
+        },
+        {
+          "name": "linguo2625469/workbuddy2api-panel",
+          "url": "https://github.com/linguo2625469/workbuddy2api-panel",
+          "stars": 1902,
+          "growth": 1415,
+          "days_seen": 2,
+          "language": "Go",
+          "first_seen": "2026-09-13",
+          "description": "把腾讯WorkBuddy账号变成 OpenAI 兼容 API 的多账号网关，同时自动完成任务中心全部任务，附 Web 管理面板（账号池可视化 / 积分任务 / 配置热更新）。基于 Sliverkiss/workbuddy2api 的增强分支"
+        },
+        {
+          "name": "google/ax",
+          "url": "https://github.com/google/ax",
+          "stars": 12935,
+          "growth": 1322,
+          "days_seen": 1,
+          "language": "Go",
+          "first_seen": "2026-09-22",
+          "description": "Google's open agentic orchestration runtime"
+        },
+        {
+          "name": "google/skills",
+          "url": "https://github.com/google/skills",
+          "stars": 20807,
+          "growth": 1286,
+          "days_seen": 1,
+          "language": "Python",
+          "first_seen": "2026-09-01",
+          "description": "Agent Skills for Google products and technologies"
+        }
+      ],
+      "newcomers": [
+        {
+          "name": "flutter/flutter",
+          "url": "https://github.com/flutter/flutter",
+          "stars": 179320,
+          "growth": 84,
+          "days_seen": 3,
+          "language": "Dart",
+          "first_seen": "2026-10-02",
+          "description": "Flutter makes it easy and fast to build beautiful apps for mobile and beyond"
+        },
+        {
+          "name": "elastic/elasticsearch",
+          "url": "https://github.com/elastic/elasticsearch",
+          "stars": 78170,
+          "growth": 92,
+          "days_seen": 3,
+          "language": "Java",
+          "first_seen": "2026-09-29",
+          "description": "Free and Open Source, Distributed, RESTful Search Engine"
+        },
+        {
+          "name": "HunxByts/GhostTrack",
+          "url": "https://github.com/HunxByts/GhostTrack",
+          "stars": 17060,
+          "growth": 546,
+          "days_seen": 3,
+          "language": "Python",
+          "first_seen": "2026-10-02",
+          "description": "Useful tool to track location or mobile number"
+        },
+        {
+          "name": "tile-ai/tilelang",
+          "url": "https://github.com/tile-ai/tilelang",
+          "stars": 8380,
+          "growth": 214,
+          "days_seen": 3,
+          "language": "Python",
+          "first_seen": "2026-10-02",
+          "description": "Domain-specific language designed to streamline the development of high-performance GPU/CPU/Accelerators kernels"
+        },
+        {
+          "name": "pablostanley/yoinks",
+          "url": "https://github.com/pablostanley/yoinks",
+          "stars": 4449,
+          "growth": 1384,
+          "days_seen": 3,
+          "language": "TypeScript",
+          "first_seen": "2026-10-02",
+          "description": "yoink any video from your terminal. no shady ads."
+        },
+        {
+          "name": "cs341-illinois/coursebook",
+          "url": "https://github.com/cs341-illinois/coursebook",
+          "stars": 3704,
+          "growth": 1072,
+          "days_seen": 3,
+          "language": "TeX",
+          "first_seen": "2026-09-29",
+          "description": "Open Source Introductory Systems Programming Textbook for the University of Illinois"
+        },
+        {
+          "name": "CopilotKit/OpenDots",
+          "url": "https://github.com/CopilotKit/OpenDots",
+          "stars": 3288,
+          "growth": 2669,
+          "days_seen": 3,
+          "language": "TypeScript",
+          "first_seen": "2026-10-02",
+          "description": "Your always-on AI coworkers that move between text, calls, and Slack."
+        },
+        {
+          "name": "RubinLabs26/ISpotify",
+          "url": "https://github.com/RubinLabs26/ISpotify",
+          "stars": 1901,
+          "growth": 0,
+          "days_seen": 4,
+          "language": "Python",
+          "first_seen": "2026-10-01",
+          "description": "Local-first desktop music search, playlist, download, and playback app for Windows and Linux"
+        },
+        {
+          "name": "CAPCOM-TD-OSS/REDox",
+          "url": "https://github.com/CAPCOM-TD-OSS/REDox",
+          "stars": 1037,
+          "growth": 814,
+          "days_seen": 3,
+          "language": "C#",
+          "first_seen": "2026-10-02",
+          "description": "High-performance, token-based structured data engine for .NET. A core component of REX, the technology behind CAPCOM's next-generation game engine."
+        },
+        {
+          "name": "echris6/motion-video-kit",
+          "url": "https://github.com/echris6/motion-video-kit",
+          "stars": 971,
+          "growth": 310,
+          "days_seen": 3,
+          "language": "",
+          "first_seen": "2026-10-01",
+          "description": ""
+        }
+      ],
+      "langs": {
+        "Python": 7,
+        "TypeScript": 5,
+        "JavaScript": 3,
+        "HTML": 2,
+        "C++": 1,
+        "Shell": 1,
+        "Dart": 1,
+        "Java": 1,
+        "TeX": 1,
+        "C#": 1
+      }
+    },
     {
       "week_start": "2026-09-21",
       "week_end": "2026-09-27",
