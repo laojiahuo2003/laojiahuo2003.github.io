@@ -1,6 +1,381 @@
 {
-  "updated": "2026-10-05T15:29:17Z",
+  "updated": "2026-10-12T15:47:51Z",
   "reports": [
+    {
+      "week_start": "2026-10-05",
+      "week_end": "2026-10-11",
+      "generated": "2026-10-12 15:47",
+      "coverage": 7,
+      "warmup": false,
+      "darkhorses": [
+        {
+          "name": "morluto/rea",
+          "url": "https://github.com/morluto/rea",
+          "stars": 118734,
+          "growth": 108189,
+          "days_seen": 5,
+          "language": "TypeScript",
+          "first_seen": "2026-10-07",
+          "description": "Reverse engineer anything with agents, from app behavior down to native binaries."
+        },
+        {
+          "name": "storytold/photocraft",
+          "url": "https://github.com/storytold/photocraft",
+          "stars": 49211,
+          "growth": 48650,
+          "days_seen": 7,
+          "language": "Rust",
+          "first_seen": "2026-10-03",
+          "description": "An open-source, clean-room reimplementation of Adobe Photoshop in pure Rust"
+        },
+        {
+          "name": "boykopovar/AnyPS5",
+          "url": "https://github.com/boykopovar/AnyPS5",
+          "stars": 30889,
+          "growth": 27566,
+          "days_seen": 6,
+          "language": "C++",
+          "first_seen": "2026-10-04",
+          "description": "Tool for automatic PS5 executables porting to Linux and Windows"
+        },
+        {
+          "name": "Niko1221/Strata",
+          "url": "https://github.com/Niko1221/Strata",
+          "stars": 21952,
+          "growth": 12239,
+          "days_seen": 7,
+          "language": "C++",
+          "first_seen": "2026-09-27",
+          "description": "Qwen3.8-Flash-Next (125B MoE) on a 8GB+ NVIDIA GPU: one-click install for Windows / Linux. Strata inference engine, OpenAI/Anthropic API on localhost, optional image input."
+        },
+        {
+          "name": "mattpocock/skills",
+          "url": "https://github.com/mattpocock/skills",
+          "stars": 286698,
+          "growth": 11201,
+          "days_seen": 5,
+          "language": "Shell",
+          "first_seen": "2026-08-19",
+          "description": "Skills for Real Engineers. Straight from my .agents directory."
+        },
+        {
+          "name": "storytold/filmcraft",
+          "url": "https://github.com/storytold/filmcraft",
+          "stars": 10486,
+          "growth": 10282,
+          "days_seen": 7,
+          "language": "Rust",
+          "first_seen": "2026-10-03",
+          "description": "An open-source, clean-room reimplementation of Adobe Premiere Pro built in pure Rust."
+        },
+        {
+          "name": "storytold/lightcraft",
+          "url": "https://github.com/storytold/lightcraft",
+          "stars": 10433,
+          "growth": 10251,
+          "days_seen": 6,
+          "language": "Rust",
+          "first_seen": "2026-10-03",
+          "description": "An open-source, clean-room reimplementation of Adobe Lightroom in pure Rust."
+        },
+        {
+          "name": "openai/math",
+          "url": "https://github.com/openai/math",
+          "stars": 14184,
+          "growth": 9333,
+          "days_seen": 5,
+          "language": "Lean",
+          "first_seen": "2026-10-07",
+          "description": ""
+        },
+        {
+          "name": "cathrynlavery/diagram-design",
+          "url": "https://github.com/cathrynlavery/diagram-design",
+          "stars": 50966,
+          "growth": 9319,
+          "days_seen": 5,
+          "language": "HTML",
+          "first_seen": "2026-08-19",
+          "description": "Editorial diagram design for Claude Code, Codex, GitHub Copilot, Cursor, Factory Droid, and Pi. 44 diagram types. Self-contained HTML + SVG. No shadows. No Mermaid slop."
+        },
+        {
+          "name": "robbietilton/Compositor",
+          "url": "https://github.com/robbietilton/Compositor",
+          "stars": 16069,
+          "growth": 8570,
+          "days_seen": 7,
+          "language": "Swift",
+          "first_seen": "2026-09-19",
+          "description": "The Photoshop alternative for Mac"
+        },
+        {
+          "name": "Ebony-Vinyl/dsh-our-free-model",
+          "url": "https://github.com/Ebony-Vinyl/dsh-our-free-model",
+          "stars": 9887,
+          "growth": 7249,
+          "days_seen": 5,
+          "language": "JavaScript",
+          "first_seen": "2026-10-07",
+          "description": "在 dsh 里装上这个插件即可，无需登录、注册或填 API Key，就能使用包括 DeepSeek V4.1 Flash、Kimi K3 在内的前沿模型——完全免费，不限量。 All you do is install this plugin in dsh: no login, no sign-up, no API key — the frontier models are just there, DeepSeek V4.1 Flash and Kimi K3 among them. Completely free, with no usage cap."
+        },
+        {
+          "name": "storytold/pdfcraft",
+          "url": "https://github.com/storytold/pdfcraft",
+          "stars": 10010,
+          "growth": 7180,
+          "days_seen": 4,
+          "language": "Rust",
+          "first_seen": "2026-10-08",
+          "description": "An open-source, clean-room reimplementation of Adobe Acrobat built in pure Rust"
+        },
+        {
+          "name": "storytold/vectorcraft",
+          "url": "https://github.com/storytold/vectorcraft",
+          "stars": 7284,
+          "growth": 7094,
+          "days_seen": 6,
+          "language": "Rust",
+          "first_seen": "2026-10-03",
+          "description": "An open-source, clean-room reimplementation of Adobe Illustrator, built in pure Rust."
+        },
+        {
+          "name": "tester-army/e2e",
+          "url": "https://github.com/tester-army/e2e",
+          "stars": 9196,
+          "growth": 6594,
+          "days_seen": 6,
+          "language": "TypeScript",
+          "first_seen": "2026-10-04",
+          "description": "Next generation e2e testing framework for web and mobile apps."
+        },
+        {
+          "name": "storytold/wordcraft",
+          "url": "https://github.com/storytold/wordcraft",
+          "stars": 6823,
+          "growth": 6472,
+          "days_seen": 4,
+          "language": "Rust",
+          "first_seen": "2026-10-08",
+          "description": "An open-source, clean-room reimplementation of Microsoft Word in pure Rust"
+        }
+      ],
+      "onedayers": [
+        {
+          "name": "eternity4719/HowToLiveBetter",
+          "url": "https://github.com/eternity4719/HowToLiveBetter",
+          "stars": 44300,
+          "growth": 4737,
+          "days_seen": 2,
+          "language": "HTML",
+          "first_seen": "2026-09-16",
+          "description": "按性价比排序的循证生活指南：长寿防病、急救、省钱理财、法律红线、失业与工伤、医保社保、恋爱婚育、怀孕育儿、创业与做平台合规、出国与技能。每条写明成本、收益、证据等级和原始出处，只引期刊论文与官方文件。"
+        },
+        {
+          "name": "cloudflare/security-audit-skill",
+          "url": "https://github.com/cloudflare/security-audit-skill",
+          "stars": 26240,
+          "growth": 2985,
+          "days_seen": 1,
+          "language": "JavaScript",
+          "first_seen": "2026-09-16",
+          "description": "A coding-agent skill for multi-phase security audits with independently verified, machine-readable findings"
+        },
+        {
+          "name": "calesthio/OpenMontage",
+          "url": "https://github.com/calesthio/OpenMontage",
+          "stars": 64253,
+          "growth": 1316,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-08-28",
+          "description": "World's first open-source, agentic video production system. 12 production pipelines, 100+ tools, 700+ agent skill and production-knowledge files. Turn your AI coding assistant into a full video production studio."
+        },
+        {
+          "name": "rohitg00/ai-engineering-from-scratch",
+          "url": "https://github.com/rohitg00/ai-engineering-from-scratch",
+          "stars": 64915,
+          "growth": 1295,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-08-25",
+          "description": "Learn it. Build it. Ship it for others."
+        },
+        {
+          "name": "storytold/craft-launcher",
+          "url": "https://github.com/storytold/craft-launcher",
+          "stars": 1365,
+          "growth": 1122,
+          "days_seen": 2,
+          "language": "Rust",
+          "first_seen": "2026-10-10",
+          "description": "The Craft App Launcher"
+        },
+        {
+          "name": "t4t5/omdrop-owl",
+          "url": "https://github.com/t4t5/omdrop-owl",
+          "stars": 2205,
+          "growth": 1092,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-10-10",
+          "description": ""
+        },
+        {
+          "name": "byoungd/up",
+          "url": "https://github.com/byoungd/up",
+          "stars": 67571,
+          "growth": 1069,
+          "days_seen": 1,
+          "language": "JavaScript",
+          "first_seen": "2026-09-29",
+          "description": "An advanced guide which might benefit you a lot 🎉 . 韩先凯的人生进阶指南 人生进阶指南 离谱的人生 人生进阶 AI学习 AI指南 韩先凯的AI学习指南 英语学习指南/英语学习教程/英语学习/学英语"
+        },
+        {
+          "name": "huggingface/transformers",
+          "url": "https://github.com/huggingface/transformers",
+          "stars": 167380,
+          "growth": 965,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-09-13",
+          "description": "🤗 Transformers: the model-definition framework for state-of-the-art machine learning models in text, vision, audio, and multimodal models, for both inference and training."
+        },
+        {
+          "name": "longbridge/gpui-kit",
+          "url": "https://github.com/longbridge/gpui-kit",
+          "stars": 16864,
+          "growth": 935,
+          "days_seen": 2,
+          "language": "Rust",
+          "first_seen": "2026-09-30",
+          "description": "Rust GUI components for building fantastic cross-platform desktop application by using GPUI."
+        },
+        {
+          "name": "pytorch/pytorch",
+          "url": "https://github.com/pytorch/pytorch",
+          "stars": 104628,
+          "growth": 918,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-09-23",
+          "description": "Tensors and Dynamic neural networks in Python with strong GPU acceleration"
+        }
+      ],
+      "newcomers": [
+        {
+          "name": "storytold/artcraft",
+          "url": "https://github.com/storytold/artcraft",
+          "stars": 18945,
+          "growth": 10066,
+          "days_seen": 3,
+          "language": "Rust",
+          "first_seen": "2026-10-09",
+          "description": "ArtCraft is an intentional crafting engine for artists, designers, and filmmakers"
+        },
+        {
+          "name": "mhtsec/ARTEX",
+          "url": "https://github.com/mhtsec/ARTEX",
+          "stars": 3344,
+          "growth": 2058,
+          "days_seen": 3,
+          "language": "Go",
+          "first_seen": "2026-10-09",
+          "description": "AI 自主渗透测试系统 | 百度“agent+”攻防挑战赛冠军项目"
+        },
+        {
+          "name": "zhongerxin/iPhone-use",
+          "url": "https://github.com/zhongerxin/iPhone-use",
+          "stars": 3196,
+          "growth": 2308,
+          "days_seen": 3,
+          "language": "Python",
+          "first_seen": "2026-10-09",
+          "description": "让 Codex 通过 USB 操作真实 iPhone：引导安装、App 自动化、实时屏幕与截图回退。"
+        },
+        {
+          "name": "waligoraamodio288-rgb/hongguo-desktop-releases",
+          "url": "https://github.com/waligoraamodio288-rgb/hongguo-desktop-releases",
+          "stars": 3005,
+          "growth": 763,
+          "days_seen": 3,
+          "language": "",
+          "first_seen": "2026-10-09",
+          "description": "红果短剧｜Windows 10/11 桌面版 + Android TV 测试版。电视 APK 4.03 MB，Android 5.0+ / ARM64，支持遥控、续播与换一部；免费使用，由渠道有数独立维护。"
+        },
+        {
+          "name": "spotify/portal-ai-plugins",
+          "url": "https://github.com/spotify/portal-ai-plugins",
+          "stars": 2463,
+          "growth": 38,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-10-08",
+          "description": ""
+        },
+        {
+          "name": "noahdunnagan/fsearch",
+          "url": "https://github.com/noahdunnagan/fsearch",
+          "stars": 1905,
+          "growth": 1214,
+          "days_seen": 3,
+          "language": "",
+          "first_seen": "2026-10-09",
+          "description": ""
+        },
+        {
+          "name": "shadany7824/playgta5",
+          "url": "https://github.com/shadany7824/playgta5",
+          "stars": 1412,
+          "growth": 584,
+          "days_seen": 3,
+          "language": "",
+          "first_seen": "2026-10-09",
+          "description": ""
+        },
+        {
+          "name": "deadinside28/bloodborne_pc",
+          "url": "https://github.com/deadinside28/bloodborne_pc",
+          "stars": 1346,
+          "growth": 902,
+          "days_seen": 3,
+          "language": "C++",
+          "first_seen": "2026-10-05",
+          "description": ""
+        },
+        {
+          "name": "HelixDB/helix-foundry",
+          "url": "https://github.com/HelixDB/helix-foundry",
+          "stars": 1246,
+          "growth": 1113,
+          "days_seen": 3,
+          "language": "TypeScript",
+          "first_seen": "2026-10-09",
+          "description": "Your company's data, connected into one ontology, on your own computer. A local-first data workspace built on HelixDB and DuckDB."
+        },
+        {
+          "name": "anthropics/oss-scanner",
+          "url": "https://github.com/anthropics/oss-scanner",
+          "stars": 822,
+          "growth": 704,
+          "days_seen": 3,
+          "language": "Python",
+          "first_seen": "2026-10-09",
+          "description": ""
+        }
+      ],
+      "langs": {
+        "Rust": 7,
+        "TypeScript": 3,
+        "C++": 3,
+        "Python": 2,
+        "Shell": 1,
+        "Lean": 1,
+        "HTML": 1,
+        "Swift": 1,
+        "JavaScript": 1,
+        "Go": 1
+      }
+    },
     {
       "week_start": "2026-09-28",
       "week_end": "2026-10-04",
