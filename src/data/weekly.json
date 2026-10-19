@@ -1,6 +1,382 @@
 {
-  "updated": "2026-10-12T15:47:51Z",
+  "updated": "2026-10-19T14:35:37Z",
   "reports": [
+    {
+      "week_start": "2026-10-12",
+      "week_end": "2026-10-18",
+      "generated": "2026-10-19 14:35",
+      "coverage": 7,
+      "warmup": false,
+      "darkhorses": [
+        {
+          "name": "morluto/rea",
+          "url": "https://github.com/morluto/rea",
+          "stars": 325511,
+          "growth": 246567,
+          "days_seen": 7,
+          "language": "TypeScript",
+          "first_seen": "2026-10-07",
+          "description": "Reverse engineer anything with agents, from app behavior down to native binaries."
+        },
+        {
+          "name": "storytold/photocraft",
+          "url": "https://github.com/storytold/photocraft",
+          "stars": 67695,
+          "growth": 24410,
+          "days_seen": 7,
+          "language": "Rust",
+          "first_seen": "2026-10-03",
+          "description": "An open-source, clean-room reimplementation of Adobe Photoshop in pure Rust"
+        },
+        {
+          "name": "debpalash/VoiceStudio",
+          "url": "https://github.com/debpalash/VoiceStudio",
+          "stars": 75942,
+          "growth": 18316,
+          "days_seen": 7,
+          "language": "Python",
+          "first_seen": "2026-09-01",
+          "description": "VoiceStudio is the open-source, fully-local ElevenLabs alternative — voice cloning, voice design, video dubbing, dictation, transcription & audiobook creation in 646 languages."
+        },
+        {
+          "name": "Ebony-Vinyl/dsh-our-free-model",
+          "url": "https://github.com/Ebony-Vinyl/dsh-our-free-model",
+          "stars": 25516,
+          "growth": 18146,
+          "days_seen": 7,
+          "language": "JavaScript",
+          "first_seen": "2026-10-07",
+          "description": "在 dsh 里装上这个插件即可，无需登录、注册或填 API Key，就能使用包括 DeepSeek V4.1 Flash、Kimi K3 在内的前沿模型——完全免费，不限量。 All you do is install this plugin in dsh: no login, no sign-up, no API key — the frontier models are just there, DeepSeek V4.1 Flash and Kimi K3 among them. Completely free, with no usage cap."
+        },
+        {
+          "name": "storytold/artcraft",
+          "url": "https://github.com/storytold/artcraft",
+          "stars": 32955,
+          "growth": 17838,
+          "days_seen": 6,
+          "language": "Rust",
+          "first_seen": "2026-10-09",
+          "description": "ArtCraft is an intentional crafting engine for artists, designers, and filmmakers"
+        },
+        {
+          "name": "boykopovar/AnyPS5",
+          "url": "https://github.com/boykopovar/AnyPS5",
+          "stars": 43409,
+          "growth": 15901,
+          "days_seen": 7,
+          "language": "C++",
+          "first_seen": "2026-10-04",
+          "description": "Tool for automatic PS5 executables porting to Linux and Windows"
+        },
+        {
+          "name": "wheresryan22/anatomy",
+          "url": "https://github.com/wheresryan22/anatomy",
+          "stars": 16254,
+          "growth": 15841,
+          "days_seen": 7,
+          "language": "JavaScript",
+          "first_seen": "2026-10-11",
+          "description": "An agent skill for creating detailed, interactive isometric illustrations of real-world machines and complex systems. Generates polished SVGs with optional WebGL shaders and 3D effects."
+        },
+        {
+          "name": "storytold/wordcraft",
+          "url": "https://github.com/storytold/wordcraft",
+          "stars": 14456,
+          "growth": 11010,
+          "days_seen": 7,
+          "language": "Rust",
+          "first_seen": "2026-10-08",
+          "description": "An open-source, clean-room reimplementation of Microsoft Word in pure Rust"
+        },
+        {
+          "name": "mattpocock/skills",
+          "url": "https://github.com/mattpocock/skills",
+          "stars": 295278,
+          "growth": 10399,
+          "days_seen": 7,
+          "language": "Shell",
+          "first_seen": "2026-08-19",
+          "description": "Skills for Real Engineers. Straight from my .agents directory."
+        },
+        {
+          "name": "cathrynlavery/diagram-design",
+          "url": "https://github.com/cathrynlavery/diagram-design",
+          "stars": 57874,
+          "growth": 8647,
+          "days_seen": 7,
+          "language": "HTML",
+          "first_seen": "2026-08-19",
+          "description": "Editorial diagram design for Claude Code, Codex, GitHub Copilot, Cursor, Factory Droid, and Pi. 44 diagram types. Self-contained HTML + SVG. No shadows. No Mermaid slop."
+        },
+        {
+          "name": "NationalSecurityAgency/ghidra",
+          "url": "https://github.com/NationalSecurityAgency/ghidra",
+          "stars": 91054,
+          "growth": 8164,
+          "days_seen": 7,
+          "language": "Java",
+          "first_seen": "2026-08-28",
+          "description": "Ghidra is a software reverse engineering (SRE) framework"
+        },
+        {
+          "name": "storytold/pdfcraft",
+          "url": "https://github.com/storytold/pdfcraft",
+          "stars": 15982,
+          "growth": 7711,
+          "days_seen": 7,
+          "language": "Rust",
+          "first_seen": "2026-10-08",
+          "description": "An open-source, clean-room reimplementation of Adobe Acrobat built in pure Rust"
+        },
+        {
+          "name": "yetone/magpie",
+          "url": "https://github.com/yetone/magpie",
+          "stars": 16281,
+          "growth": 7535,
+          "days_seen": 7,
+          "language": "Go",
+          "first_seen": "2026-09-24",
+          "description": "Every agent's model. One place. Codex on DeepSeek, Claude Code on Kimi, from the menu bar."
+        },
+        {
+          "name": "affaan-m/ECC",
+          "url": "https://github.com/affaan-m/ECC",
+          "stars": 283430,
+          "growth": 6778,
+          "days_seen": 7,
+          "language": "JavaScript",
+          "first_seen": "2026-08-22",
+          "description": "The agent harness performance optimization system. Skills, instincts, memory, security, and research-first development for Claude Code, Codex, Opencode, Cursor and beyond."
+        },
+        {
+          "name": "Niko1221/Strata",
+          "url": "https://github.com/Niko1221/Strata",
+          "stars": 27604,
+          "growth": 6676,
+          "days_seen": 7,
+          "language": "C++",
+          "first_seen": "2026-09-27",
+          "description": "Qwen3.8-Flash-Next (125B MoE) on a 8GB+ NVIDIA GPU: one-click install for Windows / Linux. Strata inference engine, OpenAI/Anthropic API on localhost, optional image input."
+        }
+      ],
+      "onedayers": [
+        {
+          "name": "stablyai/orca",
+          "url": "https://github.com/stablyai/orca",
+          "stars": 97027,
+          "growth": 14464,
+          "days_seen": 2,
+          "language": "TypeScript",
+          "first_seen": "2026-08-19",
+          "description": "Orca is the place for working with a fleet of agents (e.g. Grok Bot, Claude Code). Run any coding agent with your own subscription. Available on desktop, mobile and remote runtime."
+        },
+        {
+          "name": "anmolkapil/plexo",
+          "url": "https://github.com/anmolkapil/plexo",
+          "stars": 4193,
+          "growth": 3932,
+          "days_seen": 2,
+          "language": "TypeScript",
+          "first_seen": "2026-09-15",
+          "description": "Speed up downloads by combining multiple network connections in parallel"
+        },
+        {
+          "name": "JuliusBrussee/caveman",
+          "url": "https://github.com/JuliusBrussee/caveman",
+          "stars": 112728,
+          "growth": 3111,
+          "days_seen": 2,
+          "language": "Go",
+          "first_seen": "2026-08-21",
+          "description": "🪨 why use many token when few token do trick. Viral skill + proxy for coding agents that cuts 65% of tokens by talking like a caveman."
+        },
+        {
+          "name": "Oldcircle/geo-sleuth",
+          "url": "https://github.com/Oldcircle/geo-sleuth",
+          "stars": 3171,
+          "growth": 2874,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-09-24",
+          "description": "An agent skill that finds where a photo was taken — OpenStreetMap geometry, elevation skylines, satellite imagery and street view — and shows its work. Works with Claude Code, Codex, Cursor, Gemini CLI, OpenCode and GitHub Copilot."
+        },
+        {
+          "name": "BlueHeisenberg/SCSKiller",
+          "url": "https://github.com/BlueHeisenberg/SCSKiller",
+          "stars": 2975,
+          "growth": 2566,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-10-05",
+          "description": ""
+        },
+        {
+          "name": "lemomo-ai/lemo-opuscar",
+          "url": "https://github.com/lemomo-ai/lemo-opuscar",
+          "stars": 3169,
+          "growth": 2385,
+          "days_seen": 1,
+          "language": "",
+          "first_seen": "2026-09-26",
+          "description": ""
+        },
+        {
+          "name": "tangency-labs/solidcraft",
+          "url": "https://github.com/tangency-labs/solidcraft",
+          "stars": 5968,
+          "growth": 2379,
+          "days_seen": 2,
+          "language": "Rust",
+          "first_seen": "2026-10-17",
+          "description": "SolidCraft: an open-source parametric 3D CAD application built in pure Rust. Desktop, web, and automation through MCP."
+        },
+        {
+          "name": "Jakeschincariol/replica-skill",
+          "url": "https://github.com/Jakeschincariol/replica-skill",
+          "stars": 3424,
+          "growth": 2276,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-10-03",
+          "description": "Eleven free Claude skills that clone any app: reverse-engineer it, rebuild it, test it for bugs, then fix what its users hate. Free, MIT."
+        },
+        {
+          "name": "anomalyco/opencode",
+          "url": "https://github.com/anomalyco/opencode",
+          "stars": 216831,
+          "growth": 2169,
+          "days_seen": 2,
+          "language": "TypeScript",
+          "first_seen": "2026-10-17",
+          "description": "The open source coding agent."
+        },
+        {
+          "name": "akitaonrails/ai-memory",
+          "url": "https://github.com/akitaonrails/ai-memory",
+          "stars": 10666,
+          "growth": 2071,
+          "days_seen": 2,
+          "language": "Rust",
+          "first_seen": "2026-08-19",
+          "description": "Solution for long term memory for agent coding CLIs and to facilitate handoff between different agent vendors"
+        }
+      ],
+      "newcomers": [
+        {
+          "name": "MadsLorentzen/ai-job-search",
+          "url": "https://github.com/MadsLorentzen/ai-job-search",
+          "stars": 53997,
+          "growth": 6048,
+          "days_seen": 3,
+          "language": "Python",
+          "first_seen": "2026-10-16",
+          "description": "The job search that runs on your machine. AI job application framework built on Claude Code: evaluate postings, tailor CVs, write cover letters, prep interviews. Fork it and own it."
+        },
+        {
+          "name": "lyogavin/airllm",
+          "url": "https://github.com/lyogavin/airllm",
+          "stars": 38452,
+          "growth": 1697,
+          "days_seen": 3,
+          "language": "Jupyter Notebook",
+          "first_seen": "2026-10-12",
+          "description": "AirLLM 2.8T LLM inference with single 4GB GPU"
+        },
+        {
+          "name": "android/skills",
+          "url": "https://github.com/android/skills",
+          "stars": 8869,
+          "growth": 960,
+          "days_seen": 3,
+          "language": "Kotlin",
+          "first_seen": "2026-10-16",
+          "description": ""
+        },
+        {
+          "name": "T-Auto/dsh-ops",
+          "url": "https://github.com/T-Auto/dsh-ops",
+          "stars": 3129,
+          "growth": 2675,
+          "days_seen": 3,
+          "language": "JavaScript",
+          "first_seen": "2026-10-12",
+          "description": "A toolkit for low-level operations in DSH, designed to reduce token usage and task execution time / DSH 底层操作工具插件，旨在减少 Token 消耗与任务耗时"
+        },
+        {
+          "name": "bherbruck/solidcraft",
+          "url": "https://github.com/bherbruck/solidcraft",
+          "stars": 2970,
+          "growth": 2253,
+          "days_seen": 3,
+          "language": "Rust",
+          "first_seen": "2026-10-12",
+          "description": "SolidCraft: an open-source parametric 3D CAD application built in pure Rust. Desktop, web, and automation through MCP."
+        },
+        {
+          "name": "feder-cr/git-ai",
+          "url": "https://github.com/feder-cr/git-ai",
+          "stars": 2318,
+          "growth": 1285,
+          "days_seen": 3,
+          "language": "Go",
+          "first_seen": "2026-10-16",
+          "description": "Git designed for AI agents."
+        },
+        {
+          "name": "Leonxlnx/earshot",
+          "url": "https://github.com/Leonxlnx/earshot",
+          "stars": 927,
+          "growth": 722,
+          "days_seen": 3,
+          "language": "Python",
+          "first_seen": "2026-10-16",
+          "description": "Ears for coding agents: let AI hear, review and make sound. CPU-only, open source."
+        },
+        {
+          "name": "Tencent-Hunyuan/Hy-Memory",
+          "url": "https://github.com/Tencent-Hunyuan/Hy-Memory",
+          "stars": 849,
+          "growth": 634,
+          "days_seen": 3,
+          "language": "Python",
+          "first_seen": "2026-10-16",
+          "description": ""
+        },
+        {
+          "name": "YeonwooSung/my-claude-code-mods",
+          "url": "https://github.com/YeonwooSung/my-claude-code-mods",
+          "stars": 819,
+          "growth": 65,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-10-14",
+          "description": ""
+        },
+        {
+          "name": "OpenMOSS/MOSS-Image",
+          "url": "https://github.com/OpenMOSS/MOSS-Image",
+          "stars": 752,
+          "growth": 617,
+          "days_seen": 3,
+          "language": "Python",
+          "first_seen": "2026-10-16",
+          "description": "Official repository for MOSS-Image, a 5B-parameter base DiT model with high-quality text rendering, layout generation, and efficient fine-tuning."
+        }
+      ],
+      "langs": {
+        "Rust": 5,
+        "Python": 5,
+        "JavaScript": 4,
+        "C++": 2,
+        "Go": 2,
+        "TypeScript": 1,
+        "Shell": 1,
+        "HTML": 1,
+        "Java": 1,
+        "Jupyter Notebook": 1,
+        "Kotlin": 1
+      }
+    },
     {
       "week_start": "2026-10-05",
       "week_end": "2026-10-11",
