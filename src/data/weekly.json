@@ -1,6 +1,379 @@
 {
-  "updated": "2026-10-19T14:35:37Z",
+  "updated": "2026-10-26T14:45:03Z",
   "reports": [
+    {
+      "week_start": "2026-10-19",
+      "week_end": "2026-10-25",
+      "generated": "2026-10-26 14:45",
+      "coverage": 7,
+      "warmup": false,
+      "darkhorses": [
+        {
+          "name": "morluto/rea",
+          "url": "https://github.com/morluto/rea",
+          "stars": 379680,
+          "growth": 63355,
+          "days_seen": 7,
+          "language": "TypeScript",
+          "first_seen": "2026-10-07",
+          "description": "Reverse engineer anything with agents, from app behavior down to native binaries."
+        },
+        {
+          "name": "Gathin23/cleanyourtv",
+          "url": "https://github.com/Gathin23/cleanyourtv",
+          "stars": 36059,
+          "growth": 26327,
+          "days_seen": 6,
+          "language": "Java",
+          "first_seen": "2026-10-20",
+          "description": "Debloat any Android or Google TV over Wi-Fi and get an Apple TV-style home."
+        },
+        {
+          "name": "cloudflare/security-audit-skill",
+          "url": "https://github.com/cloudflare/security-audit-skill",
+          "stars": 47270,
+          "growth": 16330,
+          "days_seen": 7,
+          "language": "JavaScript",
+          "first_seen": "2026-09-16",
+          "description": "A coding-agent skill for multi-phase security audits with independently verified, machine-readable findings"
+        },
+        {
+          "name": "google-research/harness2",
+          "url": "https://github.com/google-research/harness2",
+          "stars": 19761,
+          "growth": 16175,
+          "days_seen": 7,
+          "language": "Python",
+          "first_seen": "2026-10-18",
+          "description": ""
+        },
+        {
+          "name": "Ebony-Vinyl/dsh-our-free-model",
+          "url": "https://github.com/Ebony-Vinyl/dsh-our-free-model",
+          "stars": 38664,
+          "growth": 14659,
+          "days_seen": 5,
+          "language": "JavaScript",
+          "first_seen": "2026-10-07",
+          "description": "在 dsh 里装上这个插件即可，无需登录、注册或填 API Key，就能使用包括 DeepSeek V4.1 Flash、Kimi K3 在内的前沿模型——完全免费，不限量。 All you do is install this plugin in dsh: no login, no sign-up, no API key — the frontier models are just there, DeepSeek V4.1 Flash and Kimi K3 among them. Completely free, with no usage cap."
+        },
+        {
+          "name": "deepseek-ai/DeepInfer",
+          "url": "https://github.com/deepseek-ai/DeepInfer",
+          "stars": 22580,
+          "growth": 13758,
+          "days_seen": 6,
+          "language": "Python",
+          "first_seen": "2026-10-20",
+          "description": "DeepInfer: High-performance, large-scale inference framework for DeepSeek models"
+        },
+        {
+          "name": "DietrichGebert/ponytail",
+          "url": "https://github.com/DietrichGebert/ponytail",
+          "stars": 173819,
+          "growth": 13196,
+          "days_seen": 4,
+          "language": "JavaScript",
+          "first_seen": "2026-08-26",
+          "description": "Makes your AI agent think like the laziest senior dev in the room. The best code is the code you never wrote."
+        },
+        {
+          "name": "debpalash/VoiceStudio",
+          "url": "https://github.com/debpalash/VoiceStudio",
+          "stars": 87253,
+          "growth": 12895,
+          "days_seen": 7,
+          "language": "Python",
+          "first_seen": "2026-09-01",
+          "description": "VoiceStudio is the open-source, fully-local ElevenLabs alternative — voice cloning, voice design, video dubbing, dictation, transcription & audiobook creation in 646 languages."
+        },
+        {
+          "name": "pbakaus/impeccable",
+          "url": "https://github.com/pbakaus/impeccable",
+          "stars": 87990,
+          "growth": 10111,
+          "days_seen": 6,
+          "language": "Rust",
+          "first_seen": "2026-09-23",
+          "description": "The design language that makes your AI harness better at design."
+        },
+        {
+          "name": "stablyai/orca",
+          "url": "https://github.com/stablyai/orca",
+          "stars": 106094,
+          "growth": 10053,
+          "days_seen": 7,
+          "language": "TypeScript",
+          "first_seen": "2026-08-19",
+          "description": "Orca is the place for working with a fleet of agents (e.g. Grok Bot, Claude Code). Run any coding agent with your own subscription. Available on desktop, mobile and remote runtime."
+        },
+        {
+          "name": "KnifeLemon/Filee",
+          "url": "https://github.com/KnifeLemon/Filee",
+          "stars": 12436,
+          "growth": 9002,
+          "days_seen": 7,
+          "language": "C#",
+          "first_seen": "2026-10-18",
+          "description": "Free, open-source file converter. Convert 255 formats offline by drag & drop — images, PDF, Word, Excel, PowerPoint, HWP/HWPX, video, audio, e-books and archives. No upload, no Office needed."
+        },
+        {
+          "name": "affaan-m/ECC",
+          "url": "https://github.com/affaan-m/ECC",
+          "stars": 288991,
+          "growth": 5991,
+          "days_seen": 7,
+          "language": "JavaScript",
+          "first_seen": "2026-08-22",
+          "description": "The agent harness performance optimization system. Skills, instincts, memory, security, and research-first development for Claude Code, Codex, Opencode, Cursor and beyond."
+        },
+        {
+          "name": "heygen-com/hyperframes",
+          "url": "https://github.com/heygen-com/hyperframes",
+          "stars": 72335,
+          "growth": 5932,
+          "days_seen": 7,
+          "language": "TypeScript",
+          "first_seen": "2026-09-07",
+          "description": "Write HTML. Render video. Built for agents."
+        },
+        {
+          "name": "storytold/photocraft",
+          "url": "https://github.com/storytold/photocraft",
+          "stars": 72934,
+          "growth": 5907,
+          "days_seen": 7,
+          "language": "Rust",
+          "first_seen": "2026-10-03",
+          "description": "An open-source, clean-room reimplementation of Adobe Photoshop in pure Rust"
+        },
+        {
+          "name": "Graphify-Labs/graphify",
+          "url": "https://github.com/Graphify-Labs/graphify",
+          "stars": 135445,
+          "growth": 5716,
+          "days_seen": 6,
+          "language": "Python",
+          "first_seen": "2026-10-20",
+          "description": "Turn any codebase, with its docs, SQL schemas, configs, and PDFs, into a queryable knowledge graph. A /graphify skill for Claude Code, Cursor, Codex, and Gemini CLI: local deterministic AST parsing, every edge explained, no vector store."
+        }
+      ],
+      "onedayers": [
+        {
+          "name": "multica-ai/andrej-karpathy-skills",
+          "url": "https://github.com/multica-ai/andrej-karpathy-skills",
+          "stars": 223963,
+          "growth": 5502,
+          "days_seen": 1,
+          "language": "",
+          "first_seen": "2026-10-10",
+          "description": "A single CLAUDE.md file to improve Claude Code behavior, derived from Andrej Karpathy's observations on LLM coding pitfalls."
+        },
+        {
+          "name": "msitarzewski/agency-agents",
+          "url": "https://github.com/msitarzewski/agency-agents",
+          "stars": 162521,
+          "growth": 4534,
+          "days_seen": 2,
+          "language": "Shell",
+          "first_seen": "2026-10-06",
+          "description": "A complete AI agency at your fingertips - From frontend wizards to Reddit community ninjas, from whimsy injectors to reality checkers. Each agent is a specialized expert with personality, processes, and proven deliverables."
+        },
+        {
+          "name": "seedds/nxnative",
+          "url": "https://github.com/seedds/nxnative",
+          "stars": 4557,
+          "growth": 4187,
+          "days_seen": 2,
+          "language": "",
+          "first_seen": "2026-10-18",
+          "description": ""
+        },
+        {
+          "name": "Nutlope/hallmark",
+          "url": "https://github.com/Nutlope/hallmark",
+          "stars": 34315,
+          "growth": 2718,
+          "days_seen": 2,
+          "language": "CSS",
+          "first_seen": "2026-10-24",
+          "description": "Anti-AI-slop design skill for Claude Code, Cursor, and Codex."
+        },
+        {
+          "name": "Fei2411/DeepSeek-Bot",
+          "url": "https://github.com/Fei2411/DeepSeek-Bot",
+          "stars": 3777,
+          "growth": 2290,
+          "days_seen": 2,
+          "language": "JavaScript",
+          "first_seen": "2026-10-12",
+          "description": "A team of long-lived bots for DeepSeek Harness, with main bots, bot-to-bot messages and group chats."
+        },
+        {
+          "name": "storytold/figcraft",
+          "url": "https://github.com/storytold/figcraft",
+          "stars": 3343,
+          "growth": 2090,
+          "days_seen": 1,
+          "language": "Rust",
+          "first_seen": "2026-10-14",
+          "description": "FigCraft: interface design and prototyping; an open-source, clean-room reimplementation of collaborative design workflows in pure Rust"
+        },
+        {
+          "name": "feitangyuan/onetake",
+          "url": "https://github.com/feitangyuan/onetake",
+          "stars": 3114,
+          "growth": 1943,
+          "days_seen": 1,
+          "language": "Python",
+          "first_seen": "2026-09-26",
+          "description": "Motion films that never cut to the next slide: every beat grows out of the one before, one continuous camera, continuity measured by an oracle. A Claude Agent Skill for product launch films and feature demos."
+        },
+        {
+          "name": "Gathin23/tv-vibehack",
+          "url": "https://github.com/Gathin23/tv-vibehack",
+          "stars": 2443,
+          "growth": 1488,
+          "days_seen": 1,
+          "language": "Java",
+          "first_seen": "2026-10-18",
+          "description": "Your TV, minus the ads. Debloat any Android TV or Google TV over Wi-Fi and swap the ad-filled home screen for a clean Apple TV-style launcher. No root, fully reversible."
+        },
+        {
+          "name": "makecindy/cindy",
+          "url": "https://github.com/makecindy/cindy",
+          "stars": 5198,
+          "growth": 1391,
+          "days_seen": 2,
+          "language": "TypeScript",
+          "first_seen": "2026-10-24",
+          "description": "Consider it done. The open-source AI agent that works out of the box · 想到，就能做到。开源、开箱即用的 AI Agent。"
+        },
+        {
+          "name": "pollen-robotics/microduck",
+          "url": "https://github.com/pollen-robotics/microduck",
+          "stars": 11853,
+          "growth": 1175,
+          "days_seen": 2,
+          "language": "Rust",
+          "first_seen": "2026-10-24",
+          "description": "A Tiny biped duck robot 🦆"
+        }
+      ],
+      "newcomers": [
+        {
+          "name": "headroomlabs-ai/headroom",
+          "url": "https://github.com/headroomlabs-ai/headroom",
+          "stars": 77363,
+          "growth": 787,
+          "days_seen": 3,
+          "language": "Python",
+          "first_seen": "2026-10-20",
+          "description": "Compress tool outputs, logs, files, and RAG chunks before they reach the LLM. 20% fewer tokens for coding agents, 60-95% fewer tokens for JSON, same answers. Library, proxy, MCP server."
+        },
+        {
+          "name": "shiyu-coder/Kronos",
+          "url": "https://github.com/shiyu-coder/Kronos",
+          "stars": 42939,
+          "growth": 826,
+          "days_seen": 3,
+          "language": "Python",
+          "first_seen": "2026-10-20",
+          "description": "Kronos: A Foundation Model for the Language of Financial Markets"
+        },
+        {
+          "name": "php/php-src",
+          "url": "https://github.com/php/php-src",
+          "stars": 41597,
+          "growth": 688,
+          "days_seen": 3,
+          "language": "C",
+          "first_seen": "2026-10-22",
+          "description": "The PHP Interpreter"
+        },
+        {
+          "name": "wshobson/agents",
+          "url": "https://github.com/wshobson/agents",
+          "stars": 41500,
+          "growth": 75,
+          "days_seen": 2,
+          "language": "Python",
+          "first_seen": "2026-10-21",
+          "description": "Multi-harness agentic plugin marketplace for Claude Code, Codex, Cursor, OpenCode, GitHub Copilot, Google Antigravity, and Pi"
+        },
+        {
+          "name": "Renhuai123/ziwei-doushu",
+          "url": "https://github.com/Renhuai123/ziwei-doushu",
+          "stars": 7857,
+          "growth": 1181,
+          "days_seen": 3,
+          "language": "TypeScript",
+          "first_seen": "2026-10-23",
+          "description": "紫微斗数开源排盘引擎 — 基于倪海厦《天纪》体系，含完整排盘算法、四化系统、格局知识库、古籍原文数据"
+        },
+        {
+          "name": "Zagitta/gpu-unlock",
+          "url": "https://github.com/Zagitta/gpu-unlock",
+          "stars": 7424,
+          "growth": 7019,
+          "days_seen": 3,
+          "language": "C",
+          "first_seen": "2026-10-23",
+          "description": "Unlock FP/BF16 instruction issue rate on Nvidia 3000's cards to their professional equivalents"
+        },
+        {
+          "name": "EthanArbuckle/fairplay-decrypt",
+          "url": "https://github.com/EthanArbuckle/fairplay-decrypt",
+          "stars": 2052,
+          "growth": 752,
+          "days_seen": 3,
+          "language": "",
+          "first_seen": "2026-10-23",
+          "description": ""
+        },
+        {
+          "name": "xevrion/hatchzip",
+          "url": "https://github.com/xevrion/hatchzip",
+          "stars": 1966,
+          "growth": 1560,
+          "days_seen": 3,
+          "language": "Rust",
+          "first_seen": "2026-10-23",
+          "description": "HatchZip is a free, open-source archive extractor for Windows, macOS and Linux that extracts ZIP, 7z, RAR, tar and split archives in place, so it needs free space for the extracted files only. Desktop app and CLI."
+        },
+        {
+          "name": "wesbos/3d-model-anything",
+          "url": "https://github.com/wesbos/3d-model-anything",
+          "stars": 1959,
+          "growth": 1133,
+          "days_seen": 3,
+          "language": "",
+          "first_seen": "2026-10-23",
+          "description": ""
+        },
+        {
+          "name": "tek-sys-hub/Rubix-lang",
+          "url": "https://github.com/tek-sys-hub/Rubix-lang",
+          "stars": 1914,
+          "growth": 13,
+          "days_seen": 2,
+          "language": "Assembly",
+          "first_seen": "2026-10-22",
+          "description": "The 100% Pure x86-64 Assembly Systems Language"
+        }
+      ],
+      "langs": {
+        "Python": 7,
+        "TypeScript": 4,
+        "JavaScript": 4,
+        "Rust": 3,
+        "C": 2,
+        "Java": 1,
+        "C#": 1,
+        "Assembly": 1
+      }
+    },
     {
       "week_start": "2026-10-12",
       "week_end": "2026-10-18",
